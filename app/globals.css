@@ -120,3 +120,841 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@keyframes borderAnimation {
+  0%,
+  100% {
+    clip-path: inset(0 0 98% 0);
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  25% {
+    clip-path: inset(0 0 0 98%);
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  50% {
+    clip-path: inset(98% 0 0 0);
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  75% {
+    clip-path: inset(0 98% 0 0);
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+.bento-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-font-smoothing: subpixel-antialiased;
+  perspective: 1000px;
+}
+
+.bento-card img {
+  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bento-card:hover img {
+  transform: scale(1.05);
+  transition-duration: 0.5s;
+}
+
+.bento-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.8s ease;
+}
+
+.bento-card:hover::after {
+  transform: translateX(100%);
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.1);
+}
+
+@media (min-width: 768px) {
+  .bento-card {
+    height: 100%;
+  }
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.taxonomy-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.taxonomy-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+.taxonomy-card::before,
+.taxonomy-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  animation: borderAnimation 8s linear infinite;
+}
+
+.taxonomy-card::before {
+  border-color: rgba(16, 185, 129, 0.15);
+  animation-delay: -4s;
+}
+
+.taxonomy-card::after {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.taxonomy-card:hover::before,
+.taxonomy-card:hover::after {
+  animation-duration: 4s;
+}
+
+.taxonomy-item {
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  overflow: hidden;
+}
+
+.taxonomy-item:hover {
+  transform: translateX(8px);
+  border-color: rgba(16, 185, 129, 0.2);
+  background: none;
+}
+
+.taxonomy-item img {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.taxonomy-item:hover img {
+  transform: scale(1.1);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.stats-card {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+.stats-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.stats-card:hover::before {
+  transform: translateX(100%);
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .taxonomy-card {
+    padding: 1rem;
+  }
+
+  .taxonomy-item {
+    padding: 0.75rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -ms-content-zooming: none;
+  -webkit-text-size-adjust: none;
+}
+
+button,
+a,
+.hover-effect {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Add these new styles for the scanner section */
+.scanner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.scanner-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scanner-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.scanner-card:hover::before {
+  transform: translateX(100%);
+}
+
+.scan-pulse {
+  animation: scanPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes scanPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Improve existing animations */
+
+.hover-scale {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Add the glow animation */
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Improve card animations */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1) rotate(3deg);
+}
+
+
+/* Prevent default zoom behavior when ctrl + scroll */
+.scroll-none {
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
+/* Add smooth transitions for zoom */
+svg g {
+  transition: transform 0.1s ease-out;
+}
+
+/* Ensure proper event handling on the SVG */
+svg {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Update the taxonomy explorer container styles */
+.taxonomy-explorer-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden !important;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  max-width: 100vw;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: none;
+}
+
+/* Add these to your existing styles */
+@media (hover: none) and (pointer: coarse) {
+  .taxonomy-explorer-container {
+    touch-action: none;
+    -webkit-overflow-scrolling: auto;
+  }
+
+  svg {
+    touch-action: none;
+    -ms-touch-action: none;
+  }
+
+  /* Prevent pull-to-refresh and other browser gestures */
+  body,
+  html {
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    overflow-x: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ensure the container takes full height */
+  #__next,
+  main {
+    height: 100%;
+  }
+}
+
+/* Ensure proper touch target sizes for mobile */
+.taxonomy-controls button,
+.search-bar button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Improve pinch-zoom behavior */
+.taxonomy-explorer-container svg {
+  touch-action: none;
+  -ms-touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Custom breakpoint for extra small screens */
+@media (max-width: 639px) {
+  .xs\:right-1\/2 {
+    right: 50%;
+  }
+
+  .xs\:transform {
+    transform: translateX(50%);
+  }
+
+  .xs\:translate-x-1\/2 {
+    --tw-translate-x: 50%;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+      skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+}
+
+/* Improve mobile card handling */
+.species-card-container {
+  width: 100%;
+  max-width: calc(100vw - 2rem);
+  margin: 0 auto;
+  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  .species-card-container {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .species-card-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* Prevent content overflow */
+.taxonomy-explorer-container {
+  overflow: hidden !important;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* Prevent horizontal scroll on mobile */
+@media (max-width: 640px) {
+  .species-card-container {
+    max-width: calc(100vw - 2rem);
+    margin: 0 auto;
+  }
+}
+
+/* Add custom scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.7);
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.5) #f1f1f1;
+}
+
+/* Add these styles to the end of the file */
+.parallax-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.parallax-content {
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes floatAnimation {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.float-element {
+  animation: floatAnimation 8s ease-in-out infinite;
+}
+
+.float-element-slow {
+  animation: floatAnimation 12s ease-in-out infinite;
+}
+
+.float-element-fast {
+  animation: floatAnimation 6s ease-in-out infinite;
+}
+
+/* Tambahkan di bagian bawah file */
+.radial-explorer-container {
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.radial-diagram {
+  cursor: grab;
+}
+
+.radial-diagram:active {
+  cursor: grabbing;
+}
+
+/* Optimasi performa untuk transformasi */
+.diagram-container {
+  transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Mencegah highlight saat drag */
+.radial-explorer-container * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Add these styles at the end of the file for the Felidae node */
+.felidae-node {
+  filter: drop-shadow(0 0 8px rgba(8, 145, 178, 0.3));
+}
+
+/* Add a subtle animation for the zoom indicator */
+@keyframes pulseZoom {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.zoom-indicator {
+  animation: pulseZoom 2s ease-in-out infinite;
+}
+
+/* Enhance the story mode navigation */
+.story-navigation {
+  position: relative;
+  overflow: hidden;
+}
+
+.story-navigation::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, #0d9488, #0891b2);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.story-navigation:hover::after {
+  transform: scaleX(1);
+}
+
+/* Add these responsive styles for the radial diagram */
+@media (max-width: 640px) {
+  .radial-explorer-container {
+    touch-action: none;
+    -webkit-overflow-scrolling: auto;
+    overflow: hidden;
+  }
+
+  /* Improve touch targets for mobile */
+  .control-panel button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Ensure the diagram takes full height */
+  .radial-diagram {
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Adjust the position of controls for mobile */
+  .control-panel {
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    padding: 8px;
+    border-radius: 9999px;
+  }
+}
+
+/* Add styles for the mobile bottom controls */
+.mobile-controls {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  border: 1px solid rgba(20, 184, 166, 0.2);
+}
+
+.mobile-controls button {
+  margin: 0 4px;
+}
+
+/* Add these styles for responsive node labels */
+@media (max-width: 480px) {
+  .node-label {
+    font-size: 10px;
+  }
+
+  .node-scientific {
+    font-size: 8px;
+  }
+
+  /* Hide some elements on very small screens */
+  @media (max-width: 360px) {
+    .node-scientific {
+      display: none;
+    }
+  }
+}
+
+/* Improve the mobile controls */
+.control-panel {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .control-panel {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 9999px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    border: 1px solid rgba(20, 184, 166, 0.2);
+  }
+}
+
+/* Add these styles at the end of the file for smoother transitions */
+.diagram-container {
+  transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Improve the control panel styling */
+.control-panel {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.control-panel button {
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.control-panel button:hover {
+  transform: translateY(-1px);
+}
+
+.control-panel button:active {
+  transform: translateY(0);
+}
+
+/* Improve the radial diagram dragging experience */
+.radial-diagram {
+  cursor: grab;
+  transition: cursor 0.2s ease;
+}
+
+.radial-diagram:active {
+  cursor: grabbing;
+}
+
+/* Add these styles at the end of the file for smoother animations */
+.diagram-container {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Improve performance for Safari */
+@supports (-webkit-overflow-scrolling: touch) {
+  .radial-explorer-container {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  .diagram-container {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Improve performance for Firefox */ 
+@-moz-document url-prefix() {
+  .diagram-container {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Tambahkan animasi transisi yang lebih halus untuk diagram container */
+.diagram-container {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Tambahkan animasi fade untuk node saat transisi */
+.node-transition {
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tambahkan animasi untuk node yang dipilih */
+.node-selected {
+  filter: drop-shadow(0 0 10px rgba(8, 145, 178, 0.5));
+  transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tambahkan animasi untuk overlay saat transisi */
+.overlay-transition {
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tambahkan animasi untuk zoom dan rotasi */
+@keyframes pulse-zoom {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.zoom-pulse {
+  animation: pulse-zoom 1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Perbaikan untuk interaksi touchscreen */
+.mobile-touch-fix {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+@media (pointer: coarse) {
+  .radial-diagram {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Memperbesar area sentuh untuk kontrol pada perangkat mobile */
+  .control-panel button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Add this CSS class to enable text selection */
+.select-text {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+}
+
+/* Make sure no parent elements are preventing text selection */
+.species-card-container p,
+.species-card-container h3,
+.species-card-container h4,
+.species-card-container span,
+.species-card-container div {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Fix any global styles that might be preventing text selection */
+* {
+  user-select: auto;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+}
+
+/* Electric path effect styles */
+.electric-path {
+  animation: electricPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes electricPulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    stroke-width: 2px;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 3px;
+  }
+}
+
+/* Add a subtle glow to selected nodes */
+/*.node-selected {
+  filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.6));
+}*/
+
+/* Add a subtle animation for the electric path */
+@keyframes electricFlow {
+  0% {
+    stroke-dashoffset: 60;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.electric-path {
+  stroke-dasharray: 4, 2;
+  animation: electricFlow 1.5s linear infinite;
+}
