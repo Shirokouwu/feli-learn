@@ -1,6 +1,29 @@
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
+import { signOut } from "./(auth)/_action";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div>
+          <h1 className="text-2xl font-bold">Welcome back, {user.user_metadata.full_name}</h1>
+        </div>
+        <form>
+          <Button type="submit" formAction={signOut} className="ml-4">
+            Sign Out
+          </Button>
+        </form>
+      </div>
+    );
+  }
+
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
