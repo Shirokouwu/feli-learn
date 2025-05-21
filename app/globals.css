@@ -116,6 +116,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -123,24 +124,29 @@
 
 
 @keyframes borderAnimation {
+
   0%,
   100% {
     clip-path: inset(0 0 98% 0);
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
+
   25% {
     clip-path: inset(0 0 0 98%);
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
+
   50% {
     clip-path: inset(98% 0 0 0);
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
+
   75% {
     clip-path: inset(0 98% 0 0);
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
+
 h1,
 h2,
 h3,
@@ -186,12 +192,15 @@ a,
 .scanner-card:hover::before {
   transform: translateX(100%);
 }
+
 /* Add the glow animation */
 @keyframes glow {
+
   0%,
   100% {
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
   }
+
   50% {
     box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
   }
@@ -226,6 +235,7 @@ svg {
   -webkit-user-select: none;
   user-select: none;
 }
+
 /* Add these to your existing styles */
 @media (hover: none) and (pointer: coarse) {
   /* .taxonomy-explorer-container {
@@ -270,8 +280,7 @@ svg {
 
   .xs\:translate-x-1\/2 {
     --tw-translate-x: 50%;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
-      skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 }
 
@@ -336,15 +345,19 @@ svg {
   scrollbar-width: thin;
   scrollbar-color: rgba(16, 185, 129, 0.5) #f1f1f1;
 }
+
 @keyframes floatAnimation {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-15px);
   }
 }
+
 /* Tambahkan di bagian bawah file */
 .radial-explorer-container {
   touch-action: none;
@@ -380,9 +393,11 @@ svg {
 .felidae-node {
   filter: drop-shadow(0 0 8px rgba(8, 145, 178, 0.3));
 }
+
 .zoom-indicator {
   animation: pulse-zoom 2s ease-in-out infinite;
 }
+
 /* Add these responsive styles for the radial diagram */
 @media (max-width: 640px) {
   .radial-explorer-container {
@@ -483,28 +498,28 @@ svg {
 .control-panel {
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
 
-.control-panel button {
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
+  & button {
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 
-.control-panel button:hover {
-  transform: translateY(-1px);
-}
+    &:hover {
+      transform: translateY(-1px);
+    }
 
-.control-panel button:active {
-  transform: translateY(0);
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 /* Improve the radial diagram dragging experience */
 .radial-diagram {
   cursor: grab;
   transition: cursor 0.2s ease;
-}
 
-.radial-diagram:active {
-  cursor: grabbing;
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 /* Add these styles at the end of the file for smoother animations */
@@ -533,7 +548,7 @@ svg {
   }
 }
 
-/* Improve performance for Firefox */ 
+/* Improve performance for Firefox */
 @-moz-document url-prefix() {
   .diagram-container {
     transform: translate3d(0, 0, 0);
@@ -571,10 +586,12 @@ svg {
 
 /* Tambahkan animasi untuk zoom dan rotasi */
 @keyframes pulse-zoom {
+
   0%,
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -613,15 +630,13 @@ svg {
 }
 
 /* Make sure no parent elements are preventing text selection */
-.species-card-container p,
-.species-card-container h3,
-.species-card-container h4,
-.species-card-container span,
-.species-card-container div {
-  user-select: text;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
+.species-card-container {
+  & :is(p, h3, h4, span, div) {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+  }
 }
 
 /* Fix any global styles that might be preventing text selection */
@@ -638,21 +653,25 @@ svg {
 }
 
 @keyframes electricPulse {
+
   0%,
   100% {
     opacity: 0.8;
     stroke-width: 2px;
   }
+
   50% {
     opacity: 1;
     stroke-width: 3px;
   }
 }
+
 /* Add a subtle animation for the electric path */
 @keyframes electricFlow {
   0% {
     stroke-dashoffset: 60;
   }
+
   100% {
     stroke-dashoffset: 0;
   }
