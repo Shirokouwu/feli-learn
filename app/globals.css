@@ -141,174 +141,12 @@
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
-
-.bento-card {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-font-smoothing: subpixel-antialiased;
-  perspective: 1000px;
-}
-
-.bento-card img {
-  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.bento-card:hover img {
-  transform: scale(1.05);
-  transition-duration: 0.5s;
-}
-
-.bento-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.8s ease;
-}
-
-.bento-card:hover::after {
-  transform: translateX(100%);
-}
-
-.bento-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.1);
-}
-
-@media (min-width: 768px) {
-  .bento-card {
-    height: 100%;
-  }
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-}
-
-.taxonomy-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.taxonomy-card {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform;
-}
-
-.taxonomy-card::before,
-.taxonomy-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 2px solid transparent;
-  border-radius: inherit;
-  animation: borderAnimation 8s linear infinite;
-}
-
-.taxonomy-card::before {
-  border-color: rgba(16, 185, 129, 0.15);
-  animation-delay: -4s;
-}
-
-.taxonomy-card::after {
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.taxonomy-card:hover::before,
-.taxonomy-card:hover::after {
-  animation-duration: 4s;
-}
-
-.taxonomy-item {
-  position: relative;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-  overflow: hidden;
-}
-
-.taxonomy-item:hover {
-  transform: translateX(8px);
-  border-color: rgba(16, 185, 129, 0.2);
-  background: none;
-}
-
-.taxonomy-item img {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.taxonomy-item:hover img {
-  transform: scale(1.1);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
-}
-
-.stats-card {
-  position: relative;
-  overflow: hidden;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform;
-}
-
-.stats-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.stats-card:hover::before {
-  transform: translateX(100%);
-}
-
 h1,
 h2,
 h3,
 h4,
 p {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (max-width: 768px) {
-  .taxonomy-card {
-    padding: 1rem;
-  }
-
-  .taxonomy-item {
-    padding: 0.75rem;
-  }
 }
 
 html {
@@ -348,31 +186,6 @@ a,
 .scanner-card:hover::before {
   transform: translateX(100%);
 }
-
-.scan-pulse {
-  animation: scanPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes scanPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-/* Improve existing animations */
-
-.hover-scale {
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.hover-scale:hover {
-  transform: scale(1.02);
-}
-
 /* Add the glow animation */
 @keyframes glow {
   0%,
@@ -413,29 +226,12 @@ svg {
   -webkit-user-select: none;
   user-select: none;
 }
-
-/* Update the taxonomy explorer container styles */
-.taxonomy-explorer-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden !important;
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-tap-highlight-color: transparent;
-  max-width: 100vw;
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: none;
-}
-
 /* Add these to your existing styles */
 @media (hover: none) and (pointer: coarse) {
-  .taxonomy-explorer-container {
+  /* .taxonomy-explorer-container {
     touch-action: none;
     -webkit-overflow-scrolling: auto;
-  }
+  } */
 
   svg {
     touch-action: none;
@@ -460,21 +256,7 @@ svg {
   }
 }
 
-/* Ensure proper touch target sizes for mobile */
-.taxonomy-controls button,
-.search-bar button {
-  min-height: 44px;
-  min-width: 44px;
-}
 
-/* Improve pinch-zoom behavior */
-.taxonomy-explorer-container svg {
-  touch-action: none;
-  -ms-touch-action: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
 
 /* Custom breakpoint for extra small screens */
 @media (max-width: 639px) {
@@ -554,27 +336,6 @@ svg {
   scrollbar-width: thin;
   scrollbar-color: rgba(16, 185, 129, 0.5) #f1f1f1;
 }
-
-/* Add these styles to the end of the file */
-.parallax-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.parallax-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
-
-.parallax-content {
-  position: relative;
-  z-index: 10;
-}
-
 @keyframes floatAnimation {
   0%,
   100% {
@@ -584,19 +345,6 @@ svg {
     transform: translateY(-15px);
   }
 }
-
-.float-element {
-  animation: floatAnimation 8s ease-in-out infinite;
-}
-
-.float-element-slow {
-  animation: floatAnimation 12s ease-in-out infinite;
-}
-
-.float-element-fast {
-  animation: floatAnimation 6s ease-in-out infinite;
-}
-
 /* Tambahkan di bagian bawah file */
 .radial-explorer-container {
   touch-action: none;
@@ -612,13 +360,13 @@ svg {
 }
 
 /* Optimasi performa untuk transformasi */
-.diagram-container {
+/* .diagram-container {
   transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
-}
+} */
 
 /* Mencegah highlight saat drag */
 .radial-explorer-container * {
@@ -632,47 +380,9 @@ svg {
 .felidae-node {
   filter: drop-shadow(0 0 8px rgba(8, 145, 178, 0.3));
 }
-
-/* Add a subtle animation for the zoom indicator */
-@keyframes pulseZoom {
-  0%,
-  100% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
 .zoom-indicator {
-  animation: pulseZoom 2s ease-in-out infinite;
+  animation: pulse-zoom 2s ease-in-out infinite;
 }
-
-/* Enhance the story mode navigation */
-.story-navigation {
-  position: relative;
-  overflow: hidden;
-}
-
-.story-navigation::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(to right, #0d9488, #0891b2);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
-}
-
-.story-navigation:hover::after {
-  transform: scaleX(1);
-}
-
 /* Add these responsive styles for the radial diagram */
 @media (max-width: 640px) {
   .radial-explorer-container {
@@ -761,13 +471,13 @@ svg {
 }
 
 /* Add these styles at the end of the file for smoother transitions */
-.diagram-container {
+/* .diagram-container {
   transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
-}
+} */
 
 /* Improve the control panel styling */
 .control-panel {
@@ -798,7 +508,7 @@ svg {
 }
 
 /* Add these styles at the end of the file for smoother animations */
-.diagram-container {
+/* .diagram-container {
   transition-property: transform;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
@@ -808,7 +518,7 @@ svg {
   -webkit-transform-style: preserve-3d;
   perspective: 1000px;
   -webkit-perspective: 1000px;
-}
+} */
 
 /* Improve performance for Safari */
 @supports (-webkit-overflow-scrolling: touch) {
@@ -938,12 +648,6 @@ svg {
     stroke-width: 3px;
   }
 }
-
-/* Add a subtle glow to selected nodes */
-/*.node-selected {
-  filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.6));
-}*/
-
 /* Add a subtle animation for the electric path */
 @keyframes electricFlow {
   0% {
