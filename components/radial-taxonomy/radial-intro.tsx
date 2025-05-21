@@ -32,7 +32,7 @@ export function RadialIntro({ onClose }: RadialIntroProps) {
         </p>
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="bg-teal-50 p-3 rounded-xl">
-            <div className="text-teal-800 font-medium mb-1">41 Spesies</div>
+            <div className="text-teal-800 font-medium mb-1">38 Spesies</div>
             <div className="text-xs text-teal-600">Dari kucing domestik hingga harimau</div>
           </div>
           <div className="bg-teal-50 p-3 rounded-xl">

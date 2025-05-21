@@ -26,26 +26,16 @@ import Link from "next/link"
 import { RadialOnboarding } from "@/components/radial-taxonomy/radial-onboarding"
 import { RadialExplorer } from "@/components/radial-taxonomy"
 import { RadialDiagramGuide } from "@/components/radial-taxonomy/radial-diagram-guide"
-import { supabase } from "@/lib/supabase"
-import { toast } from "sonner"
 import { TaxonomyLoading } from "@/components/radial-taxonomy/radial-loading"
 
-export default function RadialTaxonomy() {
+export default function RadialTaxonomy({ userID }: { userID: string }) {
   const [showInfo, setShowInfo] = useState(false)
   const [showLegend, setShowLegend] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [requireLogin, setRequireLogin] = useState(false)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<any>(userID)
   const diagramRef = useRef<HTMLDivElement>(null)
 
   const scrollToDiagram = () => {
-    // Check if login is required but user is not logged in
-    if (requireLogin && !isLoggedIn) {
-      toast("Login Diperlukan: Silakan login untuk mengakses visualisasi radial Felidae.")
-      return
-    }
-
     diagramRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
     // Show onboarding modal after scrolling to diagram
     setShowOnboarding(true)
@@ -60,7 +50,7 @@ export default function RadialTaxonomy() {
       </AnimatePresence>
 
       {/* Back button (always visible) */}
-      <div className="fixed top-4 left-4 z-50">
+      <div className="fixed top-4 left-4 z-50 flex items-center gap-4">
         <Button
           variant="outline"
           size="sm"
@@ -68,10 +58,26 @@ export default function RadialTaxonomy() {
           asChild
         >
           <Link href="/">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Kembali
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Kembali
           </Link>
         </Button>
+        <div>
+          {user ? (
+        <span className="text-sm text-teal-600 flex items-center">
+          <Unlock className="h-4 w-4 mr-1" />
+          {user}
+        </span>
+          ) : (
+        <span className="text-sm text-teal-600 flex items-center">
+          <Lock className="h-4 w-4 mr-1" />
+          Login Diperlukan
+          <Link href="/login" className="text-teal-600 underline ml-1">
+            Login
+          </Link>
+        </span>
+          )}
+        </div>
       </div>
 
 
@@ -115,7 +121,7 @@ export default function RadialTaxonomy() {
               <div className="flex flex-wrap justify-center gap-3 mt-4">
                 <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
                   <div className="h-2 w-2 rounded-full bg-teal-400 animate-pulse mr-2"></div>
-                  41 Spesies
+                  38 Spesies
                 </Badge>
                 <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
                   <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse mr-2"></div>
@@ -128,29 +134,6 @@ export default function RadialTaxonomy() {
               </div>
             </div>
           </div>
-
-          {/* Login status indicator */}
-          {requireLogin && (
-            <div
-              className={`mb-4 p-3 rounded-lg border ${isLoggedIn ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-200"}`}
-            >
-              <div className="flex items-center justify-center gap-2 text-sm">
-                {isLoggedIn ? (
-                  <>
-                    <Unlock className="h-4 w-4 text-green-600" />
-                    <span className="text-green-700">
-                      Anda telah login sebagai <span className="font-medium">{user?.email}</span>
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="h-4 w-4 text-amber-600" />
-                    <span className="text-amber-700">Login diperlukan untuk mengakses visualisasi</span>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
 
           <div className="flex flex-wrap justify-center gap-4 mt-8">
             <Button
@@ -167,7 +150,6 @@ export default function RadialTaxonomy() {
             >
               <Zap className="h-4 w-4 group-hover:scale-110 transition-transform duration-300" />
               <span>Mulai Eksplorasi</span>
-              {requireLogin && !isLoggedIn && <Lock className="h-3.5 w-3.5 ml-1.5" />}
             </Button>
             <Button
               variant="outline"

@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
         hostname: "images.pexels.com"
       }, {
         hostname: "static.inaturalist.org"
+      }, {
+        hostname: "www.tzwcadopt.ca"
       }
     ]
   },

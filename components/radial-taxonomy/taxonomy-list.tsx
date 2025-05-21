@@ -302,7 +302,7 @@ export function TaxonomyList({ onSelectNode, isOpen: externalIsOpen, onToggle }:
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
             </div>
           ) : (
-            <ScrollArea className="flex-1 h-[calc(100%-180px)]">
+            <ScrollArea className="flex-1 h-[calc(100%-200px)]">
               <div className="p-2">
                 {/* Family Felidae */}
                 <div className="mb-2">

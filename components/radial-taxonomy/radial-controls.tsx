@@ -7,7 +7,7 @@ import { ZoomIn, ZoomOut, RotateCcw, RotateCw, Search, RefreshCw } from "lucide-
 import { motion } from "framer-motion"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
+
 
 interface RadialControlsProps {
   zoom: number
@@ -68,68 +68,9 @@ export function RadialControls({
         transition={{ duration: 0.5, delay: 0.2 }}
         className="control-panel fixed sm:absolute bottom-4 left-4 bg-white/90 backdrop-blur-md p-3 rounded-xl shadow-lg border border-teal-100/50 z-10"
       >
-        {/* Search Input */}
-        <motion.form
-          className={`relative overflow-hidden transition-all duration-300 ease-in-out mb-3 ${isExpanded ? "w-64" : "w-0"}`}
-          onSubmit={handleSearchSubmit}
-        >
-          <Input
-            type="text"
-            placeholder="Cari spesies..."
-            value={localSearchQuery}
-            onChange={handleSearchChange}
-            className="h-9 pl-3 pr-8 rounded-full border-teal-200 focus:border-teal-400 focus:ring-teal-400"
-          />
-          <Button
-            type="submit"
-            size="sm"
-            variant="ghost"
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 rounded-full"
-          >
-            <Search className="h-4 w-4 text-teal-600" />
-          </Button>
-        </motion.form>
-
         <div className="flex flex-col gap-2">
-          {/* Top row controls */}
-          <div className="flex items-center justify-between gap-2">
-            {/* Search Toggle Button */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-9 w-9 rounded-full bg-white hover:bg-teal-50 border-teal-200 text-teal-700"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>Cari Spesies</p>
-              </TooltipContent>
-            </Tooltip>
-
-            {/* Reset Button */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={onReset}
-                  className="h-9 w-9 rounded-full bg-white hover:bg-teal-50 border-teal-200 text-teal-700"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>Reset Tampilan</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-
           {/* Zoom Controls */}
-          <div className="flex items-center gap-1 bg-white rounded-full border border-teal-200 p-1">
+          <div className="flex items-center gap-1 bg-white rounded-full border border-teal-200 p-1 w-full justify-center">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -146,7 +87,7 @@ export function RadialControls({
               </TooltipContent>
             </Tooltip>
 
-            <div className="text-xs font-medium text-teal-700 px-1 min-w-[40px] text-center">{zoomPercentage}%</div>
+            <div className="text-xs font-medium text-teal-700 px-1 min-w-[40px] text-center flex-1">{zoomPercentage}%</div>
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -166,7 +107,7 @@ export function RadialControls({
           </div>
 
           {/* Rotation Controls */}
-          <div className="flex items-center gap-1 bg-white rounded-full border border-teal-200 p-1">
+          <div className="flex items-center gap-1 bg-white rounded-full border border-teal-200 p-1 justify-between">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -180,6 +121,22 @@ export function RadialControls({
               </TooltipTrigger>
               <TooltipContent side="top">
                 <p>Putar Kiri</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-full hover:bg-teal-50 text-teal-700"
+                  onClick={onReset}
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>Reset Posisi</p>
               </TooltipContent>
             </Tooltip>
 

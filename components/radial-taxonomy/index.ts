@@ -1,4 +1,4 @@
-export { RadialExplorer } from "./radial-explorer.tsx"
+export { RadialExplorer } from "./radial-explorer"
 export { RadialControls } from "./radial-controls"
 export { RadialSearch } from "./radial-search"
 export { RadialStoryMode } from "./radial-story-mode"

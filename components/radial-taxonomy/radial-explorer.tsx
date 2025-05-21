@@ -147,7 +147,7 @@ export function RadialExplorer() {
         radius: centerRadius,
         level: "family",
         color: "#0891b2", // cyan-600
-        image_url: "https://images.unsplash.com/photo-1589652717521-10c0d092dea9",
+        image_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/The_Felidae.jpg/960px-The_Felidae.jpg",
       },
     ]
 

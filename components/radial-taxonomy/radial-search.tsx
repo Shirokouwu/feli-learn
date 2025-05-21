@@ -4,7 +4,6 @@ import type React from "react"
 
 import { Search, X, ArrowLeft, Loader2, TrendingUp, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useState, useEffect, useRef } from "react"
@@ -372,7 +371,7 @@ export function RadialSearch({
                         >
                           <div className="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-900/60 flex-shrink-0 border border-teal-200 dark:border-teal-800 shadow-sm">
                             {node.image_url ? (
-                              <Image
+                              <img
                                 src={node.image_url || "/placeholder.svg"}
                                 alt={node.name || "Node"}
                                 width={48}
@@ -485,7 +484,7 @@ export function RadialSearch({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
                         {popularSpeciesData.map((node, index) => (
                           <motion.button
-                            key={node.id}
+                            key={node?.id}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
@@ -502,32 +501,32 @@ export function RadialSearch({
                                 {index + 1}
                               </div>
                               <div className="w-10 h-10 rounded-lg overflow-hidden bg-teal-100 dark:bg-teal-900/50 flex-shrink-0 border border-teal-200 dark:border-teal-800">
-                                {node.image_url ? (
-                                  <Image
-                                    src={node.image_url || "/placeholder.svg"}
-                                    alt={node.name}
+                                {node?.image_url ? (
+                                  <img
+                                    src={node?.image_url || "/placeholder.svg"}
+                                    alt={node?.name}
                                     width={40}
                                     height={40}
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center text-teal-600 dark:text-teal-400 text-xs font-medium">
-                                    {node.name?.substring(0, 2) || "?"}
+                                    {node?.name?.substring(0, 2) || "?"}
                                   </div>
                                 )}
                               </div>
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="font-medium text-neutral-900 dark:text-neutral-100 truncate">
-                                {node.name}
+                                {node?.name}
                               </div>
                               <div className="text-xs text-teal-600 dark:text-teal-400 italic truncate">
-                                {node.scientific_name}
+                                {node?.scientific_name}
                               </div>
-                              {node.click_count && (
+                              {node?.click_count && (
                                 <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 flex items-center gap-1">
                                   <div className="w-1.5 h-1.5 bg-teal-400 dark:bg-teal-500 rounded-full"></div>
-                                  {node.click_count} kali dilihat
+                                  {node?.click_count} kali dilihat
                                 </div>
                               )}
                             </div>
@@ -554,7 +553,7 @@ export function RadialSearch({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
                         {popularGeneraData.map((node, index) => (
                           <motion.button
-                            key={node.id}
+                            key={node?.id}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
@@ -571,29 +570,29 @@ export function RadialSearch({
                                 {index + 1}
                               </div>
                               <div className="w-10 h-10 rounded-lg overflow-hidden bg-indigo-100 dark:bg-indigo-900/50 flex-shrink-0 border border-indigo-200 dark:border-indigo-800">
-                                {node.image_url ? (
-                                  <Image
-                                    src={node.image_url || "/placeholder.svg"}
-                                    alt={node.name}
+                                {node?.image_url ? (
+                                  <img
+                                    src={node?.image_url || "/placeholder.svg"}
+                                    alt={node?.name}
                                     width={40}
                                     height={40}
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xs font-medium">
-                                    {node.name?.substring(0, 2) || "?"}
+                                    {node?.name?.substring(0, 2) || "?"}
                                   </div>
                                 )}
                               </div>
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="font-medium text-neutral-900 dark:text-neutral-100 truncate">
-                                {node.name}
+                                {node?.name}
                               </div>
                               <div className="text-xs text-indigo-600 dark:text-indigo-400 italic truncate">
-                                Genus {node.scientific_name}
+                                Genus {node?.scientific_name}
                               </div>
-                              {node.click_count && (
+                              {node?.click_count && (
                                 <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 flex items-center gap-1">
                                   <div className="w-1.5 h-1.5 bg-indigo-400 dark:bg-indigo-500 rounded-full"></div>
                                   {node.click_count} kali dilihat

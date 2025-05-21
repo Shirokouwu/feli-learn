@@ -5,6 +5,8 @@ export async function POST(request: Request) {
   try {
     const { id, type } = await request.json()
 
+     console.log(`Tracked ${type} view for ID: ${id}`)
+
     if (!id || !type || (type !== "species" && type !== "genus" && type !== "family")) {
       return NextResponse.json(
         { error: "Invalid request. Provide id and type (species, genus, or family)" },
