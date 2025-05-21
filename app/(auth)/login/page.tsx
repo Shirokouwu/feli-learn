@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { loginAction } from "../_action"
+import AuthGoogle from "../auth-google"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -120,12 +121,13 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-6">
-              <div>
+              {/* <div>
                 <Button variant="outline" className="w-full flex items-center justify-center gap-2 hover:bg-gray-50">
                   <Image src="/google.svg" width={20} height={20} alt="Google logo" />
                   <span>Masuk dengan Google</span>
                 </Button>
-              </div>
+              </div> */}
+              <AuthGoogle />
             </div>
           </div>
         </div>
