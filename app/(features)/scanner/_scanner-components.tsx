@@ -96,8 +96,8 @@ export default function ScannerImages() {
     const interval = setInterval(checkApiHealth, 30000);
 
     return () => clearInterval(interval);
-  }, [API_MODEL_HEALTH_URL]);  
-  
+  }, [API_MODEL_HEALTH_URL]);
+
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -116,7 +116,7 @@ export default function ScannerImages() {
       reader.readAsDataURL(file)
     }
   }
-  
+
   const handlePrediction = async (imageSource: string) => {
     // Check if API is ready before making the request
     if (!apiReady) {
