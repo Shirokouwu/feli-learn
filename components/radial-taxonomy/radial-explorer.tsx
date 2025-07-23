@@ -1130,11 +1130,10 @@ export function RadialExplorer() {
       dragTransformRef.current.x += currentVelocityX
       dragTransformRef.current.y += currentVelocityY
 
-      // Apply transform with hardware acceleration
+      // Apply transform with 2D translation for sharper rendering
       if (diagramElementRef.current) {
         diagramElementRef.current.style.transform = `
-        translate3d(${containerWidth / 2}px, ${containerHeight / 2}px, 0) 
-        translate3d(${dragTransformRef.current.x}px, ${dragTransformRef.current.y}px, 0) 
+        translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
         scale(${dragTransformRef.current.scale}) 
         rotate(${dragTransformRef.current.rotation}deg)
       `
@@ -1188,13 +1187,12 @@ export function RadialExplorer() {
     }
 
     // Directly apply transform to the DOM element for maximum smoothness
-    // Use translate3d for hardware acceleration
+    // Use 2D translate for sharper rendering
     const containerWidth = containerRef.current?.clientWidth || 0
     const containerHeight = containerRef.current?.clientHeight || 0
 
     diagramElementRef.current.style.transform = `
-    translate3d(${containerWidth / 2}px, ${containerHeight / 2}px, 0) 
-    translate3d(${dragTransformRef.current.x}px, ${dragTransformRef.current.y}px, 0) 
+    translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
     scale(${dragTransformRef.current.scale}) 
     rotate(${dragTransformRef.current.rotation}deg)
   `
@@ -1283,13 +1281,12 @@ export function RadialExplorer() {
     }
 
     // Directly apply transform to the DOM element for maximum smoothness
-    // Use translate3d for hardware acceleration
+    // Use 2D translate for sharper rendering
     const containerWidth = containerRef.current?.clientWidth || 0
     const containerHeight = containerRef.current?.clientHeight || 0
 
     diagramElementRef.current.style.transform = `
-      translate3d(${containerWidth / 2}px, ${containerHeight / 2}px, 0) 
-      translate3d(${dragTransformRef.current.x}px, ${dragTransformRef.current.y}px, 0) 
+      translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
       scale(${dragTransformRef.current.scale}) 
       rotate(${dragTransformRef.current.rotation}deg)
     `

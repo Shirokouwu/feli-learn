@@ -372,15 +372,6 @@ svg {
   cursor: grabbing;
 }
 
-/* Optimasi performa untuk transformasi */
-/* .diagram-container {
-  transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-} */
-
 /* Mencegah highlight saat drag */
 .radial-explorer-container * {
   user-select: none;
@@ -516,6 +507,20 @@ svg {
 .radial-diagram {
   cursor: grab;
   transition: cursor 0.2s ease;
+  /* Improve rendering quality for sharper SVG */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  /* Disable text rendering optimizations that might cause blur */
+  text-rendering: geometricPrecision;
+  shape-rendering: geometricPrecision;
+  /* Force hardware acceleration off to prevent blur */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Prevent subpixel rendering issues */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   &:active {
     cursor: grabbing;
@@ -523,49 +528,56 @@ svg {
 }
 
 /* Add these styles at the end of the file for smoother animations */
-/* .diagram-container {
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  perspective: 1000px;
-  -webkit-perspective: 1000px;
-} */
+.radial-svg-container {
+  /* Force sharp SVG rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  shape-rendering: crispEdges;
+  text-rendering: geometricPrecision;
+}
 
-/* Improve performance for Safari */
+/* Improve performance for Safari - use 2D transforms for sharper rendering */
 @supports (-webkit-overflow-scrolling: touch) {
   .radial-explorer-container {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    /* Use 2D transform instead of 3D to prevent blur */
+    transform: translate(0, 0);
+    -webkit-transform: translate(0, 0);
   }
 
   .diagram-container {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    /* Use 2D transform instead of 3D to prevent blur */
+    transform: translate(0, 0);
+    -webkit-transform: translate(0, 0);
   }
 }
 
-/* Improve performance for Firefox */
+/* Improve performance for Firefox - use 2D transforms for sharper rendering */
 @-moz-document url-prefix() {
   .diagram-container {
-    transform: translate3d(0, 0, 0);
+    /* Use 2D transform instead of 3D to prevent blur */
+    transform: translate(0, 0);
+  }
+
+  .radial-diagram {
+    /* Force sharp rendering in Firefox */
+    image-rendering: -moz-crisp-edges;
+    shape-rendering: crispEdges;
   }
 }
 
 /* Tambahkan animasi transisi yang lebih halus untuk diagram container */
 .diagram-container {
+  /* Remove 3D transforms that can cause blur */
   transition-property: transform;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  perspective: 1000px;
-  -webkit-perspective: 1000px;
+  /* Force sharp rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  shape-rendering: crispEdges;
+  text-rendering: geometricPrecision;
+  /* Prevent subpixel blurring */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 /* Tambahkan animasi fade untuk node saat transisi */

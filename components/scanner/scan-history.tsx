@@ -38,7 +38,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/hooks/use-toast"
+import { toast } from "sonner"
+
 
 // Define the history item type
 export type ScanHistoryItem = {
@@ -154,20 +155,14 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
     if (window.confirm("Apakah Anda yakin ingin menghapus semua riwayat scan?")) {
       setHistoryData([])
       if (onClearHistory) onClearHistory()
-      toast({
-        title: "Riwayat Dihapus",
-        description: "Semua riwayat scan telah dihapus",
-      })
+      toast("Riwayat scan telah dihapus")
     }
   }
 
   // Handle deleting a single history item
   const handleDeleteItem = (id: string) => {
     setHistoryData((prev) => prev.filter((item) => item.id !== id))
-    toast({
-      title: "Item Dihapus",
-      description: "Item riwayat telah dihapus",
-    })
+    toast("Item riwayat telah dihapus")
   }
 
   // Handle viewing details of an item
@@ -176,13 +171,13 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
     setShowDetailDialog(true)
   }
 
-  // Handle exporting history (mock function)
-  const handleExportHistory = () => {
-    toast({
-      title: "Ekspor Riwayat",
-      description: "Fitur ekspor riwayat akan segera tersedia",
-    })
-  }
+  // // Handle exporting history (mock function)
+  // const handleExportHistory = () => {
+  //   toast({
+  //     title: "Ekspor Riwayat",
+  //     description: "Fitur ekspor riwayat akan segera tersedia",
+  //   })
+  // }
 
   return (
     <>
@@ -246,9 +241,9 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="outline" size="icon" onClick={handleExportHistory}>
+            {/* <Button variant="outline" size="icon" onClick={handleExportHistory}>
               <Download className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -419,10 +414,7 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
                   setShowDetailDialog(false)
                   // Navigate to taxonomy page with this species
                   // This would be implemented in the actual app
-                  toast({
-                    title: "Navigasi",
-                    description: "Navigasi ke halaman taksonomi akan segera tersedia",
-                  })
+                  toast("Navigating to taxonomy page...")
                 }}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >

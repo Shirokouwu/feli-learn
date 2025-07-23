@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
         hostname: "static.inaturalist.org"
       }, {
         hostname: "www.tzwcadopt.ca"
+      }, {
+        hostname: "lh3.googleusercontent.com"
+      }, {
+        hostname: "avatars.githubusercontent.com"
       }
     ]
   },

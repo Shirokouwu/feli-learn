@@ -97,9 +97,8 @@ export const RadialNode = memo(function RadialNode({ node, isSelected, onClick }
     <g
       transform={`translate(${node.x}, ${node.y})`}
       onClick={handleClick}
-      className={`cursor-pointer transition-all duration-500 ${isFelidae ? "felidae-node" : ""} ${
-        isSelected ? "node-selected" : ""
-      } node-transition`}
+      className={`cursor-pointer transition-all duration-500 ${isFelidae ? "felidae-node" : ""} ${isSelected ? "node-selected" : ""
+        } node-transition`}
     >
       {/* Special pulsing effect for Felidae node */}
       {isFelidae && !isSelected && (
@@ -250,29 +249,68 @@ export const RadialNode = memo(function RadialNode({ node, isSelected, onClick }
         </>
       ) : (
         <>
-          {/* Add white background for better text readability on species nodes */}
+          {/* Glassmorphism background for better text readability on species nodes */}
           {isSpecies && (
-            <rect
-              x={-node.radius * 1.5}
-              y={node.radius * 1.05 + 5}
-              width={node.radius * 3}
-              height={node.scientific_name && node.scientific_name !== node.name ? 45 : 30}
-              fill="white"
-              fillOpacity="0.85"
-              rx="4"
-              stroke="#e2e8f0"
-              strokeWidth="0.5"
-            />
+            <g>
+              {/* Glass background with blur effect */}
+              <rect
+                x={-node.radius * 1.5}
+                y={node.radius * 1.05 + 5}
+                width={node.radius * 3}
+                height={node.scientific_name && node.scientific_name !== node.name ? 45 : 30}
+                fill="rgba(255, 255, 255, 0.25)"
+                rx="8"
+                stroke="rgba(255, 255, 255, 0.18)"
+                strokeWidth="1"
+                className="transition-all duration-500"
+                style={{
+                  backdropFilter: "blur(10px)",
+                  filter: isSelected
+                    ? "drop-shadow(0 8px 32px rgba(31, 38, 135, 0.15)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1))"
+                    : "drop-shadow(0 4px 16px rgba(31, 38, 135, 0.1)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.05))",
+                  background: isSelected
+                    ? "linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.15) 100%)"
+                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%)",
+                }}
+              />
+              {/* Inner glass highlight */}
+              <rect
+                x={-node.radius * 1.5 + 1}
+                y={node.radius * 1.05 + 6}
+                width={node.radius * 3 - 2}
+                height="1"
+                fill="rgba(255, 255, 255, 0.4)"
+                rx="0.5"
+                className="transition-all duration-500"
+              />
+              {/* Side glass highlight */}
+              <rect
+                x={-node.radius * 1.5 + 1}
+                y={node.radius * 1.05 + 6}
+                width="1"
+                height={(node.scientific_name && node.scientific_name !== node.name ? 45 : 30) - 2}
+                fill="rgba(255, 255, 255, 0.3)"
+                rx="0.5"
+                className="transition-all duration-500"
+              />
+            </g>
           )}
 
           {/* Standard node label with improved transition */}
           <text
             dy={node.radius + (isSpecies ? 25 : 20)}
             textAnchor="middle"
-            className={`${isSpecies ? "text-sm" : "text-sm"} font-medium fill-slate-800 transition-all duration-500 node-label`}
+            className={`${isSpecies ? "text-sm" : "text-sm"} font-medium transition-all duration-500 node-label`}
+            fill={isSpecies ? "#0f172a" : "#334155"}
             style={{
               fontWeight: isSelected ? "bold" : "medium",
-              textShadow: isSelected ? "0 0 3px rgba(255,255,255,0.8)" : "none",
+              textShadow: isSpecies
+                ? isSelected
+                  ? "0 2px 4px rgba(0,0,0,0.25), 0 0 8px rgba(255,255,255,0.8)"
+                  : "0 1px 2px rgba(0,0,0,0.2), 0 0 4px rgba(255,255,255,0.6)"
+                : isSelected
+                  ? "0 0 3px rgba(255,255,255,0.8)"
+                  : "none",
               opacity: isSelected ? 1 : 0.95,
               transform: isSelected ? "translateY(0)" : "translateY(0)",
               transition:
@@ -287,9 +325,16 @@ export const RadialNode = memo(function RadialNode({ node, isSelected, onClick }
             <text
               dy={node.radius + (isSpecies ? 45 : 40)}
               textAnchor="middle"
-              className={`${isSpecies ? "text-xs" : "text-xs"} italic fill-slate-600 transition-all duration-500 node-scientific`}
+              className={`${isSpecies ? "text-xs" : "text-xs"} italic transition-all duration-500 node-scientific`}
+              fill={isSpecies ? "#334155" : "#64748b"}
               style={{
-                textShadow: isSelected ? "0 0 3px rgba(255,255,255,0.8)" : "none",
+                textShadow: isSpecies
+                  ? isSelected
+                    ? "0 1px 3px rgba(0,0,0,0.2), 0 0 6px rgba(255,255,255,0.7)"
+                    : "0 1px 2px rgba(0,0,0,0.15), 0 0 3px rgba(255,255,255,0.5)"
+                  : isSelected
+                    ? "0 0 3px rgba(255,255,255,0.8)"
+                    : "none",
                 opacity: isSelected ? 1 : 0.9,
                 transform: isSelected ? "translateY(0)" : "translateY(0)",
                 transition: "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",

@@ -175,7 +175,7 @@ export const RadialDiagram = memo(
     return (
       <div className="relative w-full h-full">
         {/* Zoom percentage indicator - keep in top right */}
-        <Badge className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm text-teal-700 border border-teal-200 shadow-sm hidden sm:flex items-center gap-1.5 px-3 py-1">
+        <Badge className="absolute top-4 right-4 z-10 bg-white/95 text-teal-700 border border-teal-200 shadow-sm hidden sm:flex items-center gap-1.5 px-3 py-1">
           <svg
             width="14"
             height="14"
@@ -203,16 +203,17 @@ export const RadialDiagram = memo(
           style={{
             touchAction: "manipulation", // Ubah dari "none" ke "manipulation" untuk mendukung touchscreen
             cursor: "grab",
-            willChange: "transform", // Optimasi performa
             userSelect: "none", // Mencegah seleksi teks
             WebkitUserSelect: "none",
             MozUserSelect: "none",
             msUserSelect: "none",
-            backfaceVisibility: "hidden", // Optimasi performa
-            WebkitBackfaceVisibility: "hidden", // Untuk Safari
-            transformStyle: "preserve-3d", // Optimasi performa
-            WebkitTransformStyle: "preserve-3d", // Untuk Safari
-            contain: "layout paint size", // Optimasi performa
+            // Hapus properties yang bisa menyebabkan blur
+            // backfaceVisibility: "hidden", 
+            // WebkitBackfaceVisibility: "hidden",
+            // transformStyle: "preserve-3d",
+            // WebkitTransformStyle: "preserve-3d",
+            shapeRendering: "geometricPrecision", // Untuk rendering SVG yang lebih tajam
+            textRendering: "geometricPrecision", // Untuk teks yang lebih tajam
           }}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
@@ -247,6 +248,13 @@ export const RadialDiagram = memo(
             <linearGradient id="speciesGradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#f97316" />
               <stop offset="100%" stopColor="#fdba74" />
+            </linearGradient>
+
+            {/* Species text background gradient */}
+            <linearGradient id="speciesTextBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#f8fafc" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#f1f5f9" stopOpacity="0.9" />
             </linearGradient>
 
             {/* Pattern for nodes without images */}
@@ -295,6 +303,13 @@ export const RadialDiagram = memo(
                 <feMergeNode in="softGlow" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
+            </filter>
+
+            {/* Glassmorphism blur filter for species background */}
+            <filter id="glassBlur" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+              <feFlood floodColor="white" floodOpacity="0.2" result="highlight" />
+              <feComposite in="highlight" in2="blur" operator="over" result="glassEffect" />
             </filter>
 
             {/* Lightning animation */}
@@ -434,18 +449,17 @@ export const RadialDiagram = memo(
           <g
             className="diagram-container"
             style={{
-              transform: `translate3d(${containerWidth / 2}px, ${containerHeight / 2}px, 0) 
-    translate3d(${transform.x}px, ${transform.y}px, 0) 
+              transform: `translate(${containerWidth / 2 + transform.x}px, ${containerHeight / 2 + transform.y}px) 
     scale(${transform.scale}) 
     rotate(${transform.rotation}deg)`,
-              transformOrigin: "0 0", // Change to 0,0 since we're explicitly translating to center
+              transformOrigin: "0 0",
               transition: showOverlay
-                ? "transform 1.8s cubic-bezier(0.16, 1, 0.3, 1)" // Smoother easing curve
-                : "none", // Remove transition during dragging for immediate response
-              willChange: "transform",
+                ? "transform 1.8s cubic-bezier(0.16, 1, 0.3, 1)"
+                : "none",
               pointerEvents: showOverlay ? "none" : "all",
-              backfaceVisibility: "hidden", // Optimasi performa
-              WebkitBackfaceVisibility: "hidden", // Untuk Safari
+              // Hapus properties yang bisa menyebabkan blur
+              // backfaceVisibility: "hidden",
+              // WebkitBackfaceVisibility: "hidden",
             }}
           >
             {/* Connection lines */}

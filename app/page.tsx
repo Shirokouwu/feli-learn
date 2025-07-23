@@ -8,9 +8,29 @@ export default async function Home() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  console.log("user", user);
+
   if (user) {
+    const avatarUrl = user.user_metadata.avatar_url || user.user_metadata.picture;
+
     return (
       <div className="flex min-h-screen items-center justify-center">
+        {avatarUrl ? (
+          <Image
+            src={avatarUrl}
+            alt="User Avatar"
+            width={100}
+            height={100}
+            className="rounded-full"
+
+          />
+        ) : (
+          <div className="w-[100px] h-[100px] bg-gray-300 rounded-full flex items-center justify-center">
+            <span className="text-gray-600 text-xl">
+              {user.user_metadata.full_name?.charAt(0) || 'U'}
+            </span>
+          </div>
+        )}
         <div>
           <h1 className="text-2xl font-bold">Welcome back, {user.user_metadata.full_name}</h1>
         </div>

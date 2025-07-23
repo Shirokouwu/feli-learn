@@ -10,8 +10,36 @@ export async function GET(request: Request) {
 
     if (code) {
         const supabase = await createClient();
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (!error) {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (!error && data.user) {
+            // Check if user exists in our users table
+            const { data: existingUser } = await supabase
+                .from("users")
+                .select("id")
+                .eq("id", data.user.id)
+                .single();
+
+            // If user doesn't exist, create them
+            if (!existingUser) {
+                const provider = data.user.app_metadata?.provider || "oauth";
+                await supabase.from("users").insert({
+                    id: data.user.id,
+                    email: data.user.email!,
+                    full_name: data.user.user_metadata?.full_name || data.user.user_metadata?.name || "",
+                    avatar_url: data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture || null,
+                    provider: provider,
+                    is_active: true,
+                    role: "user",
+                });
+            }
+
+            // Update last sign in
+            await supabase
+                .from("users")
+                .update({ last_sign_in_at: new Date().toISOString() })
+                .eq("id", data.user.id);
+
             const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
             const isLocalEnv = process.env.NODE_ENV === "development";
             if (isLocalEnv) {

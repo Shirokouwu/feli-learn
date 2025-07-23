@@ -22,6 +22,6 @@ export default async function RadialPage() {
   }
 
   return (
-    <RadialWithTimer />
+    <RadialWithTimer /> 
   )
 }

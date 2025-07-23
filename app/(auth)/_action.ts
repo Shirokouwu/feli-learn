@@ -92,27 +92,27 @@ export async function registerAction(prevState: any, formData: FormData) {
     }
 
     // Insert user data into the database
-    // if (data.user) {
-    //     const { error: insertError } = await supabase.from("users").insert({
-    //         id: data.user.id,
-    //         email: data.user.email!,
-    //         full_name: fullName,
-    //         created_at: new Date().toISOString(),
-    //         is_active: true,
-    //         role: "user",
-    //         provider: "email",
-    //     })
+    if (data.user) {
+        const { error: insertError } = await supabase.from("users").insert({
+            id: data.user.id,
+            email: data.user.email!,
+            full_name: fullName,
+            created_at: new Date().toISOString(),
+            is_active: true,
+            role: "user",
+            provider: "email",
+        })
 
-    //     if (insertError) {
-    //         console.log(insertError)
-    //         return {
-    //             success: false,
-    //             message: insertError.message || "Gagal menyimpan data pengguna.",
-    //         }
-    //     }
-    // }
+        if (insertError) {
+            console.log(insertError)
+            return {
+                success: false,
+                message: insertError.message || "Gagal menyimpan data pengguna.",
+            }
+        }
+    }
 
-    return  redirect(`/confirm-email?email=${encodeURIComponent(email)}`)
+    return redirect(`/confirm-email?email=${encodeURIComponent(email)}`)
 
 }
 
