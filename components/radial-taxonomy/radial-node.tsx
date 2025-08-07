@@ -6,32 +6,32 @@ import { memo } from "react"
 
 // Add a utility function at the top of the file, after the imports but before the component definition
 const getConservationStatusColor = (status: string | undefined) => {
-  if (!status) return "#22d3ee" // Default cyan color if no status
+  if (!status) return "#67e8f9" // Soft cyan color if no status
 
   const statusLower = status.toLowerCase()
 
   if (statusLower.includes("extinct") || statusLower.includes("punah")) {
-    return "#000000" // Black for extinct
+    return "#4b5563" // Soft dark gray for extinct
   } else if (
     statusLower.includes("critically") ||
     statusLower.includes("kritis") ||
     statusLower.includes("sangat terancam")
   ) {
-    return "#dc2626" // Bright red for critically endangered
+    return "#f87171" // Soft coral red for critically endangered
   } else if (statusLower.includes("endangered") || statusLower.includes("terancam")) {
-    return "#ef4444" // Red for endangered
+    return "#fb7185" // Soft pink-red for endangered
   } else if (statusLower.includes("vulnerable") || statusLower.includes("rentan")) {
-    return "#f97316" // Orange for vulnerable
+    return "#fb923c" // Soft warm orange for vulnerable
   } else if (statusLower.includes("near") || statusLower.includes("hampir")) {
-    return "#eab308" // Yellow for near threatened
+    return "#fbbf24" // Soft golden yellow for near threatened
   } else if (statusLower.includes("least") || statusLower.includes("rendah") || statusLower.includes("lc")) {
-    return "#22c55e" // Green for least concern
+    return "#34d399" // Soft emerald green for least concern
   } else if (statusLower.includes("data") || statusLower.includes("kurang")) {
-    return "#9ca3af" // Gray for data deficient
+    return "#a1a1aa" // Soft gray for data deficient
   } else if (statusLower.includes("not") || statusLower.includes("tidak")) {
-    return "#d1d5db" // Light gray for not evaluated
+    return "#d1d5db" // Light soft gray for not evaluated
   } else {
-    return "#3b82f6" // Default blue
+    return "#60a5fa" // Soft blue as default
   }
 }
 

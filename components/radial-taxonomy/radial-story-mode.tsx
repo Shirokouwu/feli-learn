@@ -248,27 +248,24 @@ export function RadialStoryMode({
                     {/* Progress indicator showing taxonomy level */}
                     <div className="flex items-center gap-2 mb-2">
                       <Badge
-                        className={`${
-                          currentLevel === "family" ? "bg-teal-500 shadow-lg shadow-teal-500/30" : "bg-teal-500/50"
-                        } hover:bg-teal-600 transition-all duration-300`}
+                        className={`${currentLevel === "family" ? "bg-teal-500 shadow-lg shadow-teal-500/30" : "bg-teal-500/50"
+                          } hover:bg-teal-600 transition-all duration-300`}
                       >
                         Keluarga
                       </Badge>
                       <ArrowRight className="h-3 w-3 text-white/70" />
                       <Badge
-                        className={`${
-                          currentLevel === "genus" ? "bg-indigo-500 shadow-lg shadow-indigo-500/30" : "bg-indigo-500/50"
-                        } hover:bg-indigo-600 transition-all duration-300`}
+                        className={`${currentLevel === "genus" ? "bg-indigo-500 shadow-lg shadow-indigo-500/30" : "bg-indigo-500/50"
+                          } hover:bg-indigo-600 transition-all duration-300`}
                       >
                         Genus
                       </Badge>
                       <ArrowRight className="h-3 w-3 text-white/70" />
                       <Badge
-                        className={`${
-                          currentLevel === "species"
-                            ? "bg-orange-500 shadow-lg shadow-orange-500/30"
-                            : "bg-orange-500/50"
-                        } hover:bg-orange-600 transition-all duration-300`}
+                        className={`${currentLevel === "species"
+                            ? "bg-orange-400 shadow-lg shadow-orange-400/30"
+                            : "bg-orange-400/50"
+                          } hover:bg-orange-500 transition-all duration-300`}
                       >
                         Spesies
                       </Badge>
@@ -299,7 +296,7 @@ export function RadialStoryMode({
                       {currentLevel === "species" && (
                         <Badge
                           variant="outline"
-                          className="bg-orange-500/20 text-white border-orange-400 shadow-inner shadow-orange-500/10"
+                          className="bg-orange-400/20 text-white border-orange-400 shadow-inner shadow-orange-400/10"
                         >
                           <div className="w-2 h-2 bg-orange-400 rounded-full mr-1.5 animate-pulse"></div>
                           Spesies
@@ -349,11 +346,10 @@ export function RadialStoryMode({
                               <Button
                                 key={genus.id}
                                 variant="outline"
-                                className={`flex items-center justify-start gap-2 p-2 h-auto border-indigo-100 hover:bg-indigo-50 hover:border-indigo-200 transition-all duration-200 ${
-                                  selectedGenus === genus.id
+                                className={`flex items-center justify-start gap-2 p-2 h-auto border-indigo-100 hover:bg-indigo-50 hover:border-indigo-200 transition-all duration-200 ${selectedGenus === genus.id
                                     ? "bg-indigo-50 border-indigo-300 shadow-md shadow-indigo-200/50"
                                     : ""
-                                }`}
+                                  }`}
                                 onClick={() => handleGenusSelect(genus.id)}
                               >
                                 <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0 shadow-inner">
@@ -542,11 +538,10 @@ export function RadialStoryMode({
                 {storyContent.map((_, i) => (
                   <div
                     key={i}
-                    className={`h-2 w-8 rounded-full transition-colors ${
-                      currentStory === i
+                    className={`h-2 w-8 rounded-full transition-colors ${currentStory === i
                         ? "bg-gradient-to-r from-teal-500 to-blue-500 shadow-md shadow-teal-500/30"
                         : "bg-teal-100"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>

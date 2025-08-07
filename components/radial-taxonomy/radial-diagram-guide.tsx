@@ -100,7 +100,7 @@ export function RadialDiagramGuide() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-orange-500 flex-shrink-0"></div>
+                      <div className="w-6 h-6 rounded-full bg-orange-400 flex-shrink-0"></div>
                       <div>
                         <p className="text-xs font-medium text-slate-700">Spesies</p>
                         <p className="text-xs text-slate-500">Lingkaran terluar</p>
@@ -114,23 +114,23 @@ export function RadialDiagramGuide() {
                   <h4 className="text-xs font-medium text-teal-800 mb-2">Status Konservasi</h4>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-green-500 flex-shrink-0"></div>
+                      <div className="w-3 h-3 rounded-full bg-emerald-400 flex-shrink-0"></div>
                       <p className="text-xs text-slate-700">Risiko Rendah</p>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-400 flex-shrink-0"></div>
                       <p className="text-xs text-slate-700">Hampir Terancam</p>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-orange-500 flex-shrink-0"></div>
+                      <div className="w-3 h-3 rounded-full bg-orange-400 flex-shrink-0"></div>
                       <p className="text-xs text-slate-700">Rentan</p>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-500 flex-shrink-0"></div>
+                      <div className="w-3 h-3 rounded-full bg-red-400 flex-shrink-0"></div>
                       <p className="text-xs text-slate-700">Terancam</p>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-600 flex-shrink-0"></div>
+                      <div className="w-3 h-3 rounded-full bg-rose-400 flex-shrink-0"></div>
                       <p className="text-xs text-slate-700">Kritis</p>
                     </div>
                     <div className="flex items-center gap-1.5">

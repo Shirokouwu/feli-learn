@@ -28,11 +28,10 @@ import { RadialExplorer } from "@/components/radial-taxonomy"
 import { RadialDiagramGuide } from "@/components/radial-taxonomy/radial-diagram-guide"
 import { TaxonomyLoading } from "@/components/radial-taxonomy/radial-loading"
 
-export default function RadialTaxonomy({ userID }: { userID: string }) {
+export default function RadialTaxonomy({ fullName }: { fullName: string }) {
   const [showInfo, setShowInfo] = useState(false)
   const [showLegend, setShowLegend] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
-  const [user, setUser] = useState<any>(userID)
   const diagramRef = useRef<HTMLDivElement>(null)
 
   const scrollToDiagram = () => {
@@ -58,24 +57,24 @@ export default function RadialTaxonomy({ userID }: { userID: string }) {
           asChild
         >
           <Link href="/">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Kembali
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Kembali
           </Link>
         </Button>
         <div>
-          {user ? (
-        <span className="text-sm text-teal-600 flex items-center">
-          <Unlock className="h-4 w-4 mr-1" />
-          {user}
-        </span>
+          {fullName ? (
+            <span className="text-sm text-teal-600 flex items-center">
+              <Unlock className="h-4 w-4 mr-1" />
+              {fullName}
+            </span>
           ) : (
-        <span className="text-sm text-teal-600 flex items-center">
-          <Lock className="h-4 w-4 mr-1" />
-          Login Diperlukan
-          <Link href="/login" className="text-teal-600 underline ml-1">
-            Login
-          </Link>
-        </span>
+            <span className="text-sm text-teal-600 flex items-center">
+              <Lock className="h-4 w-4 mr-1" />
+              Login Diperlukan
+              <Link href="/login" className="text-teal-600 underline ml-1">
+                Login
+              </Link>
+            </span>
           )}
         </div>
       </div>
@@ -252,49 +251,49 @@ export default function RadialTaxonomy({ userID }: { userID: string }) {
                         {
                           status: "Punah (Extinct)",
                           desc: "Spesies yang tidak ada lagi di alam liar maupun penangkaran",
-                          color: "bg-black",
+                          color: "bg-slate-500",
                           textColor: "text-white",
-                          borderColor: "border-gray-700",
+                          borderColor: "border-slate-600",
                           icon: <AlertTriangle className="h-4 w-4" />,
                         },
                         {
                           status: "Kritis (Critically Endangered)",
                           desc: "Menghadapi risiko kepunahan yang sangat tinggi",
-                          color: "bg-red-600",
+                          color: "bg-rose-400",
                           textColor: "text-white",
-                          borderColor: "border-red-700",
+                          borderColor: "border-rose-500",
                           icon: <AlertTriangle className="h-4 w-4" />,
                         },
                         {
                           status: "Terancam (Endangered)",
                           desc: "Menghadapi risiko kepunahan yang tinggi",
-                          color: "bg-red-500",
+                          color: "bg-red-400",
                           textColor: "text-white",
-                          borderColor: "border-red-600",
+                          borderColor: "border-red-500",
                           icon: <AlertTriangle className="h-4 w-4" />,
                         },
                         {
                           status: "Rentan (Vulnerable)",
                           desc: "Menghadapi risiko kepunahan di alam liar",
-                          color: "bg-orange-500",
+                          color: "bg-orange-400",
                           textColor: "text-white",
-                          borderColor: "border-orange-600",
+                          borderColor: "border-orange-500",
                           icon: <AlertTriangle className="h-4 w-4" />,
                         },
                         {
                           status: "Hampir Terancam (Near Threatened)",
                           desc: "Kemungkinan terancam dalam waktu dekat",
-                          color: "bg-yellow-500",
-                          textColor: "text-yellow-900",
-                          borderColor: "border-yellow-600",
+                          color: "bg-amber-400",
+                          textColor: "text-amber-900",
+                          borderColor: "border-amber-500",
                           icon: <AlertTriangle className="h-4 w-4" />,
                         },
                         {
                           status: "Risiko Rendah (Least Concern)",
                           desc: "Populasi stabil dan tidak terancam",
-                          color: "bg-green-500",
+                          color: "bg-emerald-400",
                           textColor: "text-white",
-                          borderColor: "border-green-600",
+                          borderColor: "border-emerald-500",
                           icon: <Leaf className="h-4 w-4" />,
                         },
                         {
@@ -316,7 +315,7 @@ export default function RadialTaxonomy({ userID }: { userID: string }) {
                         {
                           status: "Default",
                           desc: "Status konservasi tidak diketahui",
-                          color: "bg-blue-500",
+                          color: "bg-blue-400",
                           textColor: "text-white",
                           borderColor: "border-blue-600",
                           icon: <Info className="h-4 w-4" />,

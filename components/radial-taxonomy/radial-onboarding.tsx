@@ -65,7 +65,7 @@ export function RadialOnboarding({ isOpen, onClose }: RadialOnboardingProps) {
           description: "Lingkaran tengah menampilkan berbagai genus dalam keluarga Felidae",
         },
         {
-          icon: <div className="w-4 h-4 rounded-full bg-orange-500"></div>,
+          icon: <div className="w-4 h-4 rounded-full bg-orange-400"></div>,
           title: "Spesies (Luar)",
           description: "Lingkaran terluar menampilkan spesies dari setiap genus",
         },
@@ -78,17 +78,17 @@ export function RadialOnboarding({ isOpen, onClose }: RadialOnboardingProps) {
       image: "/placeholder.svg?height=300&width=500&text=Status+Konservasi",
       features: [
         {
-          icon: <div className="w-4 h-4 rounded-full bg-green-500"></div>,
+          icon: <div className="w-4 h-4 rounded-full bg-emerald-400"></div>,
           title: "Risiko Rendah",
           description: "Spesies dengan populasi stabil dan tidak terancam",
         },
         {
-          icon: <div className="w-4 h-4 rounded-full bg-yellow-500"></div>,
+          icon: <div className="w-4 h-4 rounded-full bg-amber-400"></div>,
           title: "Hampir Terancam",
           description: "Spesies yang mungkin terancam dalam waktu dekat",
         },
         {
-          icon: <div className="w-4 h-4 rounded-full bg-red-500"></div>,
+          icon: <div className="w-4 h-4 rounded-full bg-red-400"></div>,
           title: "Terancam",
           description: "Spesies yang menghadapi risiko kepunahan tinggi",
         },
@@ -188,9 +188,8 @@ export function RadialOnboarding({ isOpen, onClose }: RadialOnboardingProps) {
             {steps.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full ${
-                  currentStep === index ? "bg-teal-500" : "bg-slate-300"
-                } transition-colors`}
+                className={`w-2 h-2 rounded-full ${currentStep === index ? "bg-teal-500" : "bg-slate-300"
+                  } transition-colors`}
                 onClick={() => setCurrentStep(index)}
               />
             ))}

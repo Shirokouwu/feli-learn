@@ -42,27 +42,27 @@ export function SpeciesCard({ data, onClose }: SpeciesCardProps) {
     const statusLower = status.toLowerCase()
 
     if (statusLower.includes("extinct") || statusLower.includes("punah")) {
-      return "bg-black text-white border-gray-700" // Black for extinct
+      return "bg-slate-600 text-white border-slate-700" // Soft dark gray for extinct
     } else if (
       statusLower.includes("critically") ||
       statusLower.includes("kritis") ||
       statusLower.includes("sangat terancam")
     ) {
-      return "bg-red-600 text-white border-red-700" // Bright red for critically endangered
+      return "bg-rose-400 text-white border-rose-500" // Soft rose for critically endangered
     } else if (statusLower.includes("endangered") || statusLower.includes("terancam")) {
-      return "bg-red-500 text-white border-red-600" // Red for endangered
+      return "bg-red-400 text-white border-red-500" // Soft red for endangered
     } else if (statusLower.includes("vulnerable") || statusLower.includes("rentan")) {
-      return "bg-orange-500 text-white border-orange-600" // Orange for vulnerable
+      return "bg-orange-400 text-white border-orange-500" // Soft orange for vulnerable
     } else if (statusLower.includes("near") || statusLower.includes("hampir")) {
-      return "bg-yellow-500 text-yellow-900 border-yellow-600" // Yellow for near threatened
+      return "bg-amber-400 text-amber-900 border-amber-500" // Soft amber for near threatened
     } else if (statusLower.includes("least") || statusLower.includes("rendah") || statusLower.includes("lc")) {
-      return "bg-green-500 text-white border-green-600" // Green for least concern
+      return "bg-emerald-400 text-white border-emerald-500" // Soft emerald for least concern
     } else if (statusLower.includes("data") || statusLower.includes("kurang")) {
-      return "bg-gray-400 text-white border-gray-500" // Gray for data deficient
+      return "bg-gray-400 text-white border-gray-500" // Soft gray for data deficient
     } else if (statusLower.includes("not") || statusLower.includes("tidak")) {
-      return "bg-gray-300 text-gray-800 border-gray-400" // Light gray for not evaluated
+      return "bg-gray-300 text-gray-800 border-gray-400" // Light soft gray for not evaluated
     } else {
-      return "bg-blue-500 text-white border-blue-600" // Default blue
+      return "bg-blue-400 text-white border-blue-500" // Soft blue as default
     }
   }
 
@@ -543,12 +543,12 @@ export function SpeciesCard({ data, onClose }: SpeciesCardProps) {
 
                         {/* Status labels */}
                         <div className="grid grid-cols-7 text-[9px] mt-1 text-center">
-                          <div className="text-white bg-black px-1 rounded-l-sm select-text cursor-text">EX</div>
-                          <div className="text-white bg-red-600 px-1 select-text cursor-text">CR</div>
-                          <div className="text-white bg-red-500 px-1 select-text cursor-text">EN</div>
-                          <div className="text-white bg-orange-500 px-1 select-text cursor-text">VU</div>
-                          <div className="text-yellow-900 bg-yellow-500 px-1 select-text cursor-text">NT</div>
-                          <div className="text-white bg-green-500 px-1 rounded-r-sm select-text cursor-text">LC</div>
+                          <div className="text-white bg-slate-600 px-1 rounded-l-sm select-text cursor-text">EX</div>
+                          <div className="text-white bg-rose-400 px-1 select-text cursor-text">CR</div>
+                          <div className="text-white bg-red-400 px-1 select-text cursor-text">EN</div>
+                          <div className="text-white bg-orange-400 px-1 select-text cursor-text">VU</div>
+                          <div className="text-amber-900 bg-amber-400 px-1 select-text cursor-text">NT</div>
+                          <div className="text-white bg-emerald-400 px-1 rounded-r-sm select-text cursor-text">LC</div>
                           <div className="text-white bg-gray-400 px-1 rounded-sm ml-1 select-text cursor-text">DD</div>
                         </div>
 

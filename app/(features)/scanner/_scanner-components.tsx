@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Upload,

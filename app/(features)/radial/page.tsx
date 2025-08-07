@@ -18,7 +18,7 @@ export default async function RadialPage() {
 
   // If user is logged in, show the normal component
   if (data?.user) {
-    return <RadialTaxonomy userID={data.user.email || ""} />
+    return <RadialTaxonomy fullName={data.user.user_metadata.full_name || ""} />
   }
 
   return (

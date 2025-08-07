@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="overflow-x-hidden">
-      <body className={`${inter.className}`}>
+      <body className={inter.className}>
         <main>
           <QueryProvider>{children}</QueryProvider>
         </main>
