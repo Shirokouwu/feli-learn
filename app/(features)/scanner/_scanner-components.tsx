@@ -38,6 +38,7 @@ import { ScanCounter } from "@/components/scanner/scan-counter"
 import { toast } from "sonner"
 import axios from 'axios';
 import ScanStatusApi from "@/components/scanner/scan-check-api"
+import { matchAndFetchSpeciesData, handleUrlPredictionWithDatabase, type ApiClassificationResponse, type EnhancedSpeciesData } from "@/lib/species-matcher"
 
 export default function ScannerImages() {
   const router = useRouter()
@@ -46,6 +47,7 @@ export default function ScannerImages() {
   const [isScanning, setIsScanning] = useState(false)
   const [scanProgress, setScanProgress] = useState(0)
   const [scanResult, setScanResult] = useState<Species | null>(null)
+  const [enhancedSpeciesData, setEnhancedSpeciesData] = useState<EnhancedSpeciesData | null>(null)
   const [showTips, setShowTips] = useState(false)
   const [activeTab, setActiveTab] = useState<string>("upload")
   const [scanStage, setScanStage] = useState<string>("")
@@ -77,14 +79,59 @@ export default function ScannerImages() {
   // Check API health on component mount
   useEffect(() => {
     const checkApiHealth = async () => {
-      setApiChecking(true);
-      try {
-        const response = await axios.get(API_MODEL_HEALTH_URL);
-        setApiResponse(response);
-        setApiReady(response.data.status === "ok");
-      } catch (error) {
+      if (!API_MODEL_HEALTH_URL) {
+        console.log("❌ API_MODEL_HEALTH_URL is empty or undefined");
+        setApiChecking(false);
         setApiReady(false);
-        setApiResponse({ data: { status: "error" } });
+        setApiResponse({ data: { status: "error - no URL" } });
+        return;
+      }
+
+      setApiChecking(true);
+
+      try {
+        const fetchResponse = await fetch(API_MODEL_HEALTH_URL, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+        });
+
+        if (!fetchResponse.ok) {
+          throw new Error(`HTTP error! status: ${fetchResponse.status}`);
+        }
+
+        const data = await fetchResponse.json();
+
+        const mockResponse = { data: data, status: fetchResponse.status };
+        setApiResponse(mockResponse);
+        setApiReady(data.status === "ok");
+
+        if (data.status === "ok") {
+          console.log("✅ API is ready!");
+        } else {
+          console.log("⚠️ API status is not ok:", data.status);
+        }
+
+      } catch (error) {
+        console.error("❌ API Health Check Error:", error);
+
+        let errorMessage = "Unknown error";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+
+        // If it's a CORS error, we assume the API is available but blocked by browser
+        if (error instanceof TypeError && (errorMessage.includes('CORS') || errorMessage.includes('fetch'))) {
+          console.log("🔄 CORS error detected, but assuming API is available for direct calls");
+          setApiReady(true); // Assume API is available despite CORS
+          setApiResponse({ data: { status: "cors-blocked-but-available" } });
+        } else {
+          setApiReady(false);
+          setApiResponse({ data: { status: "error" } });
+        }
       } finally {
         setApiChecking(false);
       }
@@ -110,13 +157,13 @@ export default function ScannerImages() {
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreviewImage(reader.result as string)
-        handlePrediction(reader.result as string)
+        handleFilePrediction(file) // Use new file prediction function
       }
       reader.readAsDataURL(file)
     }
   }
 
-  const handlePrediction = async (imageSource: string) => {
+  const handleFilePrediction = async (file: File) => {
     // Check if API is ready before making the request
     if (!apiReady) {
       toast("API model tidak tersedia. Silakan coba lagi nanti.");
@@ -127,6 +174,7 @@ export default function ScannerImages() {
     setScanProgress(0)
     setScanStage("Memulai analisis gambar...")
     setScanResult(null)
+    setEnhancedSpeciesData(null)
 
     try {
       // Set up progress simulation
@@ -142,22 +190,45 @@ export default function ScannerImages() {
           } else if (newProgress === 60) {
             setScanStage("Membandingkan dengan database spesies...");
           } else if (newProgress === 80) {
-            setScanStage("Memverifikasi hasil identifikasi...");
+            setScanStage("Mencocokkan dengan database taksonomi...");
+          } else if (newProgress === 90) {
+            setScanStage("Menyusun informasi lengkap spesies...");
           }
 
-          return newProgress < 90 ? newProgress : 90; // Stop at 90% until API returns
+          return newProgress < 95 ? newProgress : 95; // Stop at 95% until API returns
         });
       }, 100);
 
-      // Call the API model URL used in the scanner
-      const response = await axios.post(API_MODEL_URL, {
-        url: imageSource
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      const data = response.data
+      // Step 1: Call the API for classification
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('threshold', '0.7');
+
+      const response = await fetch(`${API_MODEL_URL}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      const apiData: ApiClassificationResponse = await response.json();
+
+      // Step 2: Check if it's a Felidae species
+      if (!apiData.is_felidae) {
+        clearInterval(progressInterval)
+        setIsScanning(false)
+        setScanProgress(0)
+        setScanStage("")
+        toast("Gambar ini bukan termasuk keluarga Felidae (kucing). Silakan coba gambar kucing lain.");
+        return;
+      }
+
+      setScanStage("Mengambil data lengkap dari database...");
+
+      // Step 3: Fetch enhanced data from database
+      const enhancedData = await matchAndFetchSpeciesData(apiData);
 
       setScanProgress(100)
       clearInterval(progressInterval)
@@ -171,74 +242,193 @@ export default function ScannerImages() {
         setShowConfetti(false)
       }, 3000)
 
+      if (enhancedData) {
+        // Set enhanced species data
+        setEnhancedSpeciesData(enhancedData);
 
-      // Set the scan result
-      setScanResult({
-        id: data.id || "unknown-species",
-        name: data.predicted_class || "Spesies Tidak Diketahui",
-        scientific_name: data.confidence || "Unknown species",
-        description: data.is_felidae || "Tidak ada deskripsi yang tersedia untuk spesies ini.",
-        characteristics: {
-          Berat: "100-140 kg",
-          Panjang: "2.2-2.5 m",
-          Tinggi: "75-90 cm",
-          Umur: "15-20 tahun",
-          Makanan: "Karnivora (rusa, babi hutan)",
-          Status: "Critically Endangered",
-        },
-        habitat: "Hutan hujan tropis dataran rendah dan pegunungan",
-        distribution: "Endemik di Pulau Sumatera, Indonesia",
-        conservation_status: "Critically Endangered",
-        image_url: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?q=80&w=2940&auto=format&fit=crop",
-        genus_id: "panthera",
-        created_at: new Date().toISOString(),
+        // Also set the basic scan result for backward compatibility
+        setScanResult({
+          id: apiData.species_key || "unknown-species",
+          name: enhancedData.identifikasi.nama_umum || apiData.predicted_class,
+          scientific_name: enhancedData.identifikasi.nama_ilmiah || "Unknown species",
+          description: enhancedData.ringkasan.deskripsi_umum || "Tidak ada deskripsi yang tersedia untuk spesies ini.",
+          characteristics: {
+            Berat: enhancedData.ringkasan.karakteristik.berat || "Unknown",
+            Panjang: enhancedData.ringkasan.karakteristik.panjang || "Unknown",
+            Tinggi: enhancedData.ringkasan.karakteristik.tinggi || "Unknown",
+            Umur: enhancedData.ringkasan.karakteristik.umur || "Unknown",
+          },
+          habitat: "Beragam habitat alami",
+          distribution: enhancedData.distribusi.negara.join(", "),
+          conservation_status: enhancedData.identifikasi.status.konservasi,
+          image_url: enhancedData.gambar.utama || URL.createObjectURL(file),
+          genus_id: "felidae",
+          created_at: new Date().toISOString(),
+          lifespan: enhancedData.ringkasan.karakteristik.umur || "Unknown",
+          genus: "Felidae"
+        } as Species);
+      } else {
+        // Fallback to basic data if database enhancement fails
+        setScanResult({
+          id: apiData.species_key || "unknown-species",
+          name: apiData.predicted_class || "Spesies Tidak Diketahui",
+          scientific_name: "Unknown species",
+          description: "Identifikasi berhasil, namun data lengkap tidak tersedia di database.",
+          characteristics: {
+            Berat: "Unknown",
+            Panjang: "Unknown",
+            Tinggi: "Unknown",
+            Umur: "Unknown",
+          },
+          habitat: "Unknown",
+          distribution: "Unknown",
+          conservation_status: "Unknown",
+          image_url: URL.createObjectURL(file),
+          genus_id: "felidae",
+          created_at: new Date().toISOString(),
+          lifespan: "Unknown",
+          genus: "Felidae"
+        } as Species);
 
-        // Add these new detailed properties
-        population: "Kurang dari 400 individu di alam liar",
-        behavior: "Soliter, teritorial, dan aktif terutama pada malam hari (nokturnal)",
-        distinctive_features:
-          "Garis-garis hitam yang lebih rapat, rambut lebih gelap, dan janggut yang lebih panjang dibanding subspesies lain",
-        threats: "Perburuan liar, hilangnya habitat akibat deforestasi, dan konflik dengan manusia",
-        conservation_efforts: "Program pembiakan di penangkaran, perlindungan habitat, dan upaya anti-perburuan",
-        evolutionary_history:
-          "Berevolusi secara terpisah selama sekitar 12.000-6.000 tahun yang lalu ketika Sumatera terpisah dari daratan Asia",
-        cultural_significance: "Simbol kebanggaan dan kekuatan dalam budaya Indonesia, terutama di Sumatera",
-        // Enhanced distribution information
-        detailed_distribution: {
-          regions: [
-            "Taman Nasional Gunung Leuser (Aceh dan Sumatera Utara)",
-            "Taman Nasional Kerinci Seblat (Sumatera Barat, Jambi, Sumatera Selatan, dan Bengkulu)",
-            "Taman Nasional Bukit Barisan Selatan (Lampung dan Bengkulu)",
-            "Hutan Harapan (Jambi dan Sumatera Selatan)",
-            "Taman Nasional Way Kambas (Lampung)",
-          ],
-          habitat_types: [
-            "Hutan hujan dataran rendah (0-600m)",
-            "Hutan pegunungan (600-2000m)",
-            "Hutan rawa gambut",
-            "Hutan sekunder",
-          ],
-          historical_range:
-            "Sebelumnya tersebar di seluruh Pulau Sumatera, namun kini terbatas pada kantong-kantong hutan yang terlindungi",
-          map_image: "/placeholder.svg?height=200&width=300&text=Peta+Distribusi+Harimau+Sumatera",
-        },
+        toast("Spesies berhasil diidentifikasi, namun data lengkap tidak tersedia.");
+      }
 
-        // Additional information for enhanced display
-        diet_details:
-          "Terutama memangsa rusa sambar, babi hutan, kijang, dan kadang-kadang primata. Dapat mengkonsumsi 18-40 kg daging dalam sekali makan.",
-        reproduction: {
-          gestation: "103-105 hari",
-          litter_size: "2-4 anak",
-          sexual_maturity: "3-4 tahun",
-          breeding_season: "Dapat berkembang biak sepanjang tahun",
+    } catch (error) {
+      // Handle API errors
+      console.error("Error during image prediction:", error);
+      setIsScanning(false);
+      setScanProgress(0);
+      setScanStage("");
+      toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.");
+    }
+  }
+
+  const handlePrediction = async (imageSource: string) => {
+    // Check if API is ready before making the request
+    if (!apiReady) {
+      toast("API model tidak tersedia. Silakan coba lagi nanti.");
+      return;
+    }
+
+    setIsScanning(true)
+    setScanProgress(0)
+    setScanStage("Memulai analisis gambar...")
+    setScanResult(null)
+    setEnhancedSpeciesData(null)
+
+    try {
+      // Set up progress simulation
+      const progressInterval = setInterval(() => {
+        setScanProgress((prev) => {
+          const newProgress = prev + 5;
+
+          // Update scan stage based on progress
+          if (newProgress === 20) {
+            setScanStage("Mendeteksi fitur morfologi...");
+          } else if (newProgress === 40) {
+            setScanStage("Menganalisis pola warna dan tekstur...");
+          } else if (newProgress === 60) {
+            setScanStage("Membandingkan dengan database spesies...");
+          } else if (newProgress === 80) {
+            setScanStage("Mencocokkan dengan database taksonomi...");
+          } else if (newProgress === 90) {
+            setScanStage("Menyusun informasi lengkap spesies...");
+          }
+
+          return newProgress < 95 ? newProgress : 95; // Stop at 95% until API returns
+        });
+      }, 100);
+
+      // Step 1: Call the API for classification
+      const response = await axios.post(`${API_MODEL_URL}/url`, {
+        url: imageSource,
+        threshold: 0.7
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
         },
-        fun_facts: [
-          "Harimau Sumatera adalah subspesies harimau terkecil yang masih hidup",
-          "Memiliki selaput antara jari kaki yang membuatnya menjadi perenang yang baik",
-          "Dapat melompat sejauh 10 meter dalam sekali lompatan",
-          "Memiliki penglihatan malam 6 kali lebih baik dari manusia",
-        ],
       })
+
+      const apiData: ApiClassificationResponse = response.data
+
+      // Step 2: Check if it's a Felidae species
+      if (!apiData.is_felidae) {
+        clearInterval(progressInterval)
+        setIsScanning(false)
+        setScanProgress(0)
+        setScanStage("")
+        toast("Gambar ini bukan termasuk keluarga Felidae (kucing). Silakan coba gambar kucing lain.");
+        return;
+      }
+
+      setScanStage("Mengambil data lengkap dari database...");
+
+      // Step 3: Fetch enhanced data from database
+      const enhancedData = await matchAndFetchSpeciesData(apiData);
+
+      setScanProgress(100)
+      clearInterval(progressInterval)
+
+      setIsScanning(false)
+      setScanStage("Identifikasi selesai!")
+      setShowConfetti(true)
+
+      // Hide confetti after a few seconds
+      setTimeout(() => {
+        setShowConfetti(false)
+      }, 3000)
+
+      if (enhancedData) {
+        // Set enhanced species data
+        setEnhancedSpeciesData(enhancedData);
+
+        // Also set the basic scan result for backward compatibility
+        setScanResult({
+          id: apiData.species_key || "unknown-species",
+          name: enhancedData.identifikasi.nama_umum || apiData.predicted_class,
+          scientific_name: enhancedData.identifikasi.nama_ilmiah || "Unknown species",
+          description: enhancedData.ringkasan.deskripsi_umum || "Tidak ada deskripsi yang tersedia untuk spesies ini.",
+          characteristics: {
+            Berat: enhancedData.ringkasan.karakteristik.berat || "Unknown",
+            Panjang: enhancedData.ringkasan.karakteristik.panjang || "Unknown",
+            Tinggi: enhancedData.ringkasan.karakteristik.tinggi || "Unknown",
+            Umur: enhancedData.ringkasan.karakteristik.umur || "Unknown",
+          },
+          habitat: "Beragam habitat alami",
+          distribution: enhancedData.distribusi.negara.join(", "),
+          conservation_status: enhancedData.identifikasi.status.konservasi,
+          image_url: enhancedData.gambar.utama || imageSource,
+          genus_id: "felidae",
+          created_at: new Date().toISOString(),
+          lifespan: enhancedData.ringkasan.karakteristik.umur || "Unknown",
+          genus: "Felidae"
+        } as Species);
+      } else {
+        // Fallback to basic data if database enhancement fails
+        setScanResult({
+          id: apiData.species_key || "unknown-species",
+          name: apiData.predicted_class || "Spesies Tidak Diketahui",
+          scientific_name: "Unknown species",
+          description: "Identifikasi berhasil, namun data lengkap tidak tersedia di database.",
+          characteristics: {
+            Berat: "Unknown",
+            Panjang: "Unknown",
+            Tinggi: "Unknown",
+            Umur: "Unknown",
+          },
+          habitat: "Unknown",
+          distribution: "Unknown",
+          conservation_status: "Unknown",
+          image_url: imageSource,
+          genus_id: "felidae",
+          created_at: new Date().toISOString(),
+          lifespan: "Unknown",
+          genus: "Felidae"
+        } as Species);
+
+        toast("Spesies berhasil diidentifikasi, namun data lengkap tidak tersedia.");
+      }
+
     } catch (error) {
       // Handle API errors
       console.error("Error during image prediction:", error);
@@ -349,7 +539,9 @@ export default function ScannerImages() {
             ))}
           </div>
         </div>
-      )}      <div className="container mx-auto px-4 py-8">
+      )}
+      
+      <div className="container mx-auto px-4 py-8">
 
         <ScanStatusApi apiChecking={apiChecking} apiReady={apiReady} response={apiResponse} />
 
@@ -568,27 +760,57 @@ export default function ScannerImages() {
                           </div>
                           <div>
                             <h3 className="text-xl font-bold text-emerald-800">Hasil Identifikasi</h3>
-                            <p className="text-emerald-600">Teridentifikasi dengan akurasi 98.7%</p>
+                            <p className="text-emerald-600">
+                              Teridentifikasi dengan akurasi {enhancedSpeciesData?.identifikasi.akurasi.toFixed(1) || '98.7'}%
+                            </p>
                           </div>
                         </div>
 
-                        <div className="mb-6">
-                          <p className="text-xl font-medium text-emerald-800 mb-1">{scanResult.name}</p>
-                          <p className="text-sm text-emerald-700 italic mb-3">{scanResult.scientific_name}</p>
+                        {enhancedSpeciesData ? (
+                          // Enhanced display with database data
+                          <div className="mb-6">
+                            <p className="text-xl font-medium text-emerald-800 mb-1">
+                              {enhancedSpeciesData.identifikasi.nama_umum}
+                            </p>
+                            <p className="text-sm text-emerald-700 italic mb-3">
+                              {enhancedSpeciesData.identifikasi.nama_ilmiah}
+                            </p>
 
-                          <div className="space-y-2 mb-4">
-                            <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-200 transition-colors duration-300">
-                              <AlertTriangle className="h-3 w-3 mr-1" />
-                              {scanResult.conservation_status}
-                            </Badge>
-                            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 ml-2 hover:bg-emerald-200 transition-colors duration-300">
-                              <Leaf className="h-3 w-3 mr-1" />
-                              Endemik Indonesia
-                            </Badge>
+                            <div className="space-y-2 mb-4">
+                              <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-200 transition-colors duration-300">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                {enhancedSpeciesData.identifikasi.status.konservasi}
+                              </Badge>
+                              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 ml-2 hover:bg-emerald-200 transition-colors duration-300">
+                                <Leaf className="h-3 w-3 mr-1" />
+                                Endemik {enhancedSpeciesData.identifikasi.status.endemik}
+                              </Badge>
+                            </div>
+
+                            <p className="text-sm text-neutral-600 mb-4">
+                              {enhancedSpeciesData.ringkasan.deskripsi_umum}
+                            </p>
                           </div>
+                        ) : (
+                          // Fallback display with basic scan result
+                          <div className="mb-6">
+                            <p className="text-xl font-medium text-emerald-800 mb-1">{scanResult.name}</p>
+                            <p className="text-sm text-emerald-700 italic mb-3">{scanResult.scientific_name}</p>
 
-                          <p className="text-sm text-neutral-600 mb-4">{scanResult.description}</p>
-                        </div>
+                            <div className="space-y-2 mb-4">
+                              <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-200 transition-colors duration-300">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                {scanResult.conservation_status}
+                              </Badge>
+                              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 ml-2 hover:bg-emerald-200 transition-colors duration-300">
+                                <Leaf className="h-3 w-3 mr-1" />
+                                Data terbatas
+                              </Badge>
+                            </div>
+
+                            <p className="text-sm text-neutral-600 mb-4">{scanResult.description}</p>
+                          </div>
+                        )}
 
                         <Tabs defaultValue="overview" className="w-full">
                           <TabsList className="grid w-full grid-cols-3 mb-4">
@@ -605,36 +827,67 @@ export default function ScannerImages() {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
                               >
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div>
-                                    <h4 className="font-medium text-emerald-700 mb-2 text-sm">Karakteristik Utama</h4>
-                                    <div className="space-y-2">
-                                      {Object.entries(scanResult.characteristics as Record<string, string>)
-                                        .slice(0, 4) // Only show first 4 characteristics
-                                        .map(([key, value], index) => ( // Add index to ensure unique keys
-                                          <div
-                                            key={`char-${key}-${index}`} // Use both key and index for uniqueness
-                                            className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100"
-                                          >
-                                            <span className="text-sm font-medium text-neutral-700">{key}</span>
-                                            <span className="text-sm text-emerald-700">{value}</span>
-                                          </div>
-                                        ))}
-                                    </div>
-                                  </div>
-
-                                  <div className="space-y-3">
-                                    <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                                      <h4 className="font-medium text-emerald-700 mb-2 text-sm">Ciri Khas</h4>
-                                      <p className="text-xs text-neutral-600">{scanResult.distinctive_features}</p>
+                                {enhancedSpeciesData ? (
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <h4 className="font-medium text-emerald-700 mb-2 text-sm">Karakteristik Fisik</h4>
+                                      <div className="space-y-2">
+                                        {Object.entries(enhancedSpeciesData.ringkasan.karakteristik).map(([key, value], index) =>
+                                          value ? (
+                                            <div
+                                              key={`char-${key}-${index}`}
+                                              className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100"
+                                            >
+                                              <span className="text-sm font-medium text-neutral-700 capitalize">{key}</span>
+                                              <span className="text-sm text-emerald-700">{value}</span>
+                                            </div>
+                                          ) : null
+                                        )}
+                                      </div>
                                     </div>
 
-                                    <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                                      <h4 className="font-medium text-emerald-700 mb-2 text-sm">Perilaku</h4>
-                                      <p className="text-xs text-neutral-600">{scanResult.behavior}</p>
+                                    <div className="space-y-3">
+                                      {enhancedSpeciesData.ringkasan.ciri_khas && (
+                                        <div className="bg-white p-3 rounded-lg border border-emerald-100">
+                                          <h4 className="font-medium text-emerald-700 mb-2 text-sm">Ciri Khas</h4>
+                                          <p className="text-xs text-neutral-600">{enhancedSpeciesData.ringkasan.ciri_khas}</p>
+                                        </div>
+                                      )}
+
+                                      {enhancedSpeciesData.ringkasan.perilaku && (
+                                        <div className="bg-white p-3 rounded-lg border border-emerald-100">
+                                          <h4 className="font-medium text-emerald-700 mb-2 text-sm">Perilaku</h4>
+                                          <p className="text-xs text-neutral-600">{enhancedSpeciesData.ringkasan.perilaku}</p>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
-                                </div>
+                                ) : (
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <h4 className="font-medium text-emerald-700 mb-2 text-sm">Karakteristik Utama</h4>
+                                      <div className="space-y-2">
+                                        {Object.entries(scanResult.characteristics as Record<string, string>)
+                                          .slice(0, 4)
+                                          .map(([key, value], index) => (
+                                            <div
+                                              key={`char-${key}-${index}`}
+                                              className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100"
+                                            >
+                                              <span className="text-sm font-medium text-neutral-700">{key}</span>
+                                              <span className="text-sm text-emerald-700">{value}</span>
+                                            </div>
+                                          ))}
+                                      </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                      <div className="bg-white p-3 rounded-lg border border-emerald-100">
+                                        <h4 className="font-medium text-emerald-700 mb-2 text-sm">Informasi</h4>
+                                        <p className="text-xs text-neutral-600">Data detail tidak tersedia dari database.</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                               </motion.div>
                             </TabsContent>
 
@@ -645,41 +898,47 @@ export default function ScannerImages() {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
                               >
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div>
-                                    <h4 className="font-medium text-emerald-700 mb-3 text-sm">Peta Distribusi</h4>
-                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-emerald-100">
-                                      <img
-                                        src={scanResult.detailed_distribution.map_image || "/placeholder.svg"}
-                                        alt="Peta Distribusi Harimau Sumatera"
-                                        // fill
-                                        className="object-cover"
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div className="space-y-3">
-                                    <h4 className="font-medium text-emerald-700 mb-2 text-sm">Wilayah Utama</h4>
-                                    <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
-                                      {scanResult.detailed_distribution.regions.slice(0, 3).map((region, index) => (
-                                        <div
-                                          key={index}
-                                          className="bg-white p-2 rounded-lg border border-emerald-100 flex items-center gap-2"
-                                        >
-                                          <div className="bg-emerald-50 p-1 rounded-full">
-                                            <MapPin className="h-3 w-3 text-emerald-600" />
+                                {enhancedSpeciesData ? (
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <h4 className="font-medium text-emerald-700 mb-3 text-sm">Benua</h4>
+                                      <div className="space-y-2">
+                                        {enhancedSpeciesData.distribusi.benua.map((continent, index) => (
+                                          <div
+                                            key={index}
+                                            className="bg-white p-2 rounded-lg border border-emerald-100 flex items-center gap-2"
+                                          >
+                                            <div className="bg-emerald-50 p-1 rounded-full">
+                                              <MapPin className="h-3 w-3 text-emerald-600" />
+                                            </div>
+                                            <span className="text-xs text-neutral-700">{continent}</span>
                                           </div>
-                                          <span className="text-xs text-neutral-700">{region}</span>
-                                        </div>
-                                      ))}
-                                      {scanResult.detailed_distribution.regions.length > 3 && (
-                                        <div className="text-xs text-emerald-600 text-center">
-                                          +{scanResult.detailed_distribution.regions.length - 3} wilayah lainnya
-                                        </div>
-                                      )}
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                      <h4 className="font-medium text-emerald-700 mb-2 text-sm">Negara</h4>
+                                      <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {enhancedSpeciesData.distribusi.negara.map((country, index) => (
+                                          <div
+                                            key={index}
+                                            className="bg-white p-2 rounded-lg border border-emerald-100 flex items-center gap-2"
+                                          >
+                                            <div className="bg-blue-50 p-1 rounded-full">
+                                              <MapPin className="h-3 w-3 text-blue-600" />
+                                            </div>
+                                            <span className="text-xs text-neutral-700">{country}</span>
+                                          </div>
+                                        ))}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
+                                ) : (
+                                  <div className="text-center py-8">
+                                    <p className="text-sm text-neutral-500">Data distribusi tidak tersedia</p>
+                                  </div>
+                                )}
                               </motion.div>
                             </TabsContent>
 
@@ -690,32 +949,76 @@ export default function ScannerImages() {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
                               >
-                                <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                                  <h4 className="font-medium text-emerald-700 mb-2 text-sm">Status Populasi</h4>
-                                  <div className="flex items-center gap-3">
-                                    <div className="bg-red-100 p-2 rounded-lg">
-                                      <AlertTriangle className="h-5 w-5 text-red-600" />
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-medium text-red-700">
-                                        {scanResult.conservation_status}
-                                      </p>
-                                      <p className="text-xs text-neutral-600">{scanResult.population}</p>
-                                    </div>
-                                  </div>
-                                </div>
+                                {enhancedSpeciesData ? (
+                                  <div className="space-y-4">
+                                    {enhancedSpeciesData.konservasi.status_populasi && (
+                                      <div className="bg-white p-3 rounded-lg border border-emerald-100">
+                                        <h4 className="font-medium text-emerald-700 mb-2 text-sm">Status Populasi</h4>
+                                        <div className="flex items-center gap-3">
+                                          <div className="bg-red-100 p-2 rounded-lg">
+                                            <AlertTriangle className="h-5 w-5 text-red-600" />
+                                          </div>
+                                          <div>
+                                            <p className="text-sm font-medium text-red-700">
+                                              {enhancedSpeciesData.identifikasi.status.konservasi}
+                                            </p>
+                                            <p className="text-xs text-neutral-600">
+                                              {enhancedSpeciesData.konservasi.status_populasi}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
 
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                                    <h4 className="font-medium text-emerald-700 mb-2 text-sm">Ancaman Utama</h4>
-                                    <p className="text-xs text-neutral-600">{scanResult.threats}</p>
-                                  </div>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                      {enhancedSpeciesData.konservasi.ancaman.length > 0 && (
+                                        <div className="bg-white p-3 rounded-lg border border-emerald-100">
+                                          <h4 className="font-medium text-emerald-700 mb-2 text-sm">Ancaman Utama</h4>
+                                          <ul className="text-xs text-neutral-600 space-y-1">
+                                            {enhancedSpeciesData.konservasi.ancaman.slice(0, 3).map((threat, index) => (
+                                              <li key={index} className="flex items-start gap-1">
+                                                <span className="text-red-500 mt-0.5">•</span>
+                                                {threat}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      )}
 
-                                  <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                                    <h4 className="font-medium text-emerald-700 mb-2 text-sm">Upaya Konservasi</h4>
-                                    <p className="text-xs text-neutral-600">{scanResult.conservation_efforts}</p>
+                                      {enhancedSpeciesData.konservasi.upaya.length > 0 && (
+                                        <div className="bg-white p-3 rounded-lg border border-emerald-100">
+                                          <h4 className="font-medium text-emerald-700 mb-2 text-sm">Upaya Konservasi</h4>
+                                          <ul className="text-xs text-neutral-600 space-y-1">
+                                            {enhancedSpeciesData.konservasi.upaya.slice(0, 3).map((effort, index) => (
+                                              <li key={index} className="flex items-start gap-1">
+                                                <span className="text-green-500 mt-0.5">•</span>
+                                                {effort}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {enhancedSpeciesData.konservasi.rekomendasi.length > 0 && (
+                                      <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                        <h4 className="font-medium text-blue-700 mb-2 text-sm">Rekomendasi</h4>
+                                        <ul className="text-xs text-blue-600 space-y-1">
+                                          {enhancedSpeciesData.konservasi.rekomendasi.slice(0, 2).map((recommendation, index) => (
+                                            <li key={index} className="flex items-start gap-1">
+                                              <span className="text-blue-500 mt-0.5">•</span>
+                                              {recommendation}
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
                                   </div>
-                                </div>
+                                ) : (
+                                  <div className="text-center py-8">
+                                    <p className="text-sm text-neutral-500">Data konservasi tidak tersedia</p>
+                                  </div>
+                                )}
                               </motion.div>
                             </TabsContent>
                           </AnimatePresence>
@@ -751,6 +1054,7 @@ export default function ScannerImages() {
                       onClick={() => {
                         setPreviewImage(null)
                         setScanResult(null)
+                        setEnhancedSpeciesData(null)
                         setScanProgress(0)
                         setScanStage("")
                       }}
