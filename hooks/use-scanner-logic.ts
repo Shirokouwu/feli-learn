@@ -1,5 +1,5 @@
+"use client";
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import axios from 'axios'
 import { matchAndFetchSpeciesData, type ApiClassificationResponse, type EnhancedSpeciesData } from "@/lib/species-matcher"
@@ -26,7 +26,6 @@ export interface ScannerHook {
 }
 
 export const useScannerLogic = (): ScannerHook => {
-  const router = useRouter()
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [isScanning, setIsScanning] = useState(false)
   const [scanProgress, setScanProgress] = useState(0)
