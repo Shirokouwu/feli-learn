@@ -23,6 +23,7 @@ export interface ScannerHook {
   apiReady: boolean
   apiChecking: boolean
   apiResponse: { data: { status: string } }
+  clearFileInput: () => void
 }
 
 export const useScannerLogic = (): ScannerHook => {
@@ -100,6 +101,7 @@ export const useScannerLogic = (): ScannerHook => {
         } else {
           setApiReady(false)
           setApiResponse({ data: { status: "error" } })
+          toast.error("API Model tidak dapat diakses. Silakan hubungi developer untuk bantuan.")
         }
       } finally {
         setApiChecking(false)
@@ -107,10 +109,11 @@ export const useScannerLogic = (): ScannerHook => {
     }
 
     checkApiHealth()
-    // Check API health every 30 seconds
-    const interval = setInterval(checkApiHealth, 30000)
+    // Check API health only once on component mount
 
-    return () => clearInterval(interval)
+    return () => {
+      // No cleanup needed since we're not using setInterval
+    }
   }, [API_MODEL_HEALTH_URL])
 
   const resetScan = () => {
@@ -210,7 +213,7 @@ export const useScannerLogic = (): ScannerHook => {
 
   const handleFilePrediction = async (file: File) => {
     if (!apiReady) {
-      toast("API model tidak tersedia. Silakan coba lagi nanti.")
+      toast.error("API model tidak tersedia. Silakan hubungi developer untuk bantuan.")
       return
     }
 
@@ -268,7 +271,7 @@ export const useScannerLogic = (): ScannerHook => {
 
   const handleUrlPrediction = async (imageSource: string) => {
     if (!apiReady) {
-      toast("API model tidak tersedia. Silakan coba lagi nanti.")
+      toast.error("API model tidak tersedia. Silakan hubungi developer untuk bantuan.")
       return
     }
 
@@ -324,22 +327,124 @@ export const useScannerLogic = (): ScannerHook => {
     const file = event.target.files?.[0]
 
     if (!apiReady) {
-      toast("API model tidak tersedia. Silakan coba lagi nanti.")
+      toast.error("API model tidak tersedia. Silakan hubungi developer untuk bantuan.")
       return
     }
 
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string)
-        handleFilePrediction(file)
+      // Validasi ukuran file (10MB = 10 * 1024 * 1024 bytes)
+      const maxSize = 10 * 1024 * 1024
+      if (file.size > maxSize) {
+        toast("Ukuran file terlalu besar. Maksimal 10MB.")
+        // Clear the file input
+        if (event.target) {
+          event.target.value = ""
+        }
+        return
       }
-      reader.readAsDataURL(file)
+
+      // Validasi tipe file
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+      if (!allowedTypes.includes(file.type)) {
+        toast("Format file tidak didukung. Gunakan JPG, PNG, atau WEBP.")
+        // Clear the file input
+        if (event.target) {
+          event.target.value = ""
+        }
+        return
+      }
+
+      // Validasi nama file (opsional: cek ekstensi)
+      const fileName = file.name.toLowerCase()
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp']
+      const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext))
+
+      if (!hasValidExtension) {
+        toast("Ekstensi file tidak valid. Gunakan .jpg, .jpeg, .png, atau .webp")
+        // Clear the file input
+        if (event.target) {
+          event.target.value = ""
+        }
+        return
+      }
+
+      // Validasi dimensi gambar minimum (opsional)
+      const img = new Image()
+      img.onload = () => {
+        // Cleanup object URL
+        URL.revokeObjectURL(img.src)
+
+        // Cek dimensi minimum untuk kualitas yang baik
+        if (img.width < 100 || img.height < 100) {
+          toast("Resolusi gambar terlalu kecil. Minimal 100x100 piksel untuk hasil terbaik.")
+          // Clear the file input
+          if (event.target) {
+            event.target.value = ""
+          }
+          return
+        }
+
+        // Jika semua validasi lolos, proses file
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setPreviewImage(reader.result as string)
+          handleFilePrediction(file)
+        }
+        reader.readAsDataURL(file)
+      }
+
+      img.onerror = () => {
+        // Cleanup object URL
+        URL.revokeObjectURL(img.src)
+
+        toast("File gambar tidak valid atau rusak.")
+        // Clear the file input
+        if (event.target) {
+          event.target.value = ""
+        }
+        return
+      }
+
+      // Buat URL untuk validasi dimensi
+      img.src = URL.createObjectURL(file)
     }
   }
 
   const handleUrlSubmit = () => {
-    if (!imageUrl) return
+    if (!imageUrl) {
+      toast("Masukkan URL gambar terlebih dahulu.")
+      return
+    }
+
+    // Validasi format URL
+    try {
+      const url = new URL(imageUrl)
+
+      // Validasi protokol
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        toast("URL harus menggunakan protokol HTTP atau HTTPS.")
+        return
+      }
+
+      // Validasi ekstensi file dari URL
+      const pathname = url.pathname.toLowerCase()
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp']
+      const hasValidExtension = allowedExtensions.some(ext => pathname.endsWith(ext))
+
+      if (!hasValidExtension) {
+        toast("URL harus mengarah ke file gambar dengan ekstensi .jpg, .jpeg, .png, atau .webp")
+        return
+      }
+
+    } catch (error) {
+      toast("Format URL tidak valid. Pastikan URL lengkap dan benar.")
+      return
+    }
+
+    if (!apiReady) {
+      toast.error("API model tidak tersedia. Silakan hubungi developer untuk bantuan.")
+      return
+    }
 
     setPreviewImage(imageUrl)
     handleUrlPrediction(imageUrl)
@@ -350,6 +455,11 @@ export const useScannerLogic = (): ScannerHook => {
       // TODO: Implement rescan logic based on current image type
       toast("Fitur scan ulang akan segera tersedia")
     }
+  }
+
+  const clearFileInput = () => {
+    // Function to clear file input if accessible
+    // This will be called from parent component when needed
   }
 
   return {
@@ -369,6 +479,7 @@ export const useScannerLogic = (): ScannerHook => {
     rescan,
     apiReady,
     apiChecking,
-    apiResponse
+    apiResponse,
+    clearFileInput
   }
 }

@@ -34,6 +34,10 @@ export interface EnhancedSpeciesData {
         ciri_khas: string;
         perilaku: string;
     };
+    genus: {
+        nama: string;
+        deskripsi: string;
+    };
     distribusi: {
         benua: string[];
         negara: string[];
@@ -76,6 +80,7 @@ export async function matchAndFetchSpeciesData(
         }
 
         const spesies_id = speciesData.id;
+        const genusName = speciesData.nama ? speciesData.nama.split(' ')[0] : '';
 
         // Step 2: Fetch related data from all tables using species_id
         const [
@@ -86,6 +91,7 @@ export async function matchAndFetchSpeciesData(
             { data: dietData },
             { data: gambarData },
             { data: videoData },
+            { data: genusData }
         ] = await Promise.all([
             supabase
                 .from("taksonomi_deskripsi")
@@ -120,6 +126,11 @@ export async function matchAndFetchSpeciesData(
                 .from("taksonomi_video")
                 .select("*")
                 .eq("spesies_id", spesies_id),
+            supabase
+                .from("taksonomi_genus")
+                .select("*")
+                .eq("nama", genusName)
+                .single()
         ]);
 
         // Step 3: Process and structure the data according to the desired format
@@ -144,6 +155,10 @@ export async function matchAndFetchSpeciesData(
                 },
                 ciri_khas: deskripsiData?.fitur_unik?.join(", ") || "",
                 perilaku: perilakuData?.pola_aktivitas || "",
+            },
+            genus: {
+                nama: genusData?.nama || "",
+                deskripsi: genusData?.deskripsi || "",
             },
             distribusi: {
                 benua: extractContinents(speciesData.distribusi_geografis),
@@ -286,72 +301,4 @@ function extractCountries(distribusiGeografis: any): string[] {
     }
 
     return countries.length > 0 ? countries : ["Unknown"];
-}
-
-/**
- * Handle file upload prediction with database enhancement
- */
-export async function handlePredictionWithDatabase(
-    imageFile: File
-): Promise<EnhancedSpeciesData | null> {
-    try {
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        formData.append('threshold', '0.7');
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_MODEL_URL}/upload`, {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!response.ok) {
-            throw new Error('API request failed');
-        }
-
-        const apiData: ApiClassificationResponse = await response.json();
-
-        if (!apiData.is_felidae) {
-            return null;
-        }
-
-        return await matchAndFetchSpeciesData(apiData);
-    } catch (error) {
-        console.error('Error in handlePredictionWithDatabase:', error);
-        return null;
-    }
-}
-
-/**
- * Handle URL prediction with database enhancement
- */
-export async function handleUrlPredictionWithDatabase(
-    imageUrl: string
-): Promise<EnhancedSpeciesData | null> {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_MODEL_URL}/url`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                url: imageUrl,
-                threshold: 0.7,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error('API request failed');
-        }
-
-        const apiData: ApiClassificationResponse = await response.json();
-
-        if (!apiData.is_felidae) {
-            return null;
-        }
-
-        return await matchAndFetchSpeciesData(apiData);
-    } catch (error) {
-        console.error('Error in handleUrlPredictionWithDatabase:', error);
-        return null;
-    }
 }

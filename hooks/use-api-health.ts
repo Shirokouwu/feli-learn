@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { toast } from "sonner"
 
 interface UseApiHealthProps {
     apiChecking: boolean
@@ -51,6 +52,7 @@ export const useApiHealth = ({
                     console.log("✅ API is ready!")
                 } else {
                     console.log("⚠️ API status is not ok:", data.status)
+                    toast.error("API Model tidak tersedia. Silakan hubungi developer untuk bantuan.")
                 }
 
             } catch (error) {
@@ -69,6 +71,7 @@ export const useApiHealth = ({
                 } else {
                     setApiReady(false)
                     setApiResponse({ data: { status: "error" } })
+                    toast.error("API Model tidak dapat diakses. Silakan hubungi developer untuk bantuan.")
                 }
             } finally {
                 setApiChecking(false)
@@ -76,9 +79,10 @@ export const useApiHealth = ({
         }
 
         checkApiHealth()
-        // Check API health every 30 seconds
-        const interval = setInterval(checkApiHealth, 30000)
+        // Check API health only once on component mount
 
-        return () => clearInterval(interval)
+        return () => {
+            // No cleanup needed since we're not using setInterval
+        }
     }, [API_MODEL_HEALTH_URL, setApiChecking, setApiReady, setApiResponse])
 }

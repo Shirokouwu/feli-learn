@@ -13,6 +13,7 @@ interface ScannerUploadAreaProps {
   onImageUrlChange: (url: string) => void
   onUrlSubmit: () => void
   onFileInputClick: () => void
+  onFileDrop: (files: FileList) => void
   apiReady: boolean
   showTips: boolean
   onToggleTips: () => void
@@ -25,22 +26,51 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
   onImageUrlChange,
   onUrlSubmit,
   onFileInputClick,
+  onFileDrop,
   apiReady,
   showTips,
   onToggleTips
 }) => {
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!apiReady) return
+
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      onFileDrop(files)
+    }
+  }
   return (
     <div className="space-y-6">
       <AnimatePresence mode="wait">
         <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="upload" className="text-base">
-              <Upload className="h-4 w-4 mr-2" />
-              Unggah Gambar
+            <TabsTrigger value="upload" className="text-sm md:text-base">
+              <Upload className="h-4 w-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Unggah </span>
+              <span>Gambar</span>
             </TabsTrigger>
-            <TabsTrigger value="url" className="text-base" disabled={!apiReady}>
-              <Link className="h-4 w-4 mr-2" />
-              Gunakan URL
+            <TabsTrigger value="url" className="text-sm md:text-base" disabled={!apiReady}>
+              <Link className="h-4 w-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Gunakan </span>
+              <span>URL</span>
             </TabsTrigger>
           </TabsList>
 
@@ -53,6 +83,10 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
             >
               <div
                 onClick={() => apiReady && onFileInputClick()}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
                 className={`h-64 border-2 border-dashed ${apiReady
                   ? "border-emerald-200 cursor-pointer hover:bg-emerald-50"
                   : "border-gray-200 cursor-not-allowed opacity-70"
@@ -61,15 +95,19 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                 <div className="p-4 bg-emerald-100 rounded-full mb-4 group-hover:bg-emerald-200 transition-colors duration-300">
                   <Upload className="h-8 w-8 text-emerald-600" />
                 </div>
-                <h3 className="text-lg font-medium text-emerald-800 mb-2">
-                  Tarik & Lepas atau Klik untuk Unggah
+                <h3 className="text-lg text-center font-medium text-emerald-800 mb-2">
+                  <span className="hidden sm:inline">Tarik & Lepas atau </span>
+                  <span>Klik untuk Unggah</span>
                 </h3>
                 <p className="text-neutral-500 text-sm max-w-md text-center">
-                  Unggah foto kucing liar atau kucing peliharaan untuk diidentifikasi
+                  Unggah foto family Felidae (kucing, singa, harimau, dll) untuk diidentifikasi
                 </p>
-                <p className="text-emerald-600 text-xs mt-2">
-                  Format yang didukung: JPG, PNG, WEBP (Maks. 10MB)
-                </p>
+                <div className="text-center mt-2">
+                  <p className="text-emerald-600 text-xs">
+                    Format: JPG, PNG, WEBP (Maks. 10MB)
+                  </p>
+
+                </div>
                 {!apiReady && (
                   <div className="mt-3 px-4 py-2 bg-red-50 rounded-lg">
                     <p className="text-xs text-red-600">API model tidak tersedia. Coba lagi nanti.</p>
@@ -87,7 +125,7 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <div className="space-y-4">
-                <div className="flex gap-2">
+                <div className="sm:flex gap-2 ">
                   <Input
                     placeholder="Masukkan URL gambar (https://...)"
                     className="flex-1"
@@ -98,7 +136,7 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                   <Button
                     onClick={onUrlSubmit}
                     disabled={!imageUrl || !apiReady}
-                    className="bg-emerald-600 hover:bg-emerald-700"
+                    className="bg-emerald-600 hover:bg-emerald-700 mt-2 w-full sm:w-fit sm:mt-0"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Scan
@@ -128,7 +166,7 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                         sumber yang dapat diakses publik.
                       </p>
                       <p className="text-xs text-emerald-600 mt-2">
-                        Contoh: https://example.com/gambar-kucing.jpg
+                        Contoh: https://example.com/foto-felidae.jpg
                       </p>
                     </div>
                   </div>
@@ -163,13 +201,13 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                 {[
                   {
                     icon: <Eye className="h-5 w-5 text-emerald-600" />,
-                    title: "Fokus pada Wajah",
-                    desc: "Pastikan wajah kucing terlihat jelas untuk hasil identifikasi terbaik",
+                    title: "Fokus pada Hewan",
+                    desc: "Pastikan anggota Felidae terlihat jelas untuk hasil identifikasi terbaik",
                   },
                   {
                     icon: <Leaf className="h-5 w-5 text-emerald-600" />,
                     title: "Hindari Oklusi",
-                    desc: "Pastikan tidak ada objek yang menghalangi tampilan kucing",
+                    desc: "Pastikan tidak ada objek yang menghalangi tampilan hewan",
                   },
                   {
                     icon: <Zap className="h-5 w-5 text-emerald-600" />,

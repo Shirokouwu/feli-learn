@@ -43,6 +43,24 @@ export default function ScannerImage() {
     toast("Riwayat scan telah dihapus")
   }
 
+  // Handle file drop
+  const handleFileDrop = (files: FileList) => {
+    const file = files[0]
+    if (file && fileInputRef.current) {
+      // Set the file to the file input and trigger change event
+      const dt = new DataTransfer()
+      dt.items.add(file)
+      fileInputRef.current.files = dt.files
+
+      // Trigger the existing upload handler
+      const syntheticEvent = {
+        target: fileInputRef.current
+      } as unknown as React.ChangeEvent<HTMLInputElement>
+
+      scanner.handleFileUpload(syntheticEvent)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50">
       {/* Scanner Header */}
@@ -65,7 +83,7 @@ export default function ScannerImage() {
 
         <div className="max-w-3xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
                 <div className="space-y-6">
                   <ScanCounter className="mb-4 pb-4 border-b border-emerald-50" />
@@ -78,6 +96,7 @@ export default function ScannerImage() {
                     onImageUrlChange={scanner.setImageUrl}
                     onUrlSubmit={scanner.handleUrlSubmit}
                     onFileInputClick={() => fileInputRef.current?.click()}
+                    onFileDrop={handleFileDrop}
                     apiReady={scanner.apiReady}
                     showTips={showTips}
                     onToggleTips={() => setShowTips(!showTips)}
@@ -100,6 +119,7 @@ export default function ScannerImage() {
                     isScanning={scanner.isScanning}
                     scanStage={scanner.scanStage}
                     scanProgress={scanner.scanProgress}
+                    onResetScan={scanner.resetScan}
                   />
 
                   {/* Results */}
@@ -111,7 +131,6 @@ export default function ScannerImage() {
                   {/* Action buttons */}
                   <ScannerActionButtons
                     onReset={scanner.resetScan}
-                    onRescan={scanner.rescan}
                     isScanning={scanner.isScanning}
                   />
                 </div>
