@@ -10,13 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Felidae Learn - Platform Pembelajaran Taksonomi Modern",
   description: "Pelajari taksonomi Felidae dengan cara yang menyenangkan menggunakan teknologi AI",
-  // Add proper viewport meta tags
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+
 }
 
 export default function RootLayout({
@@ -30,7 +24,7 @@ export default function RootLayout({
         <main>
           <QueryProvider>{children}</QueryProvider>
         </main>
-        <Toaster />
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   )

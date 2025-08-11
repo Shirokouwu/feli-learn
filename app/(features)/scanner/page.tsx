@@ -1,7 +1,7 @@
-import ScannerImages from "./_scanner-components";
+import ScannerImage from "./_scanner-image";
 
 export default function ScannerPage() {
   return (
-    <ScannerImages />
+    <ScannerImage/>
   );
 }
