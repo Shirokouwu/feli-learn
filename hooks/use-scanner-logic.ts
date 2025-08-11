@@ -4,6 +4,7 @@ import { toast } from "sonner"
 import axios from 'axios'
 import { matchAndFetchSpeciesData, type ApiClassificationResponse, type EnhancedSpeciesData } from "@/lib/species-matcher"
 import type { Species } from "@/types"
+import { useIncrementScan } from "./use-scan-stats"
 
 export interface ScannerHook {
   previewImage: string | null
@@ -35,6 +36,9 @@ export const useScannerLogic = (): ScannerHook => {
   const [scanStage, setScanStage] = useState<string>("")
   const [showConfetti, setShowConfetti] = useState(false)
   const [imageUrl, setImageUrl] = useState<string>("")
+
+  // Scan stats mutation
+  const incrementScanMutation = useIncrementScan()
 
   // API health check state
   const [apiChecking, setApiChecking] = useState<boolean>(true)
@@ -130,6 +134,16 @@ export const useScannerLogic = (): ScannerHook => {
     setIsScanning(false)
     setScanStage("Identifikasi selesai!")
     setShowConfetti(true)
+
+    // Increment scan counter in Redis
+    incrementScanMutation.mutate(undefined, {
+      onSuccess: () => {
+        // Scan count incremented successfully
+      },
+      onError: (error) => {
+        // Failed to increment scan count - non-critical error
+      }
+    })
 
     // Hide confetti after a few seconds
     setTimeout(() => {

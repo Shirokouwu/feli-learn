@@ -9,23 +9,55 @@ const redis = new Redis({
 });
 
 export async function GET() {
-    const todayKey = `scan:today:${format(new Date(), "yyyy-MM-dd", { locale: id })}`;
-    const totalKey = "scan:total";
+    try {
+        const todayKey = `scan:today:${format(new Date(), "yyyy-MM-dd", { locale: id })}`;
+        const totalKey = "scan:total";
 
-    const [todayScans, totalScans] = await redis.mget<number[]>([todayKey, totalKey]);
+        console.log(`[Scan Stats] GET request at ${new Date().toISOString()} - Fetching stats for key: ${todayKey}`);
 
-    return NextResponse.json({
-        todayScans: todayScans || 0,
-        totalScans: totalScans || 0,
-    });
+        const [todayScans, totalScans] = await redis.mget<number[]>([todayKey, totalKey]);
+
+        const response = {
+            todayScans: todayScans || 0,
+            totalScans: totalScans || 0,
+        };
+
+        console.log(`[Scan Stats] GET response:`, response);
+
+        return NextResponse.json(response);
+    } catch (error) {
+        console.error(`[Scan Stats] GET error:`, error);
+        return NextResponse.json(
+            { error: "Failed to fetch scan stats" },
+            { status: 500 }
+        );
+    }
 }
 
 export async function POST() {
-    const todayKey = `scan:today:${format(new Date(), "yyyy-MM-dd", { locale: id })}`;
-    const totalKey = "scan:total";
+    try {
+        const todayKey = `scan:today:${format(new Date(), "yyyy-MM-dd", { locale: id })}`;
+        const totalKey = "scan:total";
 
-    await redis.incr(todayKey);
-    await redis.incr(totalKey);
+        console.log(`🔥 [Scan Stats] POST request at ${new Date().toISOString()} - Incrementing counters for key: ${todayKey}`);
 
-    return NextResponse.json({ message: "Scan recorded" });
+        // Get current values before increment for logging
+        const [currentTodayScans, currentTotalScans] = await redis.mget<number[]>([todayKey, totalKey]);
+
+        await redis.incr(todayKey);
+        await redis.incr(totalKey);
+
+        // Get new values after increment
+        const [newTodayScans, newTotalScans] = await redis.mget<number[]>([todayKey, totalKey]);
+
+        console.log(`🔥 [Scan Stats] POST success - Today: ${currentTodayScans || 0} → ${newTodayScans}, Total: ${currentTotalScans || 0} → ${newTotalScans}`);
+
+        return NextResponse.json({ message: "Scan recorded" });
+    } catch (error) {
+        console.error(`❌ [Scan Stats] POST error:`, error);
+        return NextResponse.json(
+            { error: "Failed to record scan" },
+            { status: 500 }
+        );
+    }
 }
