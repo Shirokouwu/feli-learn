@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Genus, Species } from "@/types"
 import { useState } from "react"
+import { getConservationStatusColor, getConservationStatusDescription } from "@/lib/conservation-utils"
 
 
 
@@ -36,65 +37,6 @@ interface SpeciesCardProps {
 export function SpeciesCard({ data, onClose }: SpeciesCardProps) {
   const isGenus = !("genus_id" in data)
   const [activeTab, setActiveTab] = useState("overview")
-
-  // Update the getConservationStatusColor function for better contrast and more pleasant colors
-  const getConservationStatusColor = (status: string) => {
-    const statusLower = status.toLowerCase()
-
-    if (statusLower.includes("extinct") || statusLower.includes("punah")) {
-      return "bg-slate-600 text-white border-slate-700" // Soft dark gray for extinct
-    } else if (
-      statusLower.includes("critically") ||
-      statusLower.includes("kritis") ||
-      statusLower.includes("sangat terancam")
-    ) {
-      return "bg-rose-400 text-white border-rose-500" // Soft rose for critically endangered
-    } else if (statusLower.includes("endangered") || statusLower.includes("terancam")) {
-      return "bg-red-400 text-white border-red-500" // Soft red for endangered
-    } else if (statusLower.includes("vulnerable") || statusLower.includes("rentan")) {
-      return "bg-orange-400 text-white border-orange-500" // Soft orange for vulnerable
-    } else if (statusLower.includes("near") || statusLower.includes("hampir")) {
-      return "bg-amber-400 text-amber-900 border-amber-500" // Soft amber for near threatened
-    } else if (statusLower.includes("least") || statusLower.includes("rendah") || statusLower.includes("lc")) {
-      return "bg-emerald-400 text-white border-emerald-500" // Soft emerald for least concern
-    } else if (statusLower.includes("data") || statusLower.includes("kurang")) {
-      return "bg-gray-400 text-white border-gray-500" // Soft gray for data deficient
-    } else if (statusLower.includes("not") || statusLower.includes("tidak")) {
-      return "bg-gray-300 text-gray-800 border-gray-400" // Light soft gray for not evaluated
-    } else {
-      return "bg-blue-400 text-white border-blue-500" // Soft blue as default
-    }
-  }
-
-  const getConservationStatusDescription = (status: string) => {
-    const statusLower = status.toLowerCase()
-
-    if (statusLower.includes("extinct") && !statusLower.includes("wild")) {
-      return "Spesies yang tidak lagi diketahui ada di dunia."
-    } else if (statusLower.includes("extinct in the wild") || statusLower.includes("punah di alam")) {
-      return "Spesies yang hanya diketahui hidup dalam penangkaran atau budidaya, dan tidak lagi ada di alam liar."
-    } else if (
-      statusLower.includes("critically") ||
-      statusLower.includes("kritis") ||
-      statusLower.includes("sangat terancam")
-    ) {
-      return "Spesies yang menghadapi risiko kepunahan yang sangat tinggi di alam liar."
-    } else if (statusLower.includes("endangered") || statusLower.includes("terancam")) {
-      return "Spesies yang menghadapi risiko kepunahan yang tinggi di alam liar."
-    } else if (statusLower.includes("vulnerable") || statusLower.includes("rentan")) {
-      return "Spesies yang menghadapi risiko kepunahan yang cukup tinggi di alam liar."
-    } else if (statusLower.includes("near") || statusLower.includes("hampir")) {
-      return "Spesies yang berada dekat dengan kategori terancam atau rentan."
-    } else if (statusLower.includes("least") || statusLower.includes("rendah") || statusLower.includes("lc")) {
-      return "Spesies yang tidak memenuhi kriteria untuk kategori terancam dan jumlahnya masih banyak di alam liar."
-    } else if (statusLower.includes("data") || statusLower.includes("kurang")) {
-      return "Spesies yang tidak cukup informasi tersedia untuk menilai status konservasinya."
-    } else if (statusLower.includes("not") || statusLower.includes("tidak")) {
-      return "Spesies yang belum dievaluasi oleh IUCN."
-    } else {
-      return "Status konservasi spesies ini belum diketahui dengan pasti."
-    }
-  }
 
   // Access the new data structure
   const species = data as Species
