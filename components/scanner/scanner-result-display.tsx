@@ -19,11 +19,13 @@ import type { EnhancedSpeciesData } from "@/lib/species-matcher"
 interface ScannerResultDisplayProps {
   scanResult: Species | null
   enhancedSpeciesData: EnhancedSpeciesData | null
+  scanDuration?: number
 }
 
 export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
   scanResult,
-  enhancedSpeciesData
+  enhancedSpeciesData,
+  scanDuration = 0
 }) => {
   const router = useRouter()
 
@@ -52,6 +54,9 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
             <h3 className="text-xl font-bold text-emerald-800">Hasil Identifikasi</h3>
             <p className="text-emerald-600">
               Teridentifikasi dengan akurasi {enhancedSpeciesData?.identifikasi.akurasi.toFixed(1) || '98.7'}%
+              {scanDuration > 0 && ` ( ${scanDuration >= 60
+                ? `${Math.floor(scanDuration / 60)} menit ${scanDuration % 60} detik`
+                : `${scanDuration} detik`} )`}
             </p>
           </div>
         </div>

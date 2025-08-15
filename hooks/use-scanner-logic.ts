@@ -16,6 +16,7 @@ export interface ScannerHook {
   scanStage: string
   showConfetti: boolean
   imageUrl: string
+  scanDuration: number
   setImageUrl: (url: string) => void
   handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleUrlSubmit: () => void
@@ -36,6 +37,8 @@ export const useScannerLogic = (): ScannerHook => {
   const [scanStage, setScanStage] = useState<string>("")
   const [showConfetti, setShowConfetti] = useState(false)
   const [imageUrl, setImageUrl] = useState<string>("")
+  const [scanStartTime, setScanStartTime] = useState<number>(0)
+  const [scanDuration, setScanDuration] = useState<number>(0)
 
   // Scan stats mutation
   const incrementScanMutation = useIncrementScan()
@@ -127,15 +130,26 @@ export const useScannerLogic = (): ScannerHook => {
     setScanProgress(0)
     setScanStage("")
     setShowConfetti(false)
+    setScanDuration(0)
+    setScanStartTime(0) // Reset start time
   }
 
-  const processScanResult = (apiData: ApiClassificationResponse, enhancedData: EnhancedSpeciesData | null, imageSource: string) => {
+  const processScanResult = (apiData: ApiClassificationResponse, enhancedData: EnhancedSpeciesData | null, imageSource: string, scannerDuration: number, fetchDuration: number) => {
+    const totalDuration = scannerDuration + fetchDuration
+
+    console.log("Timing breakdown:", {
+      scannerDuration,
+      fetchDuration,
+      totalDuration
+    })
+
+    setScanDuration(totalDuration)
+
     setScanProgress(100)
     setIsScanning(false)
     setScanStage("Identifikasi selesai!")
-    setShowConfetti(true)
-
-    // Increment scan counter in Redis
+    setShowConfetti(true)    // Increment scan counter in Redis
+    
     incrementScanMutation.mutate(undefined, {
       onSuccess: () => {
         // Scan count incremented successfully
@@ -205,24 +219,37 @@ export const useScannerLogic = (): ScannerHook => {
   const startScanProgress = () => {
     return setInterval(() => {
       setScanProgress((prev) => {
+        const newProgress = prev + 3 // Slower progress for more granular control
+
+        // Update scan stage based on progress - Scanner phase (0-50%)
+        if (newProgress === 15) {
+          setScanStage("Mendeteksi fitur morfologi...")
+        } else if (newProgress === 30) {
+          setScanStage("Menganalisis pola warna dan tekstur...")
+        } else if (newProgress === 45) {
+          setScanStage("Memproses dengan AI model...")
+        }
+
+        return newProgress < 50 ? newProgress : 50 // Stop at 50% for scanner phase
+      })
+    }, 150) // Slower interval
+  }
+
+  const startFetchProgress = () => {
+    return setInterval(() => {
+      setScanProgress((prev) => {
         const newProgress = prev + 5
 
-        // Update scan stage based on progress
-        if (newProgress === 20) {
-          setScanStage("Mendeteksi fitur morfologi...")
-        } else if (newProgress === 40) {
-          setScanStage("Menganalisis pola warna dan tekstur...")
-        } else if (newProgress === 60) {
-          setScanStage("Membandingkan dengan database spesies...")
-        } else if (newProgress === 80) {
+        // Update scan stage based on progress - Fetch phase (60-95%)
+        if (newProgress === 70) {
           setScanStage("Mencocokkan dengan database taksonomi...")
-        } else if (newProgress === 90) {
+        } else if (newProgress === 85) {
           setScanStage("Menyusun informasi lengkap spesies...")
         }
 
-        return newProgress < 95 ? newProgress : 95 // Stop at 95% until API returns
+        return newProgress < 95 ? newProgress : 95 // Stop at 95% until complete
       })
-    }, 100)
+    }, 200)
   }
 
   const handleFilePrediction = async (file: File) => {
@@ -240,12 +267,15 @@ export const useScannerLogic = (): ScannerHook => {
     try {
       const progressInterval = startScanProgress()
 
-      // Step 1: Call the API for classification
+      // Step 1: Scanner Phase - Call the API for classification
+      const scannerStartTime = Date.now()
+      setScanStage("Menganalisis gambar dengan AI...")
+
       const formData = new FormData()
       formData.append('image', file)
       formData.append('threshold', '0.7')
 
-      const response = await fetch(`${API_MODEL_URL}/upload`, {
+      const response = await fetch(`${API_MODEL_URL}/predict/upload`, {
         method: 'POST',
         body: formData,
       })
@@ -255,10 +285,14 @@ export const useScannerLogic = (): ScannerHook => {
       }
 
       const apiData: ApiClassificationResponse = await response.json()
+      const scannerEndTime = Date.now()
+      const scannerDuration = Math.round((scannerEndTime - scannerStartTime) / 1000)
 
-      // Step 2: Check if it's a Felidae species
+      // Stop the scanner progress interval
+      clearInterval(progressInterval)
+
+      // Check if it's a Felidae species
       if (!apiData.is_felidae) {
-        clearInterval(progressInterval)
         setIsScanning(false)
         setScanProgress(0)
         setScanStage("")
@@ -266,13 +300,26 @@ export const useScannerLogic = (): ScannerHook => {
         return
       }
 
+
+      setScanProgress(55)
+      setScanStage("Menghubungkan ke database...")
+
+
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // Fetch Phase - Get enhanced data from database
+      const fetchStartTime = Date.now()
       setScanStage("Mengambil data lengkap dari database...")
+      setScanProgress(60)
 
-      // Step 3: Fetch enhanced data from database
+      const fetchProgressInterval = startFetchProgress()
+
       const enhancedData = await matchAndFetchSpeciesData(apiData)
+      const fetchEndTime = Date.now()
+      const fetchDuration = Math.round((fetchEndTime - fetchStartTime) / 1000)
 
-      clearInterval(progressInterval)
-      processScanResult(apiData, enhancedData, URL.createObjectURL(file))
+      clearInterval(fetchProgressInterval)
+      processScanResult(apiData, enhancedData, URL.createObjectURL(file), scannerDuration, fetchDuration)
 
     } catch (error) {
       console.error("Error during image prediction:", error)
@@ -298,8 +345,11 @@ export const useScannerLogic = (): ScannerHook => {
     try {
       const progressInterval = startScanProgress()
 
-      // Step 1: Call the API for classification
-      const response = await axios.post(`${API_MODEL_URL}/url`, {
+      // Step 1: Scanner Phase - Call the API for classification
+      const scannerStartTime = Date.now()
+      setScanStage("Menganalisis gambar dengan AI...")
+
+      const response = await axios.post(`${API_MODEL_URL}/predict/url`, {
         url: imageSource,
         threshold: 0.7
       }, {
@@ -309,10 +359,14 @@ export const useScannerLogic = (): ScannerHook => {
       })
 
       const apiData: ApiClassificationResponse = response.data
+      const scannerEndTime = Date.now()
+      const scannerDuration = Math.round((scannerEndTime - scannerStartTime) / 1000)
+
+      // Stop the scanner progress interval
+      clearInterval(progressInterval)
 
       // Step 2: Check if it's a Felidae species
       if (!apiData.is_felidae) {
-        clearInterval(progressInterval)
         setIsScanning(false)
         setScanProgress(0)
         setScanStage("")
@@ -320,13 +374,26 @@ export const useScannerLogic = (): ScannerHook => {
         return
       }
 
+      // Step 2.5: Transition phase - Show that we got the species and connecting to database
+      setScanProgress(55)
+      setScanStage("Menghubungkan ke database...")
+
+      // Small delay to show the transition
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // Step 3: Fetch Phase - Get enhanced data from database
+      const fetchStartTime = Date.now()
       setScanStage("Mengambil data lengkap dari database...")
+      setScanProgress(60) // Update progress to show we're in fetch phase
 
-      // Step 3: Fetch enhanced data from database
+      const fetchProgressInterval = startFetchProgress()
+
       const enhancedData = await matchAndFetchSpeciesData(apiData)
+      const fetchEndTime = Date.now()
+      const fetchDuration = Math.round((fetchEndTime - fetchStartTime) / 1000)
 
-      clearInterval(progressInterval)
-      processScanResult(apiData, enhancedData, imageSource)
+      clearInterval(fetchProgressInterval)
+      processScanResult(apiData, enhancedData, imageSource, scannerDuration, fetchDuration)
 
     } catch (error) {
       console.error("Error during image prediction:", error)
@@ -486,6 +553,7 @@ export const useScannerLogic = (): ScannerHook => {
     scanStage,
     showConfetti,
     imageUrl,
+    scanDuration,
     setImageUrl,
     handleFileUpload,
     handleUrlSubmit,

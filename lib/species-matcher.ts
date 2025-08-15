@@ -67,15 +67,45 @@ export async function matchAndFetchSpeciesData(
     try {
         const { species_key, predicted_class, confidence } = apiResponse;
 
-        // Step 1: Find species by species_key (kunci field in database)
-        const { data: speciesData, error: speciesError } = await supabase
+        // Check if species_key exists, if not try to use predicted_class as fallback
+        let searchKey = species_key;
+        if (!species_key) {
+            if (!predicted_class) {
+                console.error("Both species_key and predicted_class are missing from API response");
+                return null;
+            }
+            searchKey = predicted_class;
+        }
+
+        console.log("Using search key:", searchKey);
+
+        // Step 1: Find species by search key (kunci field in database)
+        // Try with original key first
+        let { data: speciesData, error: speciesError } = await supabase
             .from("taksonomi_spesies")
             .select("*")
-            .eq("kunci", species_key)
+            .eq("kunci", searchKey)
             .single();
 
+        // If not found with original key, try with normalized key (hyphens to underscores)
         if (speciesError || !speciesData) {
-            console.error("Species not found in database:", speciesError);
+            const normalizedSearchKey = searchKey.replace(/-/g, '_');
+
+            const { data: normalizedData, error: normalizedError } = await supabase
+                .from("taksonomi_spesies")
+                .select("*")
+                .eq("kunci", normalizedSearchKey)
+                .single();
+
+            if (normalizedError || !normalizedData) {
+                return null;
+            }
+
+            speciesData = normalizedData;
+            speciesError = normalizedError;
+        }
+
+        if (speciesError || !speciesData) {
             return null;
         }
 
@@ -139,7 +169,7 @@ export async function matchAndFetchSpeciesData(
                 akurasi: confidence,
                 nama_umum: speciesData.nama_umum || predicted_class,
                 nama_ilmiah: speciesData.nama || "",
-                kunci: species_key,
+                kunci: searchKey, // Use the search key that actually worked
                 status: {
                     konservasi: konservasiData?.status_konservasi_alam || "Unknown",
                     endemik: extractEndemicStatus(speciesData.distribusi_geografis),

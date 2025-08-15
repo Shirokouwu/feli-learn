@@ -62,6 +62,7 @@ export function RadialExplorer() {
   const [showTour, setShowTour] = useState(false)
   const [tourStep, setTourStep] = useState(1)
   const [captureMode, setCaptureMode] = useState(false)
+  const [isDiagramHovered, setIsDiagramHovered] = useState(false)
 
   // Tambahkan state untuk mengelola visibilitas daftar taksonomi
   // Tambahkan state ini di bagian state management (sekitar baris 40-50):
@@ -1375,6 +1376,8 @@ export function RadialExplorer() {
       ref={containerRef}
       className="radial-explorer-container h-full relative bg-gradient-to-br from-teal-50 to-white overflow-hidden touch-pan-y mobile-touch-fix"
       style={{ touchAction: "manipulation" }}
+      onMouseEnter={() => setIsDiagramHovered(true)}
+      onMouseLeave={() => setIsDiagramHovered(false)}
     >
       {/* Intro overlay */}
       <AnimatePresence>{showIntro && <RadialIntro onClose={() => setShowIntro(false)} />}</AnimatePresence>
@@ -1387,6 +1390,7 @@ export function RadialExplorer() {
         onReset={handleReset}
         onRotateLeft={handleRotateLeft}
         onRotateRight={handleRotateRight}
+        isHovered={isDiagramHovered}
         onZoomChange={(values) => {
           setTransform((prev) => ({
             ...prev,

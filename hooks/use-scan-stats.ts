@@ -26,9 +26,9 @@ export function useScanStats() {
     return useQuery({
         queryKey: ["scan-stats"],
         queryFn: fetchScanStats,
-        refetchInterval: 60000, // Refetch every 1 minute
-        refetchIntervalInBackground: true, // Continue refetching when tab is not active
-        staleTime: 0, // Always consider data stale for real-time updates
+        refetchInterval: 120000, // Refetch every 2 minutes (optimized from 1 minute)
+        refetchIntervalInBackground: false, // Stop refetching when tab is not active (saves resources)
+        staleTime: 30000, // Cache data for 30 seconds to reduce unnecessary fetches
         refetchOnWindowFocus: true, // Refetch when window regains focus
         refetchOnMount: true, // Refetch when component mounts
     })

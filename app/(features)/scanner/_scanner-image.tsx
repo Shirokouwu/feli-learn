@@ -126,6 +126,7 @@ export default function ScannerImage() {
                   <ScannerResultDisplay
                     scanResult={scanner.scanResult}
                     enhancedSpeciesData={scanner.enhancedSpeciesData}
+                    scanDuration={scanner.scanDuration}
                   />
 
                   {/* Action buttons */}
