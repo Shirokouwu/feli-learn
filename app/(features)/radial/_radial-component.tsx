@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react"
 import { Suspense } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Compass,
@@ -20,10 +19,10 @@ import { RadialOnboarding } from "@/components/radial-taxonomy/radial-onboarding
 import { RadialExplorer } from "@/components/radial-taxonomy"
 import { RadialDiagramGuide } from "@/components/radial-taxonomy/radial-diagram-guide"
 import { TaxonomyLoading } from "@/components/radial-taxonomy/radial-loading"
-import { GlassNavigation } from "@/components/ui/glass-navigation"
+import { GlassNavigation } from "@/components/glass-navigation"
 import { useScrollDetection } from "@/hooks/use-scroll-detection"
 
-export default function RadialTaxonomy({ fullName }: { fullName: string }) {
+export default function RadialTaxonomy({ fullName, profilePicture }: { fullName: string, profilePicture: string }) {
   const [showInfo, setShowInfo] = useState(false)
   const [showLegend, setShowLegend] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -51,6 +50,7 @@ export default function RadialTaxonomy({ fullName }: { fullName: string }) {
         backHref="/"
         backLabel="Kembali"
         showUserInfo={true}
+        profilePicture={profilePicture}
       />
 
 

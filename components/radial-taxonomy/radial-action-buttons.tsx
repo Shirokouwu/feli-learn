@@ -57,16 +57,6 @@ export function RadialActionButtons({
       <Button
         variant="outline"
         size="sm"
-        onClick={onStoryClick}
-        className="story-button bg-white/90 backdrop-blur-sm border-teal-100 text-teal-600 hover:bg-teal-50 hover:text-teal-700 transition-all duration-300"
-      >
-        <Sparkles className="h-4 w-4 sm:mr-2" />
-        <span className="hidden sm:inline">Mode Cerita</span>
-      </Button>
-
-      <Button
-        variant="outline"
-        size="sm"
         onClick={onTourClick}
         className="bg-white/90 backdrop-blur-sm border-teal-100 text-teal-600 hover:bg-teal-50 hover:text-teal-700 transition-all duration-300"
       >
