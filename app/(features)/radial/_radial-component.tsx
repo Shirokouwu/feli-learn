@@ -127,10 +127,10 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
             </Button>
             <Button
               variant="outline"
-              className="flex items-center gap-2 border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 shadow-sm"
+              className="flex items-center gap-2 border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 shadow-sm group"
               onClick={() => setShowLegend(!showLegend)}
             >
-              <Info className="h-4 w-4 mr-2" />
+              <Info className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" />
               Status Konservasi
             </Button>
           </div>

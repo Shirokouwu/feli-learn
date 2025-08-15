@@ -27,39 +27,79 @@ export function GlassNavigation({
 }: GlassNavigationProps) {
    return (
       <motion.div
-         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-            ? 'bg-white/10 backdrop-blur-xl border-b border-white/20 shadow-lg top-5 rounded-b-lg'
-            : 'bg-transparent'
-            } ${className}`}
+         className={`fixed z-50 ${className}`}
          initial={false}
          animate={{
-            backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0)',
-            width: isScrolled ? '40%' : '90%'
+            backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0)',
+            width: isScrolled ? '50%' : '90%',
+            height: isScrolled ? '60px' : '80px',
+            top: isScrolled ? '16px' : '0px',
+            borderRadius: isScrolled ? '30px' : '20px',
+            backdropFilter: isScrolled ? 'blur(20px)' : 'blur(0px)',
+            boxShadow: isScrolled 
+              ? '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+              : '0 0 0 rgba(0, 0, 0, 0)',
+            border: isScrolled ? '1px solid rgba(255, 255, 255, 0.2)' : '0px solid rgba(255, 255, 255, 0)'
+         }}
+         transition={{
+            type: 'tween',
+            ease: [0.4, 0.0, 0.2, 1], // More aggressive easing for smoother morphing
+            duration: 0.35,
+            borderRadius: {
+               type: 'tween',
+               ease: [0.4, 0.0, 0.2, 1],
+               duration: 0.25 // Slightly faster border radius
+            }
          }}
          style={{
             left: '50%',
             transform: 'translateX(-50%)',
-            width: isScrolled ? '40%' : '90%'
+            willChange: 'width, height, top, border-radius, background-color',
+            overflow: 'hidden' // Prevent content from showing outside during transition
          }}
       >
-         <div className="container mx-auto px-4">
-            <div className={`flex items-center justify-between py-4 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-4'
-               }`}>
+         <div className="container mx-auto px-6 h-full">
+            <motion.div 
+               className="flex items-center justify-between h-full"
+               animate={{
+                  paddingLeft: isScrolled ? '16px' : '0px',
+                  paddingRight: isScrolled ? '16px' : '0px'
+               }}
+               transition={{
+                  type: 'tween',
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                  duration: 0.25
+               }}
+            >
                {/* Back button */}
-               <Button
-                  variant="outline"
-                  size="sm"
-                  className={`transition-all duration-300 ${isScrolled
-                     ? 'bg-white/20 backdrop-blur-sm border-teal-200/50 hover:bg-teal-50/20 text-teal-600 hover:text-teal-700'
-                     : 'bg-white/80 backdrop-blur-sm border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300'
-                     } shadow-md`}
-                  asChild
+               <motion.div
+                  animate={{
+                     scale: isScrolled ? 0.95 : 1,
+                     opacity: 1
+                  }}
+                  transition={{
+                     type: 'tween',
+                     ease: [0.25, 0.46, 0.45, 0.94],
+                     duration: 0.2
+                  }}
                >
-                  <Link href={backHref}>
-                     <ArrowLeft className="h-4 w-4 mr-2" />
-                     {backLabel}
-                  </Link>
-               </Button>
+                  <Button
+                     variant="outline"
+                     size={isScrolled ? "sm" : "default"}
+                     className={`transition-all duration-200 ${isScrolled
+                        ? 'bg-white/30 backdrop-blur-sm border-white/30 hover:bg-white/40 text-teal-700 hover:text-teal-800'
+                        : 'bg-white/80 backdrop-blur-sm border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300'
+                        } shadow-lg hover:shadow-xl`}
+                     asChild
+                  >
+                     <Link href={backHref}>
+                        <ArrowLeft className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-2 transition-all duration-200`} />
+                        <span className={`${isScrolled ? 'text-sm' : 'text-sm'} transition-all duration-200`}>
+                           {backLabel}
+                        </span>
+                     </Link>
+                  </Button>
+               </motion.div>
 
                {/* User info */}
                {showUserInfo && (
@@ -67,34 +107,44 @@ export function GlassNavigation({
                      className="flex items-center"
                      initial={false}
                      animate={{
-                        x: 0,
+                        scale: isScrolled ? 0.95 : 1,
                         opacity: 1
+                     }}
+                     transition={{
+                        type: 'tween',
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                        duration: 0.2
                      }}
                   >
                      {fullName ? (
                         <div className="flex items-center space-x-2">
-                           <span className="text-sm flex items-center transition-all duration-300 text-teal-600">
-                              <Unlock className="h-4 w-4 mr-1" />
-                              {fullName}
+                           <span className={`flex items-center transition-all duration-200 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
+                              <Unlock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-200`} />
+                              <span className="inline">
+                                 {fullName}
+                              </span>
                            </span>
-                           <Avatar className="border border-teal-200 w-10 h-10">
+                           <Avatar className={`border-2 border-white/40 transition-all duration-200 ${isScrolled ? 'w-9 h-9' : 'w-10 h-10'}`}>
                               <AvatarImage src={profilePicture} alt={fullName} />
-                              <AvatarFallback>{fullName.charAt(0)}</AvatarFallback>
+                              <AvatarFallback className="bg-white/20 text-teal-800 font-semibold">
+                                 {fullName.charAt(0)}
+                              </AvatarFallback>
                            </Avatar>
                         </div>
-
                      ) : (
-                        <span className="text-sm flex items-center transition-all duration-300 text-teal-600">
-                           <Lock className="h-4 w-4 mr-1" />
-                           Login Diperlukan
-                           <Link href="/login" className="underline ml-1 transition-all duration-300 text-teal-600 hover:text-teal-700">
+                        <span className={`flex items-center transition-all duration-200 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
+                           <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-200`} />
+                           <span className="inline">
+                              Login Diperlukan
+                           </span>
+                           <Link href="/login" className="underline ml-1 transition-all duration-200 text-teal-700 hover:text-teal-800 font-medium">
                               Login
                            </Link>
                         </span>
                      )}
                   </motion.div>
                )}
-            </div>
+            </motion.div>
          </div>
       </motion.div>
    )
