@@ -1,12 +1,19 @@
 "use client"
 
 import type React from "react"
-
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ZoomIn, ZoomOut, RotateCcw, RotateCw, Search, RefreshCw } from "lucide-react"
 import { motion } from "framer-motion"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useState, useEffect } from "react"
+
+// Add utility to detect mobile devices
+const isMobile = () => {
+  if (typeof window === 'undefined') return false
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    ('ontouchstart' in window) ||
+    (window.innerWidth <= 768)
+}
 
 
 interface RadialControlsProps {
@@ -44,11 +51,20 @@ export function RadialControls({
   const zoomPercentage = Math.round((zoom || 1) * 100)
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
+
+  // Check if device is mobile on mount
+  useEffect(() => {
+    setIsMobileDevice(isMobile())
+  }, [])
 
   // Update local search query when prop changes
   useEffect(() => {
     setLocalSearchQuery(searchQuery)
   }, [searchQuery])
+
+  // On mobile, always show controls. On desktop, show when hovered
+  const shouldShowControls = isMobileDevice || isHovered
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,13 +83,26 @@ export function RadialControls({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{
-          opacity: isHovered ? 1 : 0,
-          y: isHovered ? 0 : 20,
-          pointerEvents: isHovered ? "auto" : "none"
+          opacity: shouldShowControls ? 1 : 0,
+          y: shouldShowControls ? 0 : 20,
+          pointerEvents: shouldShowControls ? "auto" : "none"
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md p-2 sm:p-3 shadow-lg border border-teal-100/50 z-10 rounded-lg"
       >
+        {/* Mobile gesture hint */}
+        {isMobileDevice && shouldShowControls && (
+          <div className="mb-2 text-xs text-teal-600 text-center font-medium">
+            Geser: Pan • Cubit: Zoom di Titik Tengah
+          </div>
+        )}
+
+        {/* Desktop gesture hint */}
+        {!isMobileDevice && shouldShowControls && (
+          <div className="mb-2 text-xs text-teal-600 text-center font-medium">
+            Drag: Pan • Ctrl+Scroll: Zoom ke Cursor
+          </div>
+        )}
         <div className="flex flex-col gap-1.5 sm:gap-2">
           {/* Zoom Controls */}
           <div className="flex items-center gap-0.5 sm:gap-1 bg-white rounded-full border border-teal-200 p-0.5 sm:p-1 w-full justify-center">

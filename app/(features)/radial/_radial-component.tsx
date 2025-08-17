@@ -341,7 +341,7 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
         {/* Add the RadialDiagramGuide component */}
         <RadialDiagramGuide />
 
-        <div className="h-[500px] md:h-[calc(100vh-4rem)] relative w-full">
+        <div className="h-[600px] md:h-[calc(100vh-4rem)] relative w-full">
           <Suspense fallback={<TaxonomyLoading />}>
             <RadialExplorer />
           </Suspense>

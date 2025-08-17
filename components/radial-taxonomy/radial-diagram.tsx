@@ -24,6 +24,7 @@ interface RadialDiagramProps {
   onMouseMove: (event: React.MouseEvent) => void
   onMouseUp: (event: React.MouseEvent) => void
   onMouseLeave: (event: React.MouseEvent) => void
+  onWheel?: (event: React.WheelEvent) => void
   onTouchStart: (event: React.TouchEvent) => void
   onTouchMove: (event: React.TouchEvent) => void
   onTouchEnd: (event: React.TouchEvent) => void
@@ -43,6 +44,7 @@ export const RadialDiagram = memo(
       onMouseMove,
       onMouseUp,
       onMouseLeave,
+      onWheel,
       onTouchStart,
       onTouchMove,
       onTouchEnd,
@@ -171,7 +173,7 @@ export const RadialDiagram = memo(
           ref={ref}
           className="radial-diagram w-full h-full"
           style={{
-            touchAction: "manipulation", // Ubah dari "none" ke "manipulation" untuk mendukung touchscreen
+            touchAction: "none", // Prevent default touch behaviors to allow custom touch handling
             cursor: "grab",
             userSelect: "none", // Mencegah seleksi teks
             WebkitUserSelect: "none",
@@ -189,6 +191,7 @@ export const RadialDiagram = memo(
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
+          onWheel={onWheel}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}

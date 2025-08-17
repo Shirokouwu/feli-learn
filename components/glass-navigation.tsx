@@ -36,20 +36,17 @@ export function GlassNavigation({
             top: isScrolled ? '16px' : '0px',
             borderRadius: isScrolled ? '30px' : '20px',
             backdropFilter: isScrolled ? 'blur(20px)' : 'blur(0px)',
-            boxShadow: isScrolled 
-              ? '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-              : '0 0 0 rgba(0, 0, 0, 0)',
+            boxShadow: isScrolled
+               ? '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+               : '0 0 0 rgba(0, 0, 0, 0)',
             border: isScrolled ? '1px solid rgba(255, 255, 255, 0.2)' : '0px solid rgba(255, 255, 255, 0)'
          }}
          transition={{
-            type: 'tween',
-            ease: [0.4, 0.0, 0.2, 1], // More aggressive easing for smoother morphing
-            duration: 0.35,
-            borderRadius: {
-               type: 'tween',
-               ease: [0.4, 0.0, 0.2, 1],
-               duration: 0.25 // Slightly faster border radius
-            }
+            type: 'spring',
+            stiffness: 90,
+            damping: 38,
+            mass: 1.2,
+            velocity: 0
          }}
          style={{
             left: '50%',
@@ -59,16 +56,16 @@ export function GlassNavigation({
          }}
       >
          <div className="container mx-auto px-6 h-full">
-            <motion.div 
+            <motion.div
                className="flex items-center justify-between h-full"
                animate={{
                   paddingLeft: isScrolled ? '16px' : '0px',
                   paddingRight: isScrolled ? '16px' : '0px'
                }}
                transition={{
-                  type: 'tween',
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                  duration: 0.25
+                  type: 'spring',
+                  stiffness: 110,
+                  damping: 36
                }}
             >
                {/* Back button */}
@@ -78,23 +75,23 @@ export function GlassNavigation({
                      opacity: 1
                   }}
                   transition={{
-                     type: 'tween',
-                     ease: [0.25, 0.46, 0.45, 0.94],
-                     duration: 0.2
+                     type: 'spring',
+                     stiffness: 300,
+                     damping: 25
                   }}
                >
                   <Button
                      variant="outline"
                      size={isScrolled ? "sm" : "default"}
-                     className={`transition-all duration-200 ${isScrolled
+                     className={`transition-all duration-300 ${isScrolled
                         ? 'bg-white/30 backdrop-blur-sm border-white/30 hover:bg-white/40 text-teal-700 hover:text-teal-800'
                         : 'bg-white/80 backdrop-blur-sm border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300'
                         } shadow-lg hover:shadow-xl`}
                      asChild
                   >
                      <Link href={backHref}>
-                        <ArrowLeft className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-2 transition-all duration-200`} />
-                        <span className={`${isScrolled ? 'text-sm' : 'text-sm'} transition-all duration-200`}>
+                        <ArrowLeft className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-2 transition-all duration-300`} />
+                        <span className={`${isScrolled ? 'text-sm' : 'text-sm'} transition-all duration-600`}>
                            {backLabel}
                         </span>
                      </Link>
@@ -111,20 +108,20 @@ export function GlassNavigation({
                         opacity: 1
                      }}
                      transition={{
-                        type: 'tween',
-                        ease: [0.25, 0.46, 0.45, 0.94],
-                        duration: 0.2
+                        type: 'spring',
+                        stiffness: 280,
+                        damping: 28
                      }}
                   >
                      {fullName ? (
                         <div className="flex items-center space-x-2">
-                           <span className={`flex items-center transition-all duration-200 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
-                              <Unlock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-200`} />
+                           <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
+                              <Unlock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
                               <span className="inline">
                                  {fullName}
                               </span>
                            </span>
-                           <Avatar className={`border-2 border-white/40 transition-all duration-200 ${isScrolled ? 'w-9 h-9' : 'w-10 h-10'}`}>
+                           <Avatar className={`border-2 border-white/40 transition-all duration-300 ${isScrolled ? 'w-9 h-9' : 'w-10 h-10'}`}>
                               <AvatarImage src={profilePicture} alt={fullName} />
                               <AvatarFallback className="bg-white/20 text-teal-800 font-semibold">
                                  {fullName.charAt(0)}
@@ -132,12 +129,12 @@ export function GlassNavigation({
                            </Avatar>
                         </div>
                      ) : (
-                        <span className={`flex items-center transition-all duration-200 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
-                           <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-200`} />
+                        <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
+                           <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
                            <span className="inline">
                               Login Diperlukan
                            </span>
-                           <Link href="/login" className="underline ml-1 transition-all duration-200 text-teal-700 hover:text-teal-800 font-medium">
+                           <Link href="/login" className="underline ml-1 transition-all duration-300 text-teal-700 hover:text-teal-800 font-medium">
                               Login
                            </Link>
                         </span>

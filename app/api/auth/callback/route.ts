@@ -13,14 +13,16 @@ export async function GET(request: Request) {
         const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
         if (!error && data.user) {
+            console.log('user', data.user);
+
             // Check if user exists in our users table
             const { data: existingUser } = await supabase
                 .from("users")
-                .select("id")
+                .select("id, is_active")
                 .eq("id", data.user.id)
                 .single();
 
-            // If user doesn't exist, create them
+            // If user doesn't exist, create them (for OAuth users)
             if (!existingUser) {
                 const provider = data.user.app_metadata?.provider || "oauth";
                 await supabase.from("users").insert({
@@ -32,13 +34,16 @@ export async function GET(request: Request) {
                     is_active: true,
                     role: "user",
                 });
+            } else {
+                // User exists, update is_active to true (for email confirmed users) and last_sign_in_at
+                await supabase
+                    .from("users")
+                    .update({
+                        is_active: true, // Activate user when email is confirmed
+                        last_sign_in_at: new Date().toISOString()
+                    })
+                    .eq("id", data.user.id);
             }
-
-            // Update last sign in
-            await supabase
-                .from("users")
-                .update({ last_sign_in_at: new Date().toISOString() })
-                .eq("id", data.user.id);
 
             const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
             const isLocalEnv = process.env.NODE_ENV === "development";

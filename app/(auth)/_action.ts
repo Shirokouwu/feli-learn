@@ -72,7 +72,7 @@ export async function registerAction(prevState: any, formData: FormData) {
 
     const supabase = await createClient()
 
-    // Sign up with Supabase
+    // Sign up with Supabase (auto trigger will create user record)
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -80,38 +80,33 @@ export async function registerAction(prevState: any, formData: FormData) {
             data: {
                 full_name: fullName,
             },
+            emailRedirectTo: `${process.env.SITE_URL || 'http://localhost:3000'}/api/auth/callback`
         },
     })
 
+    console.log("Sign up result:", { data, error });
+
     if (error) {
-        console.log(error)
+        console.log("Registration error:", error)
         return {
             success: false,
             message: error.message || "Registrasi gagal. Silakan coba lagi.",
         }
     }
 
-    // Insert user data into the database
     if (data.user) {
-        const { error: insertError } = await supabase.from("users").insert({
+        console.log("User created:", {
             id: data.user.id,
-            email: data.user.email!,
-            full_name: fullName,
-            created_at: new Date().toISOString(),
-            is_active: true,
-            role: "user",
-            provider: "email",
-        })
-
-        if (insertError) {
-            console.log(insertError)
-            return {
-                success: false,
-                message: insertError.message || "Gagal menyimpan data pengguna.",
-            }
-        }
+            email: data.user.email,
+            email_confirmed_at: data.user.email_confirmed_at,
+            confirmation_sent_at: data.user.confirmation_sent_at
+        });
     }
 
+    // User record is automatically created by the auto trigger
+    // No manual insert needed
+
+    console.log("Redirecting to confirm-email page");
     return redirect(`/confirm-email?email=${encodeURIComponent(email)}`)
 
 }
