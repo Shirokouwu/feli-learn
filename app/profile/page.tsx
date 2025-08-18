@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
@@ -42,11 +42,14 @@ import {
   Filter,
   Download,
   SortDesc,
+  Loader2,
 } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { toast } from "@/hooks/use-toast"
 import { useMobile } from "@/hooks/use-mobile"
+import { useUserProfile } from "@/hooks/use-user-profile"
+import { useScanHistory } from "@/hooks/use-scan-history"
+import { AvatarUpload } from "@/components/ui/avatar-upload"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,143 +59,175 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "sonner"
 
-// Sample scan history data
-const SAMPLE_HISTORY_DATA = [
-  {
-    id: "hist-001",
-    name: "Harimau Sumatera",
-    scientificName: "Panthera tigris sumatrae",
-    imageUrl: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 98.7,
-    date: new Date(2023, 10, 15, 14, 30),
-    conservationStatus: "Critically Endangered",
-    family: "Felidae",
-    genus: "Panthera",
-  },
-  {
-    id: "hist-002",
-    name: "Singa Afrika",
-    scientificName: "Panthera leo",
-    imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 97.3,
-    date: new Date(2023, 10, 14, 9, 45),
-    conservationStatus: "Vulnerable",
-    family: "Felidae",
-    genus: "Panthera",
-  },
-  {
-    id: "hist-003",
-    name: "Macan Tutul",
-    scientificName: "Panthera pardus",
-    imageUrl: "https://images.unsplash.com/photo-1456926631375-92c8ce872def?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 95.8,
-    date: new Date(2023, 10, 12, 16, 20),
-    conservationStatus: "Vulnerable",
-    family: "Felidae",
-    genus: "Panthera",
-  },
-  {
-    id: "hist-004",
-    name: "Kucing Domestik",
-    scientificName: "Felis catus",
-    imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2943&auto=format&fit=crop",
-    accuracy: 99.2,
-    date: new Date(2023, 10, 10, 11, 15),
-    conservationStatus: "Least Concern",
-    family: "Felidae",
-    genus: "Felis",
-  },
-  {
-    id: "hist-005",
-    name: "Cheetah",
-    scientificName: "Acinonyx jubatus",
-    imageUrl: "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 96.5,
-    date: new Date(2023, 10, 8, 13, 50),
-    conservationStatus: "Vulnerable",
-    family: "Felidae",
-    genus: "Acinonyx",
-  },
-  {
-    id: "hist-006",
-    name: "Lynx",
-    scientificName: "Lynx lynx",
-    imageUrl: "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 93.1,
-    date: new Date(2023, 10, 5, 10, 30),
-    conservationStatus: "Least Concern",
-    family: "Felidae",
-    genus: "Lynx",
-  },
-]
+// Navigation items for sidebar
 
 export default function ProfilePage() {
   const isMobile = useMobile()
+  const { profile, loading, updating, uploadingAvatar, updateProfile, uploadAvatar, removeAvatar } = useUserProfile()
   const [isEditing, setIsEditing] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile)
-  const [userData, setUserData] = useState({
-    name: "Andi Wijaya",
-    username: "andiwijaya",
-    email: "andi.wijaya@example.com",
-    bio: "Pecinta kucing dan peneliti taksonomi Felidae. Aktif dalam kegiatan konservasi harimau Sumatera sejak 2020.",
-    location: "Semarang, Indonesia",
-    website: "andiwijaya.com",
-    joinDate: "Januari 2023",
-    profileImage: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=2070&auto=format&fit=crop",
+  const [formData, setFormData] = useState({
+    full_name: "",
+    bio: "",
+    location: "",
+    website: "",
   })
-  const [historyData, setHistoryData] = useState(SAMPLE_HISTORY_DATA)
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "accuracy">("newest")
   const [filterText, setFilterText] = useState("")
 
-  const handleSaveProfile = () => {
-    setIsEditing(false)
-    toast({
-      title: "Profil Disimpan",
-      description: "Perubahan profil Anda telah berhasil disimpan",
-    })
-  }
+  // Use scan history with filters
+  const {
+    historyData,
+    loading: historyLoading,
+    deleteItem,
+    clearAll,
+    deletingItem,
+    clearingAll
+  } = useScanHistory({
+    search: filterText,
+    sortBy: sortOrder
+  })
 
-  const handleDeleteItem = (id: string) => {
-    setHistoryData((prev) => prev.filter((item) => item.id !== id))
-    toast({
-      title: "Item Dihapus",
-      description: "Item riwayat telah dihapus",
-    })
-  }
-
-  const handleClearHistory = () => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus semua riwayat scan?")) {
-      setHistoryData([])
-      toast({
-        title: "Riwayat Dihapus",
-        description: "Semua riwayat scan telah dihapus",
+  // Update form data when profile loads
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        full_name: profile.full_name || "",
+        bio: profile.bio || "",
+        location: profile.location || "",
+        website: profile.website || "",
       })
+    }
+  }, [profile])
+
+  const handleSaveProfile = async () => {
+    try {
+      await updateProfile(formData)
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Failed to save profile:', error)
     }
   }
 
-  // Sort and filter history data
-  const processedHistory = historyData
-    .filter(
-      (item) =>
-        item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        item.scientificName.toLowerCase().includes(filterText.toLowerCase()),
+  const handleUploadAvatar = async (file: File) => {
+    try {
+      await uploadAvatar(file)
+      return true
+    } catch (error) {
+      console.error('Failed to upload avatar:', error)
+      return false
+    }
+  }
+
+  const handleRemoveAvatar = async () => {
+    try {
+      await removeAvatar()
+      return true
+    } catch (error) {
+      console.error('Failed to remove avatar:', error)
+      return false
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Loading Skeleton */}
+        <div className="max-w-7xl mx-auto p-4 sm:p-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mb-6"
+          >
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              {/* Cover Photo Skeleton */}
+              <div className="h-32 bg-gradient-to-r from-emerald-400 to-emerald-600 relative">
+                <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=800')] opacity-10 mix-blend-overlay"></div>
+              </div>
+
+              {/* Profile Content Skeleton */}
+              <div className="px-6 pb-6 relative">
+                {/* Avatar Skeleton */}
+                <div className="absolute -top-12 left-6 ring-4 ring-white rounded-full">
+                  <div className="h-24 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                </div>
+
+                {/* Profile Info Skeleton */}
+                <div className="pt-16">
+                  <div className="space-y-3">
+                    <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+                    <div className="flex gap-4">
+                      <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                      <div className="h-3 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Stats Skeleton */}
+          <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+                  <div className="w-8 h-6 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div className="w-16 h-3 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Tabs Skeleton */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex gap-4 mb-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
+              ))}
+            </div>
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     )
-    .sort((a, b) => {
-      if (sortOrder === "newest") return b.date.getTime() - a.date.getTime()
-      if (sortOrder === "oldest") return a.date.getTime() - b.date.getTime()
-      return b.accuracy - a.accuracy
-    })
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Gagal memuat profil</p>
+          <Button onClick={() => window.location.reload()}>
+            Muat Ulang
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const handleDeleteItem = (id: string) => {
+    deleteItem(id)
+  }
+
+  const handleClearHistory = () => {
+    clearAll()
+  }
 
   // Navigation items for sidebar
   const navItems = [
-    { icon: <Home className="h-5 w-5" />, label: "Beranda", href: "/" },
+    { icon: <User className="h-5 w-5" />, label: "Profil", href: "/profile", active: true },
     { icon: <Search className="h-5 w-5" />, label: "Taksonomi", href: "/taxonomy" },
     { icon: <Camera className="h-5 w-5" />, label: "Scanner", href: "/scanner" },
     { icon: <LayoutDashboard className="h-5 w-5" />, label: "Radial View", href: "/radial" },
-    { icon: <User className="h-5 w-5" />, label: "Profil", href: "/profile", active: true },
     { icon: <FileText className="h-5 w-5" />, label: "Tentang", href: "/tentang" },
-    { icon: <Settings className="h-5 w-5" />, label: "Pengaturan", href: "/settings" },
   ]
 
   return (
@@ -205,9 +240,8 @@ export default function ProfilePage() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className={`${
-              isMobile ? "fixed inset-y-0 left-0 z-50" : "sticky top-0 h-screen"
-            } w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col`}
+            className={`${isMobile ? "fixed inset-y-0 left-0 z-50" : "sticky top-0 h-screen"
+              } w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col`}
           >
             {/* Sidebar Header */}
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
@@ -230,11 +264,10 @@ export default function ProfilePage() {
                 <Link
                   key={index}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    item.active
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${item.active
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    }`}
                 >
                   <span
                     className={`p-1.5 rounded-md ${item.active ? "bg-emerald-100 text-emerald-600" : "text-gray-500"}`}
@@ -249,18 +282,20 @@ export default function ProfilePage() {
             {/* User Section */}
             <div className="p-4 border-t border-gray-100">
               <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <Avatar className="h-10 w-10 border-2 border-emerald-100">
-                  <AvatarImage src={userData.profileImage || "/placeholder.svg"} alt={userData.name} />
-                  <AvatarFallback className="bg-emerald-100 text-emerald-800">
-                    {userData.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
+                <AvatarUpload
+                  currentAvatar={profile.avatar_url}
+                  userName={profile.full_name || profile.email}
+                  onUpload={handleUploadAvatar}
+                  onRemove={handleRemoveAvatar}
+                  uploading={uploadingAvatar}
+                  size="sm"
+                  className="flex-shrink-0"
+                />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{userData.name}</p>
-                  <p className="text-xs text-gray-500 truncate">@{userData.username}</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {profile.full_name || "User"}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">{profile.email}</p>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500">
                   <LogOut className="h-4 w-4" />
@@ -321,59 +356,59 @@ export default function ProfilePage() {
               <div className="px-6 pb-6 relative">
                 {/* Avatar */}
                 <div className="absolute -top-12 left-6 ring-4 ring-white rounded-full">
-                  <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                    <AvatarImage src={userData.profileImage || "/placeholder.svg"} alt={userData.name} />
-                    <AvatarFallback className="bg-emerald-100 text-emerald-800 text-2xl">
-                      {userData.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="absolute bottom-1 right-1 rounded-full h-7 w-7 shadow-sm bg-white hover:bg-gray-100"
-                  >
-                    <Camera className="h-3 w-3 text-gray-700" />
-                  </Button>
+                  <AvatarUpload
+                    currentAvatar={profile.avatar_url}
+                    userName={profile.full_name || profile.email}
+                    onUpload={handleUploadAvatar}
+                    onRemove={handleRemoveAvatar}
+                    uploading={uploadingAvatar}
+                    size="lg"
+                  />
                 </div>
 
                 {/* Profile Info */}
                 <div className="pt-14 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h1 className="text-xl font-bold text-gray-900">{userData.name}</h1>
+                      <h1 className="text-xl font-bold text-gray-900">{profile.full_name || "User"}</h1>
                       <Badge
                         variant="outline"
                         className="text-[10px] font-normal bg-emerald-50 text-emerald-700 border-emerald-200"
                       >
-                        Peneliti
+                        {profile.role === 'admin' ? 'Admin' : 'Pahlawan'}
                       </Badge>
                     </div>
-                    <p className="text-gray-500 text-sm">@{userData.username}</p>
+                    <p className="text-gray-500 text-sm">{profile.email}</p>
 
                     <div className="flex flex-wrap gap-4 mt-3">
-                      <div className="flex items-center text-xs text-gray-500">
-                        <MapPin className="h-3 w-3 mr-1 text-emerald-500" />
-                        {userData.location}
-                      </div>
+                      {profile.location && (
+                        <div className="flex items-center text-xs text-gray-500">
+                          <MapPin className="h-3 w-3 mr-1 text-emerald-500" />
+                          {profile.location}
+                        </div>
+                      )}
                       <div className="flex items-center text-xs text-gray-500">
                         <Calendar className="h-3 w-3 mr-1 text-emerald-500" />
-                        Bergabung {userData.joinDate}
+                        Bergabung {format(new Date(profile.created_at), "MMMM yyyy", { locale: id })}
                       </div>
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Globe className="h-3 w-3 mr-1 text-emerald-500" />
-                        <a
-                          href={`https://${userData.website}`}
-                          className="hover:text-emerald-600 hover:underline transition-colors"
-                        >
-                          {userData.website}
-                        </a>
-                      </div>
+                      {profile.website && (
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Globe className="h-3 w-3 mr-1 text-emerald-500" />
+                          <a
+                            href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-emerald-600 hover:underline transition-colors"
+                          >
+                            {profile.website.replace(/^https?:\/\//, '')}
+                          </a>
+                        </div>
+                      )}
                     </div>
 
-                    <p className="text-gray-600 text-sm mt-3 max-w-2xl leading-relaxed">{userData.bio}</p>
+                    {profile.bio && (
+                      <p className="text-gray-600 text-sm mt-3 max-w-2xl leading-relaxed">{profile.bio}</p>
+                    )}
                   </div>
 
                   <div className="flex gap-2 mt-2 md:mt-0">
@@ -475,41 +510,16 @@ export default function ProfilePage() {
                           </Badge>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="name" className="text-xs text-gray-500">
-                              Nama
-                            </Label>
-                            <Input
-                              id="name"
-                              value={userData.name}
-                              onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                              className="h-9 text-sm focus:ring-emerald-500 focus:border-emerald-500"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="username" className="text-xs text-gray-500">
-                              Username
-                            </Label>
-                            <Input
-                              id="username"
-                              value={userData.username}
-                              onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-                              className="h-9 text-sm focus:ring-emerald-500 focus:border-emerald-500"
-                            />
-                          </div>
-                        </div>
-
                         <div className="space-y-2">
-                          <Label htmlFor="email" className="text-xs text-gray-500">
-                            Email
+                          <Label htmlFor="name" className="text-xs text-gray-500">
+                            Nama Lengkap
                           </Label>
                           <Input
-                            id="email"
-                            type="email"
-                            value={userData.email}
-                            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                            id="name"
+                            value={formData.full_name}
+                            onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                             className="h-9 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                            placeholder="Masukkan nama lengkap"
                           />
                         </div>
 
@@ -519,10 +529,11 @@ export default function ProfilePage() {
                           </Label>
                           <Textarea
                             id="bio"
-                            value={userData.bio}
-                            onChange={(e) => setUserData({ ...userData, bio: e.target.value })}
+                            value={formData.bio}
+                            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                             rows={3}
                             className="text-sm resize-none focus:ring-emerald-500 focus:border-emerald-500"
+                            placeholder="Ceritakan sedikit tentang diri Anda..."
                           />
                         </div>
 
@@ -533,9 +544,10 @@ export default function ProfilePage() {
                             </Label>
                             <Input
                               id="location"
-                              value={userData.location}
-                              onChange={(e) => setUserData({ ...userData, location: e.target.value })}
+                              value={formData.location}
+                              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                               className="h-9 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                              placeholder="Kota, Negara"
                             />
                           </div>
                           <div className="space-y-2">
@@ -544,9 +556,10 @@ export default function ProfilePage() {
                             </Label>
                             <Input
                               id="website"
-                              value={userData.website}
-                              onChange={(e) => setUserData({ ...userData, website: e.target.value })}
+                              value={formData.website}
+                              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                               className="h-9 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                              placeholder="yourwebsite.com"
                             />
                           </div>
                         </div>
@@ -555,17 +568,34 @@ export default function ProfilePage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setIsEditing(false)}
+                            onClick={() => {
+                              setIsEditing(false)
+                              // Reset form data
+                              setFormData({
+                                full_name: profile.full_name || "",
+                                bio: profile.bio || "",
+                                location: profile.location || "",
+                                website: profile.website || "",
+                              })
+                            }}
                             className="text-xs h-8 text-gray-500 hover:text-gray-700"
                           >
                             Batal
                           </Button>
                           <Button
                             onClick={handleSaveProfile}
+                            disabled={updating}
                             className="bg-emerald-600 hover:bg-emerald-700 text-xs h-8"
                             size="sm"
                           >
-                            Simpan Perubahan
+                            {updating ? (
+                              <>
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                Menyimpan...
+                              </>
+                            ) : (
+                              "Simpan Perubahan"
+                            )}
                           </Button>
                         </div>
                       </div>
@@ -580,36 +610,66 @@ export default function ProfilePage() {
                             </div>
                             <div>
                               <p className="text-xs text-gray-500 mb-0.5">Email</p>
-                              <p className="text-sm font-medium">{userData.email}</p>
+                              <p className="text-sm font-medium">{profile.email}</p>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div className="p-2.5 bg-white rounded-lg shadow-sm">
-                              <MapPin className="h-4 w-4 text-emerald-500" />
+                          {profile.location && (
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="p-2.5 bg-white rounded-lg shadow-sm">
+                                <MapPin className="h-4 w-4 text-emerald-500" />
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500 mb-0.5">Lokasi</p>
+                                <p className="text-sm font-medium">{profile.location}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-xs text-gray-500 mb-0.5">Lokasi</p>
-                              <p className="text-sm font-medium">{userData.location}</p>
+                          )}
+
+                          {profile.website && (
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="p-2.5 bg-white rounded-lg shadow-sm">
+                                <ExternalLink className="h-4 w-4 text-emerald-500" />
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500 mb-0.5">Website</p>
+                                <a
+                                  href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm font-medium text-emerald-600 hover:underline"
+                                >
+                                  {profile.website.replace(/^https?:\/\//, '')}
+                                </a>
+                              </div>
                             </div>
-                          </div>
+                          )}
 
                           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                             <div className="p-2.5 bg-white rounded-lg shadow-sm">
-                              <ExternalLink className="h-4 w-4 text-emerald-500" />
+                              <Calendar className="h-4 w-4 text-emerald-500" />
                             </div>
                             <div>
-                              <p className="text-xs text-gray-500 mb-0.5">Website</p>
-                              <a
-                                href={`https://${userData.website}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm font-medium text-emerald-600 hover:underline"
-                              >
-                                {userData.website}
-                              </a>
+                              <p className="text-xs text-gray-500 mb-0.5">Bergabung</p>
+                              <p className="text-sm font-medium">
+                                {format(new Date(profile.created_at), "d MMMM yyyy", { locale: id })}
+                              </p>
                             </div>
                           </div>
+
+                          {profile.last_sign_in_at && (
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="p-2.5 bg-white rounded-lg shadow-sm">
+                                <Clock className="h-4 w-4 text-emerald-500" />
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500 mb-0.5">Terakhir Online</p>
+                                <p className="text-sm font-medium">
+                                  {format(new Date(profile.last_sign_in_at), "d MMMM yyyy, HH:mm", { locale: id })}
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -634,7 +694,7 @@ export default function ProfilePage() {
                           variant="outline"
                           className="text-[10px] bg-emerald-50 text-emerald-600 border-emerald-200"
                         >
-                          {processedHistory.length} Total
+                          {historyData.length} Total
                         </Badge>
                       </div>
 
@@ -694,7 +754,12 @@ export default function ProfilePage() {
                       </div>
 
                       <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                        {processedHistory.length === 0 ? (
+                        {historyLoading ? (
+                          <div className="flex items-center justify-center py-12">
+                            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+                            <span className="ml-2 text-gray-600">Memuat riwayat...</span>
+                          </div>
+                        ) : historyData.length === 0 ? (
                           <div className="text-center py-12 text-neutral-500">
                             <Search className="h-16 w-16 mx-auto mb-4 text-neutral-300" />
                             <p className="text-lg font-medium mb-2">Tidak Ada Riwayat</p>
@@ -707,7 +772,7 @@ export default function ProfilePage() {
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <AnimatePresence>
-                              {processedHistory.map((item) => (
+                              {historyData.map((item) => (
                                 <motion.div
                                   key={item.id}
                                   initial={{ opacity: 0, y: 20 }}
@@ -750,10 +815,7 @@ export default function ProfilePage() {
                                         className="h-7 w-7"
                                         onClick={() => {
                                           // Navigate to taxonomy page with this species
-                                          toast({
-                                            title: "Navigasi",
-                                            description: "Navigasi ke halaman taksonomi akan segera tersedia",
-                                          })
+                                          toast("Navigasi ke halaman taksonomi akan segera tersedia")
                                         }}
                                       >
                                         <Eye className="h-3.5 w-3.5 text-emerald-600" />
@@ -778,16 +840,21 @@ export default function ProfilePage() {
                       {historyData.length > 0 && (
                         <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                           <div className="text-xs text-neutral-500">
-                            {processedHistory.length} item ditampilkan
+                            {historyData.length} item ditampilkan
                             {filterText && ` (filter: "${filterText}")`}
                           </div>
                           <Button
                             variant="destructive"
                             size="sm"
                             onClick={handleClearHistory}
+                            disabled={clearingAll}
                             className="bg-red-600 hover:bg-red-700"
                           >
-                            <Trash2 className="h-3.5 w-3.5 mr-2" />
+                            {clearingAll ? (
+                              <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-3.5 w-3.5 mr-2" />
+                            )}
                             Hapus Semua
                           </Button>
                         </div>

@@ -4,3 +4,7 @@ export { useScanStats, useIncrementScan } from './use-scan-stats'
 
 // UI-related hooks
 export { useScrollDetection } from './use-scroll-detection'
+
+// User-related hooks
+export { useUserProfile } from './use-user-profile'
+export { useScanHistory } from './use-scan-history'
