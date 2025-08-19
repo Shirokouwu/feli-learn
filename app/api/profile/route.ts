@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser, updateUserProfile } from "@/lib/auth"
-import { createClient } from "@/utils/supabase/server"
+import { createServer } from "@/utils/supabase/server"
 
 export async function GET() {
     try {
@@ -14,7 +14,7 @@ export async function GET() {
         }
 
         // Fetch complete user profile from database
-        const supabase = await createClient()
+        const supabase = await createServer()
         const { data: profile, error: profileError } = await supabase
             .from('users')
             .select('*')
@@ -62,7 +62,7 @@ export async function PUT(request: Request) {
         const body = await request.json()
         const { full_name, avatar_url, bio, location, website } = body
 
-        const supabase = await createClient()
+        const supabase = await createServer()
 
         // Update in users table
         const { data, error } = await supabase

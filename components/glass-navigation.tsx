@@ -121,7 +121,7 @@ export function GlassNavigation({
                                  {fullName}
                               </span>
                            </span>
-                           <Avatar className={`border-2 border-white/40 transition-all duration-300 ${isScrolled ? 'w-9 h-9' : 'w-10 h-10'}`}>
+                           <Avatar className={`border-2 border-white/40 transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
                               <AvatarImage src={profilePicture} alt={fullName} />
                               <AvatarFallback className="bg-white/20 text-teal-800 font-semibold">
                                  {fullName.charAt(0)}

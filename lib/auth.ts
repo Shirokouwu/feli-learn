@@ -1,8 +1,8 @@
-import { createClient } from "@/utils/supabase/server"
+import { createServer } from "@/utils/supabase/server"
 import type { User } from "@supabase/supabase-js"
 
 export async function getCurrentUser() {
-    const supabase = await createClient()
+    const supabase = await createServer()
 
     const { data: { user }, error } = await supabase.auth.getUser()
 
@@ -24,7 +24,7 @@ export async function getCurrentUser() {
 }
 
 export async function getUserById(id: string) {
-    const supabase = await createClient()
+    const supabase = await createServer()
 
     const { data, error } = await supabase
         .from("users")
@@ -43,7 +43,7 @@ export async function updateUserProfile(id: string, updates: {
     full_name?: string
     avatar_url?: string
 }) {
-    const supabase = await createClient()
+    const supabase = await createServer()
 
     const { data, error } = await supabase
         .from("users")
@@ -63,7 +63,7 @@ export async function updateUserProfile(id: string, updates: {
 }
 
 export async function isUserAdmin(userId: string): Promise<boolean> {
-    const supabase = await createClient()
+    const supabase = await createServer()
 
     const { data } = await supabase
         .from("users")

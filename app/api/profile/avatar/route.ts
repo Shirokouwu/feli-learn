@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/utils/supabase/server"
-import { validateImageFile, generateFileName } from "@/lib/upload-utils"
+import { createServer } from "@/utils/supabase/server"
+import { validateImageFile, generateFileName } from "@/lib/upload/validation"
 
 
 export const config = {
@@ -12,7 +12,7 @@ export const config = {
 
 export async function POST(request: Request) {
     try {
-        const { data: { user } } = await (await createClient()).auth.getUser()
+        const { data: { user } } = await (await createServer()).auth.getUser()
         if (!user) {
             return NextResponse.json(
                 { error: "User not authenticated" },
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
             )
         }
 
-        const supabase = await createClient()
+        const supabase = await createServer()
 
         // Generate unique filename using utility
         const fileName = generateFileName(user.id, file.name)
@@ -153,7 +153,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
     try {
-        const { data: { user } } = await (await createClient()).auth.getUser()
+        const { data: { user } } = await (await createServer()).auth.getUser()
 
         if (!user) {
             return NextResponse.json(
@@ -162,7 +162,7 @@ export async function DELETE(request: Request) {
             )
         }
 
-        const supabase = await createClient()
+        const supabase = await createServer()
 
         // Get current avatar URL to extract file path
         const { data: profile } = await supabase

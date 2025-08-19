@@ -3,11 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { createClient } from '@/utils/supabase/server'
+import { createServer } from '@/utils/supabase/server'
 import { loginSchema, registerSchema } from '@/lib/schemas'
 
 export async function loginAction(prevState: any, formData: FormData) {
-    const supabase = await createClient()
+    const supabase = await createServer()
 
     const formDataLogin = {
         email: formData.get('email') as string,
@@ -70,7 +70,7 @@ export async function registerAction(prevState: any, formData: FormData) {
         }
     }
 
-    const supabase = await createClient()
+    const supabase = await createServer()
 
     // Sign up with Supabase (auto trigger will create user record)
     const { data, error } = await supabase.auth.signUp({
@@ -112,7 +112,7 @@ export async function registerAction(prevState: any, formData: FormData) {
 }
 
 const signInWith = (provider: any) => async () => {
-    const supabase = await createClient();
+    const supabase = await createServer();
 
     const auth_callback_url = `${process.env.SITE_URL}/api/auth/callback`;
 
@@ -137,7 +137,7 @@ const signInWith = (provider: any) => async () => {
 };
 
 export const signOut = async () => {
-    const supabase = await createClient();
+    const supabase = await createServer();
     await supabase.auth.signOut();
 };
 

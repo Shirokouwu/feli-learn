@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 interface Filter {
   key: string;
@@ -39,6 +39,8 @@ export function useTaxonomyData() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (v5 syntax)
     queryFn: async () => {
+      const supabase = createClient();
+
       const fetchData = async (table: string, filter: Filter = { key: "", values: [] }) => {
         if (!filter.key || !filter.values.length) return [];
         const { data, error } = await supabase.from(table).select("*").in(filter.key, filter.values);

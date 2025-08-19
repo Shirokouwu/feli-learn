@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/auth"
-import { createClient } from "@/utils/supabase/server"
+import { createServer } from "@/utils/supabase/server"
 
 // Sample data - nanti bisa diganti dengan data real dari database
 const SAMPLE_HISTORY_DATA = [

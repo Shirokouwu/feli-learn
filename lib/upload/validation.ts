@@ -1,5 +1,6 @@
 /**
- * Utility functions for handling file uploads and validation
+ * Universal utility functions for file upload validation
+ * Safe to use on both server and client side
  */
 
 export const ALLOWED_IMAGE_TYPES = [
@@ -46,7 +47,7 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
         return { valid: false, error: 'Ukuran file terlalu besar. Maksimal 5MB' }
     }
 
-    // Log for debugging
+    // Log for debugging (works on both server and client)
     console.log('File validation:', {
         name: file.name,
         type: file.type,
@@ -81,43 +82,5 @@ export function getFileExtension(filename: string): string {
 
 export function isValidImageExtension(filename: string): boolean {
     const ext = getFileExtension(filename)
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)
-}
-
-/**
- * Compress image file before upload
- */
-export function compressImage(file: File, maxWidth = 800, quality = 0.8): Promise<File> {
-    return new Promise((resolve) => {
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-        const img = new Image()
-
-        img.onload = () => {
-            // Calculate new dimensions
-            const ratio = Math.min(maxWidth / img.width, maxWidth / img.height)
-            const width = img.width * ratio
-            const height = img.height * ratio
-
-            canvas.width = width
-            canvas.height = height
-
-            // Draw and compress
-            ctx?.drawImage(img, 0, 0, width, height)
-
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    const compressedFile = new File([blob], file.name, {
-                        type: file.type,
-                        lastModified: Date.now()
-                    })
-                    resolve(compressedFile)
-                } else {
-                    resolve(file) // Return original if compression fails
-                }
-            }, file.type, quality)
-        }
-
-        img.src = URL.createObjectURL(file)
-    })
+    return ALLOWED_IMAGE_EXTENSIONS.includes(ext)
 }

@@ -67,20 +67,18 @@ export const useScannerLogic = (): ScannerHook => {
       setApiChecking(true)
 
       try {
-        const fetchResponse = await fetch(API_MODEL_HEALTH_URL, {
-          method: 'GET',
+        const fetchResponse = await axios.get(API_MODEL_HEALTH_URL, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-          },
-          mode: 'cors',
+          }
         })
 
-        if (!fetchResponse.ok) {
+        if (!fetchResponse.status || fetchResponse.status < 200 || fetchResponse.status >= 300) {
           throw new Error(`HTTP error! status: ${fetchResponse.status}`)
         }
 
-        const data = await fetchResponse.json()
+        const data = fetchResponse.data
 
         const mockResponse = { data: data, status: fetchResponse.status }
         setApiResponse(mockResponse)
@@ -275,16 +273,13 @@ export const useScannerLogic = (): ScannerHook => {
       formData.append('image', file)
       formData.append('threshold', '0.7')
 
-      const response = await fetch(`${API_MODEL_URL}/predict/upload`, {
-        method: 'POST',
-        body: formData,
-      })
+      const response = await axios.post(`${API_MODEL_URL}/predict/upload`, formData)
 
-      if (!response.ok) {
+      if (!response.status || response.status < 200 || response.status >= 300) {
         throw new Error('API request failed')
       }
 
-      const apiData: ApiClassificationResponse = await response.json()
+      const apiData: ApiClassificationResponse = response.data
       const scannerEndTime = Date.now()
       const scannerDuration = Math.round((scannerEndTime - scannerStartTime) / 1000)
 

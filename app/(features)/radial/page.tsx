@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import RadialTaxonomy from "./_radial-component";
-import { createClient } from "@/utils/supabase/server";
+import { createServer } from "@/utils/supabase/server";
 import { Lock, LogIn, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RadialWithTimer from "./_radial-with-timer";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RadialPage() {
-  const supabase = await createClient()
+  const supabase = await createServer()
 
   const { data, error } = await supabase.auth.getUser()
 
@@ -22,6 +22,6 @@ export default async function RadialPage() {
   }
 
   return (
-    <RadialWithTimer /> 
+    <RadialWithTimer />
   )
 }
