@@ -55,10 +55,10 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
       >
         AI Scanner Pro
       </Badge>
-      <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-emerald-800 mb-4 sm:mb-6 px-2">
+      <h1 className="text-4xl lg:text-5xl font-bold text-emerald-800 mb-4 sm:mb-6 px-2">
         Identifikasi Family Felidae
       </h1>
-      <p className="text-neutral-600 text-base md:text-lg lg:text-xl leading-relaxed mb-4 px-0 sm:px-4">
+      <p className="text-neutral-600 text-base md:text-lg leading-relaxed mb-4 px-0 sm:px-4">
         Unggah gambar atau masukkan URL untuk mengidentifikasi kucing besar dan kecil{" "}
         <span className="text-emerald-700 font-medium bg-emerald-50 px-2 py-1 rounded-lg">
           (keluarga Felidae, seperti harimau, singa, kucing rumahan)

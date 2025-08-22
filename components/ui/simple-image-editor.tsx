@@ -150,19 +150,19 @@ export function SimpleImageEditor({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-lg max-h-[90vh] p-0 sm:max-w-lg w-[95vw] sm:w-auto">
-                <DialogHeader className="p-3 pb-2 sm:p-4">
-                    <DialogTitle className="flex items-center gap-2 text-sm sm:text-base">
+            <DialogContent className="max-w-md p-0 overflow-hidden">
+                <DialogHeader className="p-4 pb-3 border-b">
+                    <DialogTitle className="flex items-center gap-2 text-base">
                         <Crop className="h-4 w-4 text-emerald-600" />
-                        Crop Foto Profil
+                        Edit Foto Profil
                     </DialogTitle>
-                    <DialogDescription className="text-xs sm:text-sm">
-                        Geser dan zoom untuk mengatur foto Anda
+                    <DialogDescription className="text-sm text-gray-500">
+                       <span className="hidden lg:flex"> Geser dan zoom untuk mengatur foto</span>
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="p-3 space-y-3 sm:p-4 sm:space-y-4">
-                    {/* Simple Cropper Area */}
+                <div className="p-4 space-y-4">
+                    {/* Simple Cropper */}
                     <div className="w-full flex justify-center">
                         <div
                             className="relative bg-gray-900 rounded-lg overflow-hidden"
@@ -180,99 +180,105 @@ export function SimpleImageEditor({
                                 onCropComplete={onCropCompleteHandler}
                                 onZoomChange={setZoomLevel}
                                 cropShape={cropShape}
-                                showGrid={true}
+                                showGrid={false}
                                 restrictPosition={true}
                                 zoomWithScroll={true}
-                                minZoom={0.5}
-                                maxZoom={3}
+                                zoomSpeed={0.2}
+                                minZoom={1}
+                                maxZoom={2}
+                                objectFit="contain"
                                 style={{
                                     containerStyle: {
                                         width: '100%',
                                         height: '100%',
-                                        backgroundColor: '#111827',
-                                        touchAction: 'none'
+                                        backgroundColor: '#111827'
                                     },
                                     cropAreaStyle: {
                                         border: '2px solid #10b981',
                                         boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
                                     },
                                     mediaStyle: {
-                                        maxWidth: '100%',
-                                        maxHeight: '100%',
                                         objectFit: 'contain'
                                     }
                                 }}
                             />
 
-                            {/* Simple Instructions */}
-                            <div className="absolute bottom-1 left-1 right-1 sm:bottom-2 sm:left-2 sm:right-2">
-                                <div className="bg-black/70 backdrop-blur-sm rounded px-2 py-1">
-                                    <p className="text-white text-[10px] sm:text-xs text-center leading-tight">
-                                        <span className="hidden sm:inline">Drag untuk pindah • Scroll untuk zoom</span>
-                                        <span className="sm:hidden">Sentuh & geser untuk pindah • Pinch untuk zoom</span>
+                            {/* Simple hint */}
+                            <div className="absolute bottom-2 left-2 right-2">
+                                <div className="bg-black/70 rounded px-2 py-1">
+                                    <p className="text-white text-xs text-center">
+                                        Drag • Scroll zoom
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Simple Zoom Control */}
-                    <div className="bg-gray-50 rounded-lg p-2 space-y-2 sm:p-3">
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
+                    {/* Simple Zoom */}
+                    <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">Zoom</span>
-                            <span className="text-gray-800 font-medium">{Math.round(zoomLevel * 100)}%</span>
+                            <span className="text-emerald-600 font-medium">{Math.round(zoomLevel * 100)}%</span>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <ZoomOut className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 flex-shrink-0" />
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setZoomLevel(Math.max(1, zoomLevel - 0.1))}
+                                className="p-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
+                            >
+                                <ZoomOut className="h-4 w-4 text-gray-600" />
+                            </button>
+
                             <Slider
                                 value={[zoomLevel]}
                                 onValueChange={(value: number[]) => setZoomLevel(value[0])}
-                                min={0.5}
+                                min={1}
                                 max={3}
-                                step={0.1}
-                                className="flex-1"
+                                step={0.05}
+                                className="flex-1 cursor-pointer"
                             />
-                            <ZoomIn className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 flex-shrink-0" />
-                        </div>
-                    </div>
 
-                    {/* Quick Reset */}
-                    <div className="flex justify-center">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleResetCrop}
-                            className="text-xs text-gray-600 hover:text-gray-800 h-8 px-3 sm:h-9 sm:px-4"
-                        >
-                            Reset Posisi
-                        </Button>
+                            <button
+                                onClick={() => setZoomLevel(Math.min(3, zoomLevel + 0.1))}
+                                className="p-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
+                            >
+                                <ZoomIn className="h-4 w-4 text-gray-600" />
+                            </button>
+                        </div>
+
+                        <div className="flex justify-center">
+                            <button
+                                onClick={handleResetCrop}
+                                className="text-xs text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+                            >
+                                Reset posisi
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <DialogFooter className="p-3 pt-0 gap-2 sm:p-4 flex-col sm:flex-row">
+                <DialogFooter className="p-4 pt-0 gap-2">
                     <Button
                         variant="outline"
                         onClick={() => onOpenChange(false)}
                         disabled={isProcessingCrop}
-                        className="flex-1 h-10 text-sm sm:h-9"
+                        className="flex-1 hover:bg-gray-50 transition-colors cursor-pointer"
                     >
-                        <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                         Batal
                     </Button>
                     <Button
                         onClick={handleCropConfirm}
                         disabled={isProcessingCrop || !selectedCropAreaPixels}
-                        className="bg-emerald-600 hover:bg-emerald-700 flex-1 h-10 text-sm sm:h-9"
+                        className="bg-emerald-600 hover:bg-emerald-700 flex-1 transition-colors cursor-pointer"
                     >
                         {isProcessingCrop ? (
                             <div className="flex items-center gap-2">
-                                <div className="h-3 w-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                 Proses...
                             </div>
                         ) : (
                             <>
-                                <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                                <Check className="h-4 w-4 mr-1 " />
                                 Selesai
                             </>
                         )}

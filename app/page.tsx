@@ -9,6 +9,17 @@ export default async function Home() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  function getGreeting() {
+    const hour = new Date().getHours();
+
+    if (hour >= 5 && hour < 11) return "Selamat Pagi 🌅";
+    if (hour >= 11 && hour < 15) return "Selamat Siang ☀️";
+    if (hour >= 15 && hour < 18) return "Selamat Sore 🌇";
+    if (hour >= 18 && hour < 24) return "Selamat Malam 🌙";
+    return "Selamat Tengah Malam 🌌"; // jam 0 - 4
+  }
+
+
   console.log("user", user);
 
   if (user) {
@@ -35,8 +46,9 @@ export default async function Home() {
           )}
           <div>
             <h1 className="text-2xl font-bold">
-              Welcome back, {user.user_metadata.full_name}
+              {getGreeting()}, {user.user_metadata.full_name}
             </h1>
+            <p className="text-gray-600">Welcome back 👋</p>
           </div>
           <form>
             <Button type="submit" formAction={signOut} className="ml-4">
