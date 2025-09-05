@@ -84,17 +84,15 @@ export default function ConfirmEmailPage() {
 
   // Check verification status from Supabase
   useEffect(() => {
-    let interval: any
-    const checkVerification = async () => {
+    const interval: ReturnType<typeof setInterval> = setInterval(async () => {
       const supabase = createClient()
 
       // Ganti 'users' jika nama tabel berbeda
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('users')
         .select('is_active')
         .eq('email', email)
         .single();
-
 
       if (data && data.is_active) {
         setIsVerified((prev) => {
@@ -107,12 +105,10 @@ export default function ConfirmEmailPage() {
       } else {
         setIsVerified(false)
       }
+    }, 2000) // request setiap 2 detik
 
-    }
-    checkVerification()
-    interval = setInterval(checkVerification, 2000) // request setiap 2 detik
     return () => clearInterval(interval)
-  }, [throwConfetti, playCatSound])
+  }, [email, throwConfetti, playCatSound])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)

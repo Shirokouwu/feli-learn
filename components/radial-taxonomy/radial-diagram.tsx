@@ -5,6 +5,7 @@ import type React from "react"
 import { memo, forwardRef, useState, useEffect, useRef } from "react"
 import { RadialNode } from "./radial-node"
 import { Badge } from "@/components/ui/badge"
+import { getConservationStatusHexColor } from "@/lib/conservation-utils"
 
 interface RadialDiagramProps {
   radialNodes: any[]
@@ -23,6 +24,7 @@ interface RadialDiagramProps {
   onMouseMove: (event: React.MouseEvent) => void
   onMouseUp: (event: React.MouseEvent) => void
   onMouseLeave: (event: React.MouseEvent) => void
+  onWheel?: (event: React.WheelEvent) => void
   onTouchStart: (event: React.TouchEvent) => void
   onTouchMove: (event: React.TouchEvent) => void
   onTouchEnd: (event: React.TouchEvent) => void
@@ -42,6 +44,7 @@ export const RadialDiagram = memo(
       onMouseMove,
       onMouseUp,
       onMouseLeave,
+      onWheel,
       onTouchStart,
       onTouchMove,
       onTouchEnd,
@@ -110,38 +113,7 @@ export const RadialDiagram = memo(
       }
     }
 
-    // Add a utility function to get conservation status color
-    const getConservationStatusColor = (status: string | undefined) => {
-      if (!status) return "#67e8f9" // Soft cyan color if no status
-
-      const statusLower = status.toLowerCase()
-
-      if (statusLower.includes("extinct") || statusLower.includes("punah")) {
-        return "#4b5563" // Soft dark gray for extinct
-      } else if (
-        statusLower.includes("critically") ||
-        statusLower.includes("kritis") ||
-        statusLower.includes("sangat terancam")
-      ) {
-        return "#f87171" // Soft coral red for critically endangered
-      } else if (statusLower.includes("endangered") || statusLower.includes("terancam")) {
-        return "#fb7185" // Soft pink-red for endangered
-      } else if (statusLower.includes("vulnerable") || statusLower.includes("rentan")) {
-        return "#fb923c" // Soft warm orange for vulnerable
-      } else if (statusLower.includes("near") || statusLower.includes("hampir")) {
-        return "#fbbf24" // Soft golden yellow for near threatened
-      } else if (statusLower.includes("least") || statusLower.includes("rendah") || statusLower.includes("lc")) {
-        return "#34d399" // Soft emerald green for least concern
-      } else if (statusLower.includes("data") || statusLower.includes("kurang")) {
-        return "#a1a1aa" // Soft gray for data deficient
-      } else if (statusLower.includes("not") || statusLower.includes("tidak")) {
-        return "#d1d5db" // Light soft gray for not evaluated
-      } else {
-        return "#60a5fa" // Soft blue as default
-      }
-    }
-
-    // Add this helper function after the getConservationStatusColor function:
+    // Add this helper function after the getConservationStatusHexColor function:
     const getConservationFilterId = (status: string | undefined) => {
       if (!status) return "electricGlow"
 
@@ -201,7 +173,7 @@ export const RadialDiagram = memo(
           ref={ref}
           className="radial-diagram w-full h-full"
           style={{
-            touchAction: "manipulation", // Ubah dari "none" ke "manipulation" untuk mendukung touchscreen
+            touchAction: "none", // Prevent default touch behaviors to allow custom touch handling
             cursor: "grab",
             userSelect: "none", // Mencegah seleksi teks
             WebkitUserSelect: "none",
@@ -219,6 +191,7 @@ export const RadialDiagram = memo(
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
+          onWheel={onWheel}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -491,7 +464,7 @@ export const RadialDiagram = memo(
                 // Get conservation status color for species
                 const conservationColor =
                   node.level === "species" && node.conservation_status
-                    ? getConservationStatusColor(node.conservation_status)
+                    ? getConservationStatusHexColor(node.conservation_status)
                     : node.level === "genus"
                       ? "#818cf8"
                       : "#fdba74"

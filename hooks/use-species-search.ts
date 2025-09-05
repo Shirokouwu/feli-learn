@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import type { Species } from "@/types"
 
 export function useSpeciesSearch() {
@@ -13,12 +13,13 @@ export function useSpeciesSearch() {
   const { data: allSpecies } = useQuery({
     queryKey: ["species"],
     queryFn: async () => {
+      const supabase = createClient();
       const { data, error } = await supabase.from("taksonomi_spesies").select("*").order("nama")
 
       if (error) throw error
 
       // Map the data to match the expected format
-      return data.map((s) => ({
+      return data.map((s: any) => ({
         id: s.id,
         name: s.nama_umum || s.nama || "",
         scientific_name: s.nama || "",
@@ -44,6 +45,7 @@ export function useSpeciesSearch() {
   const { data: popularSpecies = [] } = useQuery({
     queryKey: ["popular-species"],
     queryFn: async () => {
+      const supabase = createClient();
       // This still uses the old species_clicks table
       // You might need to update this to a new table if you've renamed it
       const { data, error } = await supabase
@@ -56,7 +58,7 @@ export function useSpeciesSearch() {
       if (error) throw error
 
       // Transform the data to match the Species type with click_count
-      return data.map((item) => ({
+      return data.map((item: any) => ({
         ...item.species,
         image_url: item.species.url_gambar || item.species.image_url || "",
         url_gambar: item.species.url_gambar || "",

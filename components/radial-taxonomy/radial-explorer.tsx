@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useRef, useState, useEffect } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useTaxonomyExplorer } from "@/hooks/use-taxonomy-explorer"
 
@@ -62,10 +62,32 @@ export function RadialExplorer() {
   const [showTour, setShowTour] = useState(false)
   const [tourStep, setTourStep] = useState(1)
   const [captureMode, setCaptureMode] = useState(false)
+  const [isDiagramHovered, setIsDiagramHovered] = useState(false)
+
+  // Add mobile detection state
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
+
+  // Check if device is mobile on mount
+  useEffect(() => {
+    const checkIsMobile = () => {
+      if (typeof window === 'undefined') return false
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        ('ontouchstart' in window) ||
+        (window.innerWidth <= 768)
+    }
+
+    setIsMobileDevice(checkIsMobile())
+
+    // Listen for resize events to update mobile detection
+    const handleResize = () => {
+      setIsMobileDevice(checkIsMobile())
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Tambahkan state untuk mengelola visibilitas daftar taksonomi
-  // Tambahkan state ini di bagian state management (sekitar baris 40-50):
-
   const [showTaxonomyList, setShowTaxonomyList] = useState(false)
 
   // Refs
@@ -273,13 +295,144 @@ export function RadialExplorer() {
 
   const radialNodes = prepareRadialData()
 
-  // Add zoom functions
+  // Add zoom functions with center-point zooming
   const handleZoomIn = useCallback(() => {
-    setTransform((prev) => ({ ...prev, scale: prev.scale * 1.2 }))
+    if (!diagramElementRef.current || !containerRef.current) return
+
+    const containerWidth = containerRef.current.clientWidth
+    const containerHeight = containerRef.current.clientHeight
+    const zoomFactor = 1.2
+    const oldScale = dragTransformRef.current.scale
+    const newScale = Math.min(5, oldScale * zoomFactor)
+
+    // Zoom towards center of viewport
+    const centerX = 0 // Center of container
+    const centerY = 0 // Center of container
+
+    // Calculate the point in world coordinates before scaling
+    const worldX = (centerX - dragTransformRef.current.x) / oldScale
+    const worldY = (centerY - dragTransformRef.current.y) / oldScale
+
+    // Calculate new position to keep the center point fixed
+    const newX = centerX - worldX * newScale
+    const newY = centerY - worldY * newScale
+
+    // Update both ref and state
+    dragTransformRef.current.scale = newScale
+    dragTransformRef.current.x = newX
+    dragTransformRef.current.y = newY
+
+    setTransform(prev => ({
+      ...prev,
+      scale: newScale,
+      x: newX,
+      y: newY
+    }))
+
+    // Apply transform immediately
+    diagramElementRef.current.style.transform = `
+      translate(${containerWidth / 2 + newX}px, ${containerHeight / 2 + newY}px) 
+      scale(${newScale}) 
+      rotate(${dragTransformRef.current.rotation}deg)
+    `
   }, [])
 
   const handleZoomOut = useCallback(() => {
-    setTransform((prev) => ({ ...prev, scale: prev.scale / 1.2 }))
+    if (!diagramElementRef.current || !containerRef.current) return
+
+    const containerWidth = containerRef.current.clientWidth
+    const containerHeight = containerRef.current.clientHeight
+    const zoomFactor = 1 / 1.2
+    const oldScale = dragTransformRef.current.scale
+    const newScale = Math.max(0.1, oldScale * zoomFactor)
+
+    // Zoom towards center of viewport
+    const centerX = 0 // Center of container
+    const centerY = 0 // Center of container
+
+    // Calculate the point in world coordinates before scaling
+    const worldX = (centerX - dragTransformRef.current.x) / oldScale
+    const worldY = (centerY - dragTransformRef.current.y) / oldScale
+
+    // Calculate new position to keep the center point fixed
+    const newX = centerX - worldX * newScale
+    const newY = centerY - worldY * newScale
+
+    // Update both ref and state
+    dragTransformRef.current.scale = newScale
+    dragTransformRef.current.x = newX
+    dragTransformRef.current.y = newY
+
+    setTransform(prev => ({
+      ...prev,
+      scale: newScale,
+      x: newX,
+      y: newY
+    }))
+
+    // Apply transform immediately
+    diagramElementRef.current.style.transform = `
+      translate(${containerWidth / 2 + newX}px, ${containerHeight / 2 + newY}px) 
+      scale(${newScale}) 
+      rotate(${dragTransformRef.current.rotation}deg)
+    `
+  }, [])
+
+  // Add wheel zoom handler with Ctrl requirement and cursor-centered zoom
+  const handleWheel = useCallback((event: React.WheelEvent<SVGSVGElement>) => {
+    // Only zoom when Ctrl key is pressed (like Google Maps, etc.)
+    if (!event.ctrlKey) {
+      return // Let normal scroll behavior happen
+    }
+
+    // Prevent page scroll
+    event.preventDefault()
+
+    if (!diagramElementRef.current || !containerRef.current) return
+
+    // Get mouse position relative to container
+    const rect = containerRef.current.getBoundingClientRect()
+    const mouseX = event.clientX - rect.left
+    const mouseY = event.clientY - rect.top
+
+    // Convert to SVG coordinates (relative to container center)
+    const containerWidth = containerRef.current.clientWidth
+    const containerHeight = containerRef.current.clientHeight
+    const svgX = mouseX - containerWidth / 2
+    const svgY = mouseY - containerHeight / 2
+
+    // Calculate zoom direction and factor
+    const delta = event.deltaY > 0 ? -1 : 1
+    const zoomFactor = 1 + (delta * 0.1)
+    const oldScale = dragTransformRef.current.scale
+    const newScale = Math.max(0.1, Math.min(5, oldScale * zoomFactor))
+
+    // Calculate the point in world coordinates before scaling
+    const worldX = (svgX - dragTransformRef.current.x) / oldScale
+    const worldY = (svgY - dragTransformRef.current.y) / oldScale
+
+    // Calculate new position to keep the mouse cursor point fixed
+    const newX = svgX - worldX * newScale
+    const newY = svgY - worldY * newScale
+
+    // Update both state and ref
+    dragTransformRef.current.scale = newScale
+    dragTransformRef.current.x = newX
+    dragTransformRef.current.y = newY
+
+    setTransform(prev => ({
+      ...prev,
+      scale: newScale,
+      x: newX,
+      y: newY
+    }))
+
+    // Apply transform immediately for smooth zooming
+    diagramElementRef.current.style.transform = `
+      translate(${containerWidth / 2 + newX}px, ${containerHeight / 2 + newY}px) 
+      scale(${newScale}) 
+      rotate(${dragTransformRef.current.rotation}deg)
+    `
   }, [])
 
   const handleReset = useCallback(() => {
@@ -1028,6 +1181,12 @@ export function RadialExplorer() {
     [originalHandleSpeciesSelect, animateToNode],
   )
 
+  // Add refs for multi-touch support
+  const lastTouchRef = useRef<{ [id: number]: Point }>({})
+  const initialDistanceRef = useRef<number>(0)
+  const initialScaleRef = useRef<number>(1)
+  const initialTransformRef = useRef<{ x: number, y: number }>({ x: 0, y: 0 }) // Store initial transform
+
   // Add dragging functionality with direct DOM manipulation for maximum smoothness
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<SVGSVGElement>) => {
@@ -1206,106 +1365,233 @@ export function RadialExplorer() {
 
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<SVGSVGElement>) => {
+      // Cancel any ongoing animation
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+        animationRef.current = null
+      }
+
+      // Cancel any inertia animation and update state immediately
+      if (inertiaAnimationRef.current) {
+        cancelAnimationFrame(inertiaAnimationRef.current)
+        inertiaAnimationRef.current = null
+
+        // Update React state with the last position from inertia
+        setTransform(dragTransformRef.current)
+      }
+
+      // Store current transform values in ref for direct manipulation
+      dragTransformRef.current = {
+        x: dragTransformRef.current.x !== transform.x ? dragTransformRef.current.x : transform.x,
+        y: dragTransformRef.current.y !== transform.y ? dragTransformRef.current.y : transform.y,
+        scale: transform.scale,
+        rotation: transform.rotation,
+      }
+
+      // Get reference to the diagram container element
+      if (!diagramElementRef.current && svgRef.current) {
+        diagramElementRef.current = svgRef.current.querySelector(".diagram-container") as HTMLElement
+      }
+
       if (event.touches.length === 1) {
-        // Cancel any ongoing animation
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current)
-          animationRef.current = null
-        }
-
-        // Cancel any inertia animation and update state immediately
-        if (inertiaAnimationRef.current) {
-          cancelAnimationFrame(inertiaAnimationRef.current)
-          inertiaAnimationRef.current = null
-
-          // PENTING: Update React state dengan posisi terakhir dari inertia
-          setTransform(dragTransformRef.current)
-        }
-
-        // Store current transform values in ref for direct manipulation
-        // Gunakan nilai terbaru (baik dari state React atau dari dragTransformRef)
-        dragTransformRef.current = {
-          x: dragTransformRef.current.x !== transform.x ? dragTransformRef.current.x : transform.x,
-          y: dragTransformRef.current.y !== transform.y ? dragTransformRef.current.y : transform.y,
-          scale: transform.scale,
-          rotation: transform.rotation,
-        }
-
-        // Get reference to the diagram container element
-        if (!diagramElementRef.current && svgRef.current) {
-          diagramElementRef.current = svgRef.current.querySelector(".diagram-container") as HTMLElement
-        }
-
+        // Single touch - panning
         isGrabbingRef.current = true
         lastMousePosRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }
         velocityRef.current = { x: 0, y: 0, timestamp: performance.now() }
         velocityHistoryRef.current = []
 
-        // JANGAN GUNAKAN preventDefault() di sini untuk memungkinkan interaksi touchscreen
+        // Store touch for tracking
+        lastTouchRef.current = {
+          [event.touches[0].identifier]: {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+          }
+        }
+      } else if (event.touches.length === 2) {
+        // Two finger touch - prepare for pinch zoom
+        isGrabbingRef.current = false
+        const touch1 = event.touches[0]
+        const touch2 = event.touches[1]
+
+        // Calculate initial distance between fingers
+        const dx = touch1.clientX - touch2.clientX
+        const dy = touch1.clientY - touch2.clientY
+        initialDistanceRef.current = Math.sqrt(dx * dx + dy * dy)
+        initialScaleRef.current = dragTransformRef.current.scale
+
+        // Store initial transform state (CRUCIAL for proper zoom centering)
+        initialTransformRef.current = {
+          x: dragTransformRef.current.x,
+          y: dragTransformRef.current.y
+        }
+
+        // Store both touches
+        lastTouchRef.current = {
+          [touch1.identifier]: { x: touch1.clientX, y: touch1.clientY },
+          [touch2.identifier]: { x: touch2.clientX, y: touch2.clientY }
+        }
       }
+
+      // Prevent default behavior like scrolling
+      event.preventDefault()
     },
     [transform],
   )
 
   const handleTouchMove = useCallback((event: React.TouchEvent<SVGSVGElement>) => {
-    if (!isGrabbingRef.current || !diagramElementRef.current || event.touches.length !== 1) return
+    if (!diagramElementRef.current) return
 
-    // Calculate delta
-    const dx = event.touches[0].clientX - lastMousePosRef.current.x
-    const dy = event.touches[0].clientY - lastMousePosRef.current.y
-    const now = performance.now()
-    const elapsed = now - velocityRef.current.timestamp
-
-    // Update velocity tracking
-    if (elapsed > 0) {
-      const newVelocity = {
-        x: (dx / elapsed) * 16.67, // Normalize to pixels per frame (assuming 60fps)
-        y: (dy / elapsed) * 16.67,
-        timestamp: now,
-      }
-
-      // Keep last 8 velocity samples for smoother inertia (increased from 5)
-      velocityHistoryRef.current.push(newVelocity)
-      if (velocityHistoryRef.current.length > 8) {
-        velocityHistoryRef.current.shift()
-      }
-
-      velocityRef.current = newVelocity
-    }
-
-    // Update the transform ref (not state, for performance)
-    dragTransformRef.current = {
-      ...dragTransformRef.current,
-      x: dragTransformRef.current.x + dx,
-      y: dragTransformRef.current.y + dy,
-    }
-
-    // Directly apply transform to the DOM element for maximum smoothness
-    // Use 2D translate for sharper rendering
     const containerWidth = containerRef.current?.clientWidth || 0
     const containerHeight = containerRef.current?.clientHeight || 0
 
-    diagramElementRef.current.style.transform = `
-      translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
-      scale(${dragTransformRef.current.scale}) 
-      rotate(${dragTransformRef.current.rotation}deg)
-    `
+    if (event.touches.length === 1 && isGrabbingRef.current) {
+      // Single touch panning
+      const touch = event.touches[0]
+      const lastTouch = lastTouchRef.current[touch.identifier]
 
-    // Update last position
-    lastMousePosRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }
+      if (lastTouch) {
+        const dx = touch.clientX - lastTouch.x
+        const dy = touch.clientY - lastTouch.y
+        const now = performance.now()
+        const elapsed = now - velocityRef.current.timestamp
 
-    // Gunakan stopPropagation sebagai gantinya untuk mencegah scroll halaman
-    // tapi tetap memungkinkan interaksi touch pada diagram
-    event.stopPropagation()
+        // Update velocity tracking
+        if (elapsed > 0) {
+          const newVelocity = {
+            x: (dx / elapsed) * 16.67,
+            y: (dy / elapsed) * 16.67,
+            timestamp: now,
+          }
+
+          velocityHistoryRef.current.push(newVelocity)
+          if (velocityHistoryRef.current.length > 8) {
+            velocityHistoryRef.current.shift()
+          }
+
+          velocityRef.current = newVelocity
+        }
+
+        // Update position
+        dragTransformRef.current.x += dx
+        dragTransformRef.current.y += dy
+
+        // Apply transform
+        diagramElementRef.current.style.transform = `
+          translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
+          scale(${dragTransformRef.current.scale}) 
+          rotate(${dragTransformRef.current.rotation}deg)
+        `
+
+        // Update touch tracking
+        lastTouchRef.current[touch.identifier] = { x: touch.clientX, y: touch.clientY }
+        lastMousePosRef.current = { x: touch.clientX, y: touch.clientY }
+      }
+    } else if (event.touches.length === 2) {
+      // Two finger pinch zoom with LIVE center calculation
+      const touch1 = event.touches[0]
+      const touch2 = event.touches[1]
+
+      // Calculate current distance
+      const dx = touch1.clientX - touch2.clientX
+      const dy = touch1.clientY - touch2.clientY
+      const currentDistance = Math.sqrt(dx * dx + dy * dy)
+
+      // Calculate CURRENT center point between fingers (not initial!)
+      const currentCenterX = (touch1.clientX + touch2.clientX) / 2
+      const currentCenterY = (touch1.clientY + touch2.clientY) / 2
+
+      // Convert to SVG coordinates (relative to container center)
+      const svgCenterX = currentCenterX - containerWidth / 2
+      const svgCenterY = currentCenterY - containerHeight / 2
+
+      if (initialDistanceRef.current > 0) {
+        // Calculate scale factor
+        const scaleFactor = currentDistance / initialDistanceRef.current
+        const newScale = Math.max(0.1, Math.min(5, initialScaleRef.current * scaleFactor))
+
+        // Calculate what point in the world coordinates this center represents
+        // Use the INITIAL transform state to find world coordinates
+        const worldCenterX = (svgCenterX - initialTransformRef.current.x) / initialScaleRef.current
+        const worldCenterY = (svgCenterY - initialTransformRef.current.y) / initialScaleRef.current
+
+        // Calculate new transform position to keep this world point at the finger center
+        const newX = svgCenterX - worldCenterX * newScale
+        const newY = svgCenterY - worldCenterY * newScale
+
+        // Debug logging (comment out in production)
+        console.log('Zoom Debug:', {
+          fingerCenter: { x: currentCenterX, y: currentCenterY },
+          svgCenter: { x: svgCenterX, y: svgCenterY },
+          worldCenter: { x: worldCenterX, y: worldCenterY },
+          oldScale: initialScaleRef.current,
+          newScale,
+          oldPos: { x: initialTransformRef.current.x, y: initialTransformRef.current.y },
+          newPos: { x: newX, y: newY }
+        })
+
+        // Update transform
+        dragTransformRef.current.scale = newScale
+        dragTransformRef.current.x = newX
+        dragTransformRef.current.y = newY
+
+        // Apply transform immediately
+        diagramElementRef.current.style.transform = `
+          translate(${containerWidth / 2 + newX}px, ${containerHeight / 2 + newY}px) 
+          scale(${newScale}) 
+          rotate(${dragTransformRef.current.rotation}deg)
+        `
+
+        // Update React state
+        setTransform(prev => ({
+          ...prev,
+          scale: newScale,
+          x: newX,
+          y: newY
+        }))
+      }
+
+      // Update touch positions
+      lastTouchRef.current[touch1.identifier] = { x: touch1.clientX, y: touch1.clientY }
+      lastTouchRef.current[touch2.identifier] = { x: touch2.clientX, y: touch2.clientY }
+    }
+
+    // Prevent scrolling and other default behaviors
+    event.preventDefault()
   }, [])
 
-  const handleTouchEnd = useCallback(() => {
-    if (!isGrabbingRef.current) return
+  const handleTouchEnd = useCallback((event: React.TouchEvent<SVGSVGElement>) => {
+    if (event.touches.length === 0) {
+      // All touches ended - apply inertia if we were panning
+      if (isGrabbingRef.current) {
+        isGrabbingRef.current = false
+        applyInertia()
+      }
 
-    isGrabbingRef.current = false
+      // Update React state with final values
+      setTransform(dragTransformRef.current)
 
-    // Apply inertia effect
-    applyInertia()
+      // Clear touch tracking and zoom references
+      lastTouchRef.current = {}
+      initialDistanceRef.current = 0
+      initialScaleRef.current = 1
+      initialTransformRef.current = { x: 0, y: 0 }
+    } else if (event.touches.length === 1 && !isGrabbingRef.current) {
+      // Went from pinch to single touch - start panning
+      isGrabbingRef.current = true
+      const touch = event.touches[0]
+      lastMousePosRef.current = { x: touch.clientX, y: touch.clientY }
+      velocityRef.current = { x: 0, y: 0, timestamp: performance.now() }
+      velocityHistoryRef.current = []
+
+      lastTouchRef.current = {
+        [touch.identifier]: { x: touch.clientX, y: touch.clientY }
+      }
+
+      // Clear zoom references when switching to pan
+      initialDistanceRef.current = 0
+      initialScaleRef.current = 1
+      initialTransformRef.current = { x: 0, y: 0 }
+    }
   }, [applyInertia])
 
   // Optimize the handleNodeClick function for immediate response
@@ -1373,8 +1659,19 @@ export function RadialExplorer() {
   return (
     <div
       ref={containerRef}
-      className="radial-explorer-container h-full relative bg-gradient-to-br from-teal-50 to-white overflow-hidden touch-pan-y mobile-touch-fix"
-      style={{ touchAction: "manipulation" }}
+      className="radial-explorer-container h-full relative bg-gradient-to-br from-teal-50 to-white overflow-hidden select-none"
+      style={{
+        touchAction: "none",
+        WebkitTouchCallout: "none",
+        WebkitUserSelect: "none",
+        KhtmlUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+        userSelect: "none",
+        WebkitTapHighlightColor: "transparent"
+      }}
+      onMouseEnter={() => setIsDiagramHovered(true)}
+      onMouseLeave={() => setIsDiagramHovered(false)}
     >
       {/* Intro overlay */}
       <AnimatePresence>{showIntro && <RadialIntro onClose={() => setShowIntro(false)} />}</AnimatePresence>
@@ -1387,14 +1684,16 @@ export function RadialExplorer() {
         onReset={handleReset}
         onRotateLeft={handleRotateLeft}
         onRotateRight={handleRotateRight}
+        isHovered={isDiagramHovered || isMobileDevice} // Always show on mobile
         onZoomChange={(values) => {
+          const newScale = values[0]
           setTransform((prev) => ({
             ...prev,
-            scale: values[0],
+            scale: newScale,
           }))
 
           // Update dragTransformRef scale to match
-          dragTransformRef.current.scale = values[0]
+          dragTransformRef.current.scale = newScale
         }}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -1487,9 +1786,12 @@ export function RadialExplorer() {
         // @ts-ignore
         onMouseLeave={handleMouseUp}
         // @ts-ignore
+        onWheel={handleWheel}
+        // @ts-ignore
         onTouchStart={handleTouchStart}
         // @ts-ignore
         onTouchMove={handleTouchMove}
+        // @ts-ignore
         onTouchEnd={handleTouchEnd}
         style={{ touchAction: "none" }}
       />

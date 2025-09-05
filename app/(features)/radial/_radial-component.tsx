@@ -1,37 +1,32 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { Suspense } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Compass,
   Sparkles,
   Dna,
   Zap,
-  ArrowLeft,
   Info,
   AlertTriangle,
   Shield,
   Leaf,
-  LogIn,
-  LogOut,
-  Lock,
-  Unlock,
 } from "lucide-react"
-import Link from "next/link"
-
 import { RadialOnboarding } from "@/components/radial-taxonomy/radial-onboarding"
 import { RadialExplorer } from "@/components/radial-taxonomy"
 import { RadialDiagramGuide } from "@/components/radial-taxonomy/radial-diagram-guide"
 import { TaxonomyLoading } from "@/components/radial-taxonomy/radial-loading"
+import { GlassNavigation } from "@/components/glass-navigation"
+import { useScrollDetection } from "@/hooks/use-scroll-detection"
 
-export default function RadialTaxonomy({ fullName }: { fullName: string }) {
+export default function RadialTaxonomy({ fullName, profilePicture }: { fullName: string, profilePicture: string }) {
   const [showInfo, setShowInfo] = useState(false)
   const [showLegend, setShowLegend] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const isScrolled = useScrollDetection({ threshold: 80 })
   const diagramRef = useRef<HTMLDivElement>(null)
 
   const scrollToDiagram = () => {
@@ -48,40 +43,20 @@ export default function RadialTaxonomy({ fullName }: { fullName: string }) {
         {showOnboarding && <RadialOnboarding isOpen={showOnboarding} onClose={() => setShowOnboarding(false)} />}
       </AnimatePresence>
 
-      {/* Back button (always visible) */}
-      <div className="fixed top-4 left-4 z-50 flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-white/80 backdrop-blur-sm border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 shadow-md"
-          asChild
-        >
-          <Link href="/">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Kembali
-          </Link>
-        </Button>
-        <div>
-          {fullName ? (
-            <span className="text-sm text-teal-600 flex items-center">
-              <Unlock className="h-4 w-4 mr-1" />
-              {fullName}
-            </span>
-          ) : (
-            <span className="text-sm text-teal-600 flex items-center">
-              <Lock className="h-4 w-4 mr-1" />
-              Login Diperlukan
-              <Link href="/login" className="text-teal-600 underline ml-1">
-                Login
-              </Link>
-            </span>
-          )}
-        </div>
-      </div>
+      {/* Navigation bar with glass effect */}
+      <GlassNavigation
+        isScrolled={isScrolled}
+        fullName={fullName}
+        backHref="/"
+        backLabel="Kembali"
+        showUserInfo={true}
+        profilePicture={profilePicture}
+      />
 
 
       {/* Header section - always shown */}
-      <div className="container mx-auto px-4 py-8">
+      <div className={`container mx-auto px-4 transition-all duration-500 ${isScrolled ? 'pt-20 pb-8' : 'pt-20 pb-8'
+        }`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -152,10 +127,10 @@ export default function RadialTaxonomy({ fullName }: { fullName: string }) {
             </Button>
             <Button
               variant="outline"
-              className="flex items-center gap-2 border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 shadow-sm"
+              className="flex items-center gap-2 border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 shadow-sm group"
               onClick={() => setShowLegend(!showLegend)}
             >
-              <Info className="h-4 w-4 mr-2" />
+              <Info className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" />
               Status Konservasi
             </Button>
           </div>
@@ -366,7 +341,7 @@ export default function RadialTaxonomy({ fullName }: { fullName: string }) {
         {/* Add the RadialDiagramGuide component */}
         <RadialDiagramGuide />
 
-        <div className="h-[500px] md:h-[calc(100vh-4rem)] relative w-full">
+        <div className="h-[600px] md:h-[calc(100vh-4rem)] relative w-full">
           <Suspense fallback={<TaxonomyLoading />}>
             <RadialExplorer />
           </Suspense>

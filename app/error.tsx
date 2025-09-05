@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Error({
   error,
@@ -35,12 +36,12 @@ export default function Error({
             Coba Lagi
           </Button>
           <Button variant="outline" asChild className="ml-4">
-            <a href="/">Kembali ke Beranda</a>
+            <Link href="/">Kembali ke Beranda</Link>
           </Button>
         </div>
         <div className="mt-8 p-4 bg-emerald-50 rounded-lg">
           <p className="text-sm text-emerald-800">
-            "Kucing pun kadang membuat kesalahan, tapi mereka selalu bangkit kembali dengan anggun! 🐱"
+            &ldquo;Kucing pun kadang membuat kesalahan, tapi mereka selalu bangkit kembali dengan anggun! 🐱&rdquo;
           </p>
         </div>
       </div>

@@ -258,39 +258,41 @@ export function TaxonomyList({ onSelectNode, isOpen: externalIsOpen, onToggle }:
           </div>
 
           {/* Taxonomy Stats */}
-          <div className="px-3 py-2 bg-gradient-to-r from-teal-50 to-indigo-50 border-b border-teal-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col items-center justify-center bg-white rounded-lg p-1.5 shadow-sm border border-teal-200">
-                  <Layers className="h-4 w-4 text-indigo-600" />
-                  <span className="text-lg font-semibold text-indigo-700">{genera.length}</span>
-                  <span className="text-[10px] text-indigo-600 font-medium -mt-1">Genus</span>
+          <div className="px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-teal-50 to-indigo-50 border-b border-teal-100">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+              <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3">
+                <div className="flex flex-col items-center justify-center bg-white rounded-lg p-1 sm:p-1.5 shadow-sm border border-teal-200 min-w-[50px] sm:min-w-auto">
+                  <Layers className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-600" />
+                  <span className="text-sm sm:text-lg font-semibold text-indigo-700">{genera.length}</span>
+                  <span className="text-[9px] sm:text-[10px] text-indigo-600 font-medium -mt-0.5 sm:-mt-1">Genus</span>
                 </div>
-                <div className="flex flex-col items-center justify-center bg-white rounded-lg p-1.5 shadow-sm border border-orange-200">
-                  <Cat className="h-4 w-4 text-orange-600" />
-                  <span className="text-lg font-semibold text-orange-700">{totalSpecies}</span>
-                  <span className="text-[10px] text-orange-600 font-medium -mt-1">Spesies</span>
+                <div className="flex flex-col items-center justify-center bg-white rounded-lg p-1 sm:p-1.5 shadow-sm border border-orange-200 min-w-[50px] sm:min-w-auto">
+                  <Cat className="h-3 sm:h-4 w-3 sm:w-4 text-orange-600" />
+                  <span className="text-sm sm:text-lg font-semibold text-orange-700">{totalSpecies}</span>
+                  <span className="text-[9px] sm:text-[10px] text-orange-600 font-medium -mt-0.5 sm:-mt-1">Spesies</span>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-row sm:flex-col gap-1 justify-center sm:justify-start">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={expandAllGenera}
-                  className="h-7 px-2 text-xs bg-teal-50 border-teal-200 text-teal-700 hover:bg-teal-100 hover:text-teal-800"
+                  className="h-6 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs bg-teal-50 border-teal-200 text-teal-700 hover:bg-teal-100 hover:text-teal-800 flex-1 sm:flex-initial"
                 >
-                  <ChevronsDown className="h-3 w-3 mr-1" />
-                  Buka Semua
+                  <ChevronsDown className="h-2.5 sm:h-3 w-2.5 sm:w-3 mr-0.5 sm:mr-1" />
+                  <span className="hidden xs:inline">Buka</span>
+                  <span className="xs:hidden">↓</span>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={collapseAllGenera}
-                  className="h-7 px-2 text-xs bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-800"
+                  className="h-6 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-800 flex-1 sm:flex-initial"
                 >
-                  <ChevronsUp className="h-3 w-3 mr-1" />
-                  Tutup Semua
+                  <ChevronsUp className="h-2.5 sm:h-3 w-2.5 sm:w-3 mr-0.5 sm:mr-1" />
+                  <span className="hidden xs:inline">Tutup</span>
+                  <span className="xs:hidden">↑</span>
                 </Button>
               </div>
             </div>
@@ -340,11 +342,10 @@ export function TaxonomyList({ onSelectNode, isOpen: externalIsOpen, onToggle }:
                         </Button>
                         <Button
                           variant="ghost"
-                          className={`flex-1 justify-start px-2 py-1.5 h-auto text-left rounded-lg ${
-                            searchQuery && genus.nama.toLowerCase().includes(searchQuery.toLowerCase())
+                          className={`flex-1 justify-start px-2 py-1.5 h-auto text-left rounded-lg ${searchQuery && genus.nama.toLowerCase().includes(searchQuery.toLowerCase())
                               ? "bg-amber-50 hover:bg-amber-100 border border-amber-200"
                               : "hover:bg-teal-50 border border-indigo-100"
-                          }`}
+                            }`}
                           onClick={() => handleNodeSelect(genus.id)}
                         >
                           <div className="flex items-center justify-between w-full">

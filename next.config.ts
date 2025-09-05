@@ -18,9 +18,16 @@ const nextConfig: NextConfig = {
         hostname: "lh3.googleusercontent.com"
       }, {
         hostname: "avatars.githubusercontent.com"
+      }, {
+        hostname: "sxowqvkanlihnrsijcsm.supabase.co"
       }
     ]
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb'
+    }
+  }
 };
 
 export default nextConfig;

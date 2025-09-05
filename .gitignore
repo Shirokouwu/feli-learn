@@ -44,3 +44,5 @@ next-env.d.ts
 lib/supabase.ts
 migrations/*
 app/(features)/radial/coba.tsx
+scripts
+scripts/*

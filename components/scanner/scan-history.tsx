@@ -17,6 +17,7 @@ import {
   SortDesc,
   Eye,
   X,
+  AlertTriangle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -39,7 +40,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-
+import { getConservationStatusColor } from "@/lib/conservation-utils"
 
 // Define the history item type
 export type ScanHistoryItem = {
@@ -374,9 +375,12 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
 
                   <div className="bg-emerald-50 p-3 rounded-lg">
                     <p className="text-xs text-emerald-700 mb-1">Status Konservasi</p>
-                    <p className="text-sm font-medium text-emerald-800">
+                    <Badge
+                      className={`${getConservationStatusColor(selectedItem.conservationStatus || "Unknown")} text-xs px-2 py-1`}
+                    >
+                      <AlertTriangle className="h-3 w-3 mr-1" />
                       {selectedItem.conservationStatus || "Unknown"}
-                    </p>
+                    </Badge>
                   </div>
                 </div>
 

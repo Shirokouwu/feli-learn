@@ -109,7 +109,7 @@ export default function NewPasswordPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-black/50 flex items-center justify-center p-6">
           <div className="max-w-md text-center">
-            <p className="text-white text-2xl font-bold mb-4">"Amankan akun Anda dengan kata sandi yang kuat"</p>
+            <p className="text-white text-2xl font-bold mb-4">&ldquo;Amankan akun Anda dengan kata sandi yang kuat&rdquo;</p>
             <p className="text-emerald-400 text-xl">Lindungi petualangan pembelajaran Anda</p>
           </div>
         </div>

@@ -37,6 +37,21 @@ export async function updateSession(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser()
 
+    // Redirect authenticated users away from auth pages
+    if (
+        user &&
+        (request.nextUrl.pathname.startsWith('/login') ||
+            request.nextUrl.pathname.startsWith('/register') ||
+            request.nextUrl.pathname.startsWith('/confirm-email') ||
+            request.nextUrl.pathname.startsWith('/reset-password') ||
+            request.nextUrl.pathname.startsWith('/new-password'))
+    ) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/' // Redirect to home page or dashboard
+        return NextResponse.redirect(url)
+    }
+
+    // Redirect unauthenticated users to login page
     if (
         !user &&
         !request.nextUrl.pathname.startsWith('/login') &&
@@ -45,7 +60,10 @@ export async function updateSession(request: NextRequest) {
         !request.nextUrl.pathname.startsWith('/api/auth/confirm') &&
         !request.nextUrl.pathname.startsWith('/confirm-email') &&
         !request.nextUrl.pathname.startsWith('/verify-email') &&
-        !request.nextUrl.pathname.startsWith('/') 
+        !request.nextUrl.pathname.startsWith('/reset-password') &&
+        !request.nextUrl.pathname.startsWith('/new-password') &&
+        !request.nextUrl.pathname.startsWith('/') &&
+        !request.nextUrl.pathname.startsWith('/tentang')
     ) {
         // no user, potentially respond by redirecting the user to the login page
         const url = request.nextUrl.clone()

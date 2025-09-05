@@ -15,15 +15,18 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Species } from "@/types"
 import type { EnhancedSpeciesData } from "@/lib/species-matcher"
+import { getConservationStatusColor } from "@/lib/conservation-utils"
 
 interface ScannerResultDisplayProps {
   scanResult: Species | null
   enhancedSpeciesData: EnhancedSpeciesData | null
+  scanDuration?: number
 }
 
 export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
   scanResult,
-  enhancedSpeciesData
+  enhancedSpeciesData,
+  scanDuration = 0
 }) => {
   const router = useRouter()
 
@@ -52,6 +55,9 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
             <h3 className="text-xl font-bold text-emerald-800">Hasil Identifikasi</h3>
             <p className="text-emerald-600">
               Teridentifikasi dengan akurasi {enhancedSpeciesData?.identifikasi.akurasi.toFixed(1) || '98.7'}%
+              {scanDuration > 0 && ` ( ${scanDuration >= 60
+                ? `${Math.floor(scanDuration / 60)} menit ${scanDuration % 60} detik`
+                : `${scanDuration} detik`} )`}
             </p>
           </div>
         </div>
@@ -78,9 +84,8 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
 
             {/* Status Badges - Minimalist */}
             <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mb-4">
-              <Badge className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
+              <Badge className={`${getConservationStatusColor(enhancedSpeciesData.identifikasi.status.konservasi)} transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm`}>
                 <AlertTriangle className="h-3 w-3 mr-1" />
-
                 Status: {enhancedSpeciesData.identifikasi.status.konservasi}
               </Badge>
               <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
@@ -118,7 +123,7 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
 
             {/* Status Badges - Minimalist */}
             <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mb-4">
-              <Badge className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
+              <Badge className={`${getConservationStatusColor(scanResult.conservation_status)} transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm`}>
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 <span className="hidden sm:inline">Status: </span>
                 {scanResult.conservation_status}

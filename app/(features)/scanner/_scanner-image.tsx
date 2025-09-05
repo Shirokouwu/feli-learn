@@ -1,10 +1,12 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { useScannerLogic } from "@/hooks/use-scanner-logic"
-
+import { useScrollDetection } from "@/hooks/use-scroll-detection"
+import { getUserClient } from "@/lib/auth-client"
+import { GlassNavigation } from "@/components/glass-navigation"
 
 import { ScannerHeader } from "@/components/scanner/scanner-header"
 import { ScannerUploadArea } from "@/components/scanner/scanner-upload-area"
@@ -20,14 +22,48 @@ import ScanStatusApi from "@/components/scanner/scan-check-api"
 export default function ScannerImage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Auth state
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
   // Local state for UI interactions
   const [showTips, setShowTips] = useState(false)
   const [activeTab, setActiveTab] = useState<string>("upload")
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [showHistory, setShowHistory] = useState<boolean>(false)
 
+  // Scroll detection for navbar
+  const isScrolled = useScrollDetection({ threshold: 80 })
+
   // Scanner logic hook
   const scanner = useScannerLogic()
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const userData = await getUserClient()
+        setUser(userData)
+        setIsLoggedIn(!!userData)
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        setUser(null)
+        setIsLoggedIn(false)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [])
+
+  // Handle login toggle
+  const handleToggleLogin = (checked: boolean) => {
+    setIsLoggedIn(checked)
+    if (!checked) {
+      setShowHistory(false)
+    }
+  }
 
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -61,12 +97,35 @@ export default function ScannerImage() {
     }
   }
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
+          <p className="mt-2 text-emerald-700">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50">
+      {/* Glass Navigation */}
+      <GlassNavigation
+        isScrolled={isScrolled}
+        fullName={user?.profile?.full_name || user?.user_metadata?.full_name}
+        profilePicture={user?.profile?.avatar_url || user?.user_metadata?.avatar_url}
+        backHref="/"
+        backLabel="Beranda"
+        showUserInfo={true}
+        className=""
+      />
+
       {/* Scanner Header */}
       <ScannerHeader
         isLoggedIn={isLoggedIn}
-        onToggleLogin={setIsLoggedIn}
+        onToggleLogin={handleToggleLogin}
         onShowHistory={() => setShowHistory(true)}
       />
 
@@ -126,6 +185,7 @@ export default function ScannerImage() {
                   <ScannerResultDisplay
                     scanResult={scanner.scanResult}
                     enhancedSpeciesData={scanner.enhancedSpeciesData}
+                    scanDuration={scanner.scanDuration}
                   />
 
                   {/* Action buttons */}

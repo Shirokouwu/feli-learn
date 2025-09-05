@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Badge } from "../ui/badge";
-import { CheckCircle, Sparkles, Zap, AlertTriangle } from "lucide-react";
+import { CheckCircle, Sparkles, Zap, AlertTriangle, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
 
 
 
@@ -15,6 +16,32 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
     };
   };
 }) {
+  const [waitTime, setWaitTime] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (apiChecking) {
+      interval = setInterval(() => {
+        setWaitTime(prev => prev + 1);
+      }, 1000);
+    } else {
+      setWaitTime(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [apiChecking]);
+
+  const formatWaitTime = (seconds: number) => {
+    if (seconds < 60) {
+      return `${seconds} detik`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -28,11 +55,15 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
       >
         AI Scanner Pro
       </Badge>
-      <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-emerald-800 mb-4 sm:mb-6 px-2">
+      <h1 className="text-4xl lg:text-5xl font-bold text-emerald-800 mb-4 sm:mb-6 px-2">
         Identifikasi Family Felidae
       </h1>
-      <p className="text-neutral-600 text-base md:text-lg lg:text-xl leading-relaxed mb-4 px-0 sm:px-4">
-        Unggah gambar atau masukkan URL untuk mengidentifikasi anggota keluarga Felidae secara instan dengan teknologi AI.
+      <p className="text-neutral-600 text-base md:text-lg leading-relaxed mb-4 px-0 sm:px-4">
+        Unggah gambar atau masukkan URL untuk mengidentifikasi kucing besar dan kecil{" "}
+        <span className="text-emerald-700 font-medium bg-emerald-50 px-2 py-1 rounded-lg">
+          (keluarga Felidae, seperti harimau, singa, kucing rumahan)
+        </span>{" "}
+        secara instan dengan teknologi AI
       </p>
 
       <section className="mx-auto ">
@@ -52,10 +83,19 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
         </div>
         <div className="flex justify-center mt-3 px-2">
           {apiChecking ? (
-            <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs sm:text-sm">
-              <div className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse mr-2"></div>
-              Memeriksa status API...
-            </Badge>
+            <div className="flex flex-col items-center gap-2">
+              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs sm:text-sm">
+                <div className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse mr-2"></div>
+                <Clock className="h-3 w-3 mr-1 text-yellow-500" />
+                Memeriksa status API...
+              </Badge>
+              <div className="text-xs text-neutral-600 text-center">
+                <span className="font-medium">Waktu tunggu: {formatWaitTime(waitTime)}</span>
+                <p className="mt-1 px-2">
+                  Model sedang dimuat, harap tunggu sebentar...
+                </p>
+              </div>
+            </div>
           ) : apiReady ? (
             <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs sm:text-sm">
               <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
