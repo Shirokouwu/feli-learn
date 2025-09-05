@@ -88,7 +88,7 @@ export default function RadialWithTimer() {
           Akses gratis: {formatTime(timeRemaining)}
         </span>
       </div>
-      <RadialTaxonomy userID="anonymous" />
+      <RadialTaxonomy fullName="Anony" profilePicture="Anony" />
     </div>
   );
 }

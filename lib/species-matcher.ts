@@ -187,8 +187,8 @@ export async function matchAndFetchSpeciesData(
                 perilaku: perilakuData?.pola_aktivitas || "",
             },
             genus: {
-                nama: genusData?.nama || "",
-                deskripsi: genusData?.deskripsi || "",
+                nama: genusData?.[0]?.nama || "",
+                deskripsi: genusData?.[0]?.deskripsi || "",
             },
             distribusi: {
                 benua: extractContinents(speciesData.distribusi_geografis),

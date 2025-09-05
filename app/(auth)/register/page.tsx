@@ -172,7 +172,7 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-black/50 flex items-center justify-center p-6">
           <div className="max-w-md text-center">
             <p className="text-white text-2xl font-bold mb-4">
-              "Taxonomy is the science of naming, describing and classifying organisms"
+              &ldquo;Taxonomy is the science of naming, describing and classifying organisms&rdquo;
             </p>
             <p className="text-emerald-400 text-xl">- Carl Linnaeus</p>
           </div>

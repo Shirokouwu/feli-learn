@@ -14,7 +14,7 @@ export default async function NotFound() {
     try {
       const url = new URL(referer)
       previousPath = url.pathname
-    } catch (error) {
+    } catch {
       // If referrer is invalid, fallback to home
       previousPath = "/"
     }
@@ -48,7 +48,7 @@ export default async function NotFound() {
         </div>
         <div className="mt-8 p-4 bg-emerald-50 rounded-lg">
           <p className="text-sm text-emerald-800">
-            "Bahkan kucing pun kadang tersesat, tapi mereka selalu menemukan jalan pulang! 🐱"
+            &ldquo;Bahkan kucing pun kadang tersesat, tapi mereka selalu menemukan jalan pulang! 🐱&rdquo;
           </p>
         </div>
       </div>

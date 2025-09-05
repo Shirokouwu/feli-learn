@@ -10,7 +10,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
     try {
         const user = await getCurrentUser()
         if (!user) {
-            return { success: false, message: 'User tidak terautentikasi' }
+            return { error: 'User tidak terautentikasi' }
         }
 
         // Parse and validate form data
@@ -25,8 +25,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
 
         if (!result.success) {
             return {
-                success: false,
-                message: 'Data tidak valid',
+                error: 'Data tidak valid',
                 fieldErrors: result.error.flatten().fieldErrors,
             }
         }
@@ -46,18 +45,39 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
 
         if (error) {
             console.error('Profile update error:', error)
-            return { success: false, message: 'Gagal memperbarui profil' }
+            return { error: 'Gagal memperbarui profil' }
+        }
+
+        // Update Supabase Auth metadata for consistency (full_name)
+        try {
+            if (result.data.full_name) {
+                const { data: { user: authUser } } = await supabase.auth.getUser()
+                if (authUser) {
+                    const currentMetadata = authUser.user_metadata || {}
+                    await supabase.auth.updateUser({
+                        data: {
+                            ...currentMetadata,
+                            full_name: result.data.full_name
+                        }
+                    })
+                }
+            }
+        } catch (metadataError) {
+            console.warn('Failed to update auth metadata:', metadataError)
+            // Don't fail the entire operation for metadata sync issues
         }
 
         // Revalidate the profile page
         revalidatePath('/profile')
+        revalidatePath('/radial') // Revalidate pages that use auth metadata
+        revalidatePath('/') // Revalidate home page that uses auth metadata
 
         console.timeEnd('updateProfileAction')
-        return { success: true, message: 'Profil berhasil diperbarui' }
+        return { success: 'Profil berhasil diperbarui' }
     } catch (error) {
         console.timeEnd('updateProfileAction')
         console.error('Profile update action error:', error)
-        return { success: false, message: 'Terjadi kesalahan saat memperbarui profil' }
+        return { error: 'Terjadi kesalahan saat memperbarui profil' }
     }
 }
 
@@ -66,31 +86,31 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
     try {
         const user = await getCurrentUser()
         if (!user) {
-            return { success: false, message: 'User tidak terautentikasi' }
+            return { error: 'User tidak terautentikasi' }
         }
 
         const action = formData.get('action')
         if (action === 'remove') {
-            return await removeAvatarAction(prevState, formData)
+            return await removeAvatarAction()
         }
 
         const file = formData.get('avatar') as File
 
         // If no file, return error
         if (!file || file.size === 0) {
-            return { success: false, message: 'File tidak ditemukan' }
+            return { error: 'File tidak ditemukan' }
         }
 
         // Validate file type
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
         if (!allowedTypes.includes(file.type)) {
-            return { success: false, message: 'Format file harus JPG, PNG, atau WebP' }
+            return { error: 'Format file harus JPG, PNG, atau WebP' }
         }
 
         // Validate file size (5MB max)
         const maxSize = 5 * 1024 * 1024 // 5MB
         if (file.size > maxSize) {
-            return { success: false, message: 'Ukuran file maksimal 5MB' }
+            return { error: 'Ukuran file maksimal 5MB' }
         }
 
         console.time('supabase-operations')
@@ -110,7 +130,7 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
 
             if (uploadError) {
                 console.error('Avatar upload error:', uploadError)
-                return { success: false, message: 'Gagal mengunggah foto profil' }
+                return { error: 'Gagal mengunggah foto profil' }
             }
 
             // Step 2: Get public URL (very fast, no network call)
@@ -144,7 +164,24 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
                 await supabase.storage
                     .from('avatars')
                     .remove([fileName])
-                return { success: false, message: 'Gagal memperbarui foto profil' }
+                return { error: 'Gagal memperbarui foto profil' }
+            }
+
+            // Step 4: Update Supabase Auth metadata for consistency
+            try {
+                const { data: { user: authUser } } = await supabase.auth.getUser()
+                if (authUser) {
+                    const currentMetadata = authUser.user_metadata || {}
+                    await supabase.auth.updateUser({
+                        data: {
+                            ...currentMetadata,
+                            avatar_url: publicUrl
+                        }
+                    })
+                }
+            } catch (metadataError) {
+                console.warn('Failed to update auth metadata:', metadataError)
+                // Don't fail the entire operation for metadata sync issues
             }
 
             // Step 5: Cleanup old avatar in background (don't wait for it)
@@ -169,9 +206,11 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
 
             // Step 6: Revalidate cache
             revalidatePath('/profile')
+            revalidatePath('/radial') // Revalidate pages that use auth metadata
+            revalidatePath('/') // Revalidate home page that uses auth metadata
 
             console.timeEnd('uploadAvatarAction')
-            return { success: true, message: 'Foto profil berhasil diperbarui' }
+            return { success: 'Foto profil berhasil diperbarui' }
 
         } catch (error) {
             console.error('Upload process error:', error)
@@ -181,22 +220,22 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
                 .remove([fileName])
                 .catch(() => {}) // Ignore cleanup errors
 
-            throw error
+            return { error: 'Terjadi kesalahan saat mengunggah foto profil' }
         }
 
     } catch (error) {
         console.timeEnd('uploadAvatarAction')
         console.error('Avatar upload action error:', error)
-        return { success: false, message: 'Terjadi kesalahan saat mengunggah foto profil' }
+        return { error: 'Terjadi kesalahan saat mengunggah foto profil' }
     }
 }
 
-export async function removeAvatarAction(prevState: any, formData: FormData) {
+export async function removeAvatarAction() {
     console.time('removeAvatarAction')
     try {
         const user = await getCurrentUser()
         if (!user) {
-            return { success: false, message: 'User tidak terautentikasi' }
+            return { error: 'User tidak terautentikasi' }
         }
 
         const supabase = await createServer()
@@ -224,7 +263,24 @@ export async function removeAvatarAction(prevState: any, formData: FormData) {
 
         if (updateResult.error) {
             console.error('Avatar remove error:', updateResult.error)
-            return { success: false, message: 'Gagal menghapus foto profil' }
+            return { error: 'Gagal menghapus foto profil' }
+        }
+
+        // Update Supabase Auth metadata for consistency
+        try {
+            const { data: { user: authUser } } = await supabase.auth.getUser()
+            if (authUser) {
+                const currentMetadata = authUser.user_metadata || {}
+                await supabase.auth.updateUser({
+                    data: {
+                        ...currentMetadata,
+                        avatar_url: null
+                    }
+                })
+            }
+        } catch (metadataError) {
+            console.warn('Failed to update auth metadata:', metadataError)
+            // Don't fail the entire operation for metadata sync issues
         }
 
         // Remove from storage in background (don't wait for it)
@@ -246,12 +302,14 @@ export async function removeAvatarAction(prevState: any, formData: FormData) {
         }
 
         revalidatePath('/profile')
+        revalidatePath('/radial') // Revalidate pages that use auth metadata
+        revalidatePath('/') // Revalidate home page that uses auth metadata
 
         console.timeEnd('removeAvatarAction')
-        return { success: true, message: 'Foto profil berhasil dihapus' }
+        return { success: 'Foto profil berhasil dihapus' }
     } catch (error) {
         console.timeEnd('removeAvatarAction')
         console.error('Avatar remove action error:', error)
-        return { success: false, message: 'Terjadi kesalahan saat menghapus foto profil' }
+        return { error: 'Terjadi kesalahan saat menghapus foto profil' }
     }
 }

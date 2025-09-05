@@ -68,10 +68,8 @@ export const useScannerLogic = (): ScannerHook => {
 
       try {
         const fetchResponse = await axios.get(API_MODEL_HEALTH_URL, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          }
+          timeout: 10000, // 10 seconds timeout
+          validateStatus: (status) => status >= 200 && status < 300
         })
 
         if (!fetchResponse.status || fetchResponse.status < 200 || fetchResponse.status >= 300) {
@@ -98,8 +96,14 @@ export const useScannerLogic = (): ScannerHook => {
           errorMessage = error.message
         }
 
+        // If it's a timeout or network error, assume API might be slow but available
+        if (error instanceof Error && (errorMessage.includes('timeout') || errorMessage.includes('Network Error'))) {
+          console.log("⏰ API timeout detected, but assuming API is available for direct calls")
+          setApiReady(true) // Assume API is available despite timeout
+          setApiResponse({ data: { status: "timeout-but-available" } })
+        }
         // If it's a CORS error, we assume the API is available but blocked by browser
-        if (error instanceof TypeError && (errorMessage.includes('CORS') || errorMessage.includes('fetch'))) {
+        else if (error instanceof TypeError && (errorMessage.includes('CORS') || errorMessage.includes('fetch'))) {
           console.log("🔄 CORS error detected, but assuming API is available for direct calls")
           setApiReady(true) // Assume API is available despite CORS
           setApiResponse({ data: { status: "cors-blocked-but-available" } })
@@ -113,13 +117,16 @@ export const useScannerLogic = (): ScannerHook => {
       }
     }
 
-    checkApiHealth()
-    // Check API health only once on component mount
+    // Only check once on mount, don't re-check constantly
+    let mounted = true
+    if (mounted) {
+      checkApiHealth()
+    }
 
     return () => {
-      // No cleanup needed since we're not using setInterval
+      mounted = false
     }
-  }, [API_MODEL_HEALTH_URL])
+  }, []) // Removed API_MODEL_HEALTH_URL dependency to prevent re-checking
 
   const resetScan = () => {
     setPreviewImage(null)
@@ -147,7 +154,7 @@ export const useScannerLogic = (): ScannerHook => {
     setIsScanning(false)
     setScanStage("Identifikasi selesai!")
     setShowConfetti(true)    // Increment scan counter in Redis
-    
+
     incrementScanMutation.mutate(undefined, {
       onSuccess: () => {
         // Scan count incremented successfully
@@ -217,37 +224,37 @@ export const useScannerLogic = (): ScannerHook => {
   const startScanProgress = () => {
     return setInterval(() => {
       setScanProgress((prev) => {
-        const newProgress = prev + 3 // Slower progress for more granular control
+        const newProgress = prev + 2 // Faster progress for quicker feedback
 
         // Update scan stage based on progress - Scanner phase (0-50%)
-        if (newProgress === 15) {
+        if (newProgress === 10) {
           setScanStage("Mendeteksi fitur morfologi...")
-        } else if (newProgress === 30) {
+        } else if (newProgress === 25) {
           setScanStage("Menganalisis pola warna dan tekstur...")
-        } else if (newProgress === 45) {
+        } else if (newProgress === 40) {
           setScanStage("Memproses dengan AI model...")
         }
 
         return newProgress < 50 ? newProgress : 50 // Stop at 50% for scanner phase
       })
-    }, 150) // Slower interval
+    }, 50) // Faster interval for better UX
   }
 
   const startFetchProgress = () => {
     return setInterval(() => {
       setScanProgress((prev) => {
-        const newProgress = prev + 5
+        const newProgress = prev + 7 // Faster progress
 
         // Update scan stage based on progress - Fetch phase (60-95%)
-        if (newProgress === 70) {
+        if (newProgress === 75) {
           setScanStage("Mencocokkan dengan database taksonomi...")
-        } else if (newProgress === 85) {
+        } else if (newProgress === 90) {
           setScanStage("Menyusun informasi lengkap spesies...")
         }
 
         return newProgress < 95 ? newProgress : 95 // Stop at 95% until complete
       })
-    }, 200)
+    }, 100) // Faster interval
   }
 
   const handleFilePrediction = async (file: File) => {
@@ -273,13 +280,25 @@ export const useScannerLogic = (): ScannerHook => {
       formData.append('image', file)
       formData.append('threshold', '0.7')
 
-      const response = await axios.post(`${API_MODEL_URL}/predict/upload`, formData)
+      const response = await axios.post(`${API_MODEL_URL}/predict/upload`, formData, {
+        timeout: 30000, // 30 seconds timeout for file upload
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 40) // 40% for upload
+            setScanProgress(10 + uploadProgress) // Start from 10%, up to 50%
+          }
+        }
+      })
 
       if (!response.status || response.status < 200 || response.status >= 300) {
         throw new Error('API request failed')
       }
 
       const apiData: ApiClassificationResponse = response.data
+      console.log("API Response:", apiData)
       const scannerEndTime = Date.now()
       const scannerDuration = Math.round((scannerEndTime - scannerStartTime) / 1000)
 
@@ -299,13 +318,10 @@ export const useScannerLogic = (): ScannerHook => {
       setScanProgress(55)
       setScanStage("Menghubungkan ke database...")
 
-
-      await new Promise(resolve => setTimeout(resolve, 100))
-
-      // Fetch Phase - Get enhanced data from database
+      // Step 3: Fetch Phase - Get enhanced data from database (no artificial delay)
       const fetchStartTime = Date.now()
       setScanStage("Mengambil data lengkap dari database...")
-      setScanProgress(60)
+      setScanProgress(60) // Update progress to show we're in fetch phase
 
       const fetchProgressInterval = startFetchProgress()
 
@@ -321,7 +337,21 @@ export const useScannerLogic = (): ScannerHook => {
       setIsScanning(false)
       setScanProgress(0)
       setScanStage("")
-      toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.")
+
+      // Better error messaging based on error type
+      if (error instanceof Error) {
+        if (error.message.includes('timeout')) {
+          toast("Koneksi timeout. Periksa koneksi internet dan coba lagi.")
+        } else if (error.message.includes('Network Error')) {
+          toast("Tidak dapat terhubung ke server. Periksa koneksi internet.")
+        } else if (error.message.includes('413')) {
+          toast("File terlalu besar untuk diupload. Coba kompres gambar terlebih dahulu.")
+        } else {
+          toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.")
+        }
+      } else {
+        toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.")
+      }
     }
   }
 
@@ -351,6 +381,13 @@ export const useScannerLogic = (): ScannerHook => {
         headers: {
           'Content-Type': 'application/json',
         },
+        timeout: 30000, // 30 seconds timeout
+        onDownloadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const downloadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 40) // 40% for download
+            setScanProgress(10 + downloadProgress) // Start from 10%, up to 50%
+          }
+        }
       })
 
       const apiData: ApiClassificationResponse = response.data
@@ -373,10 +410,7 @@ export const useScannerLogic = (): ScannerHook => {
       setScanProgress(55)
       setScanStage("Menghubungkan ke database...")
 
-      // Small delay to show the transition
-      await new Promise(resolve => setTimeout(resolve, 100))
-
-      // Step 3: Fetch Phase - Get enhanced data from database
+      // Step 3: Fetch Phase - Get enhanced data from database (no artificial delay)
       const fetchStartTime = Date.now()
       setScanStage("Mengambil data lengkap dari database...")
       setScanProgress(60) // Update progress to show we're in fetch phase
@@ -395,7 +429,21 @@ export const useScannerLogic = (): ScannerHook => {
       setIsScanning(false)
       setScanProgress(0)
       setScanStage("")
-      toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.")
+
+      // Better error messaging based on error type
+      if (error instanceof Error) {
+        if (error.message.includes('timeout')) {
+          toast("Koneksi timeout. Periksa koneksi internet dan coba lagi.")
+        } else if (error.message.includes('Network Error')) {
+          toast("Tidak dapat terhubung ke server. Periksa koneksi internet.")
+        } else if (error.message.includes('413')) {
+          toast("URL gambar terlalu besar untuk diproses.")
+        } else {
+          toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.")
+        }
+      } else {
+        toast("Terjadi kesalahan saat analisis gambar. Silakan coba lagi.")
+      }
     }
   }
 
@@ -408,81 +456,56 @@ export const useScannerLogic = (): ScannerHook => {
     }
 
     if (file) {
-      // Validasi ukuran file (10MB = 10 * 1024 * 1024 bytes)
-      const maxSize = 10 * 1024 * 1024
+      // Quick validations first (no async operations)
+      const maxSize = 3 * 1024 * 1024 // 3MB - optimal untuk upload speed
       if (file.size > maxSize) {
-        toast("Ukuran file terlalu besar. Maksimal 10MB.")
-        // Clear the file input
+        toast("Ukuran file terlalu besar. Maksimal 3MB untuk performa optimal.")
         if (event.target) {
           event.target.value = ""
         }
         return
       }
 
-      // Validasi tipe file
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
       if (!allowedTypes.includes(file.type)) {
         toast("Format file tidak didukung. Gunakan JPG, PNG, atau WEBP.")
-        // Clear the file input
         if (event.target) {
           event.target.value = ""
         }
         return
       }
 
-      // Validasi nama file (opsional: cek ekstensi)
       const fileName = file.name.toLowerCase()
       const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp']
       const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext))
 
       if (!hasValidExtension) {
         toast("Ekstensi file tidak valid. Gunakan .jpg, .jpeg, .png, atau .webp")
-        // Clear the file input
         if (event.target) {
           event.target.value = ""
         }
         return
       }
 
-      // Validasi dimensi gambar minimum (opsional)
-      const img = new Image()
-      img.onload = () => {
-        // Cleanup object URL
-        URL.revokeObjectURL(img.src)
+      // Start processing immediately for better UX
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string)
 
-        // Cek dimensi minimum untuk kualitas yang baik
-        if (img.width < 100 || img.height < 100) {
-          toast("Resolusi gambar terlalu kecil. Minimal 100x100 piksel untuk hasil terbaik.")
-          // Clear the file input
-          if (event.target) {
-            event.target.value = ""
-          }
-          return
-        }
-
-        // Jika semua validasi lolos, proses file
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          setPreviewImage(reader.result as string)
-          handleFilePrediction(file)
-        }
-        reader.readAsDataURL(file)
+        // Start processing without waiting for image dimension validation
+        // Most modern cameras produce images > 100x100, so this check is often unnecessary
+        handleFilePrediction(file)
       }
 
-      img.onerror = () => {
-        // Cleanup object URL
-        URL.revokeObjectURL(img.src)
-
+      reader.onerror = () => {
         toast("File gambar tidak valid atau rusak.")
-        // Clear the file input
         if (event.target) {
           event.target.value = ""
         }
         return
       }
 
-      // Buat URL untuk validasi dimensi
-      img.src = URL.createObjectURL(file)
+      reader.readAsDataURL(file)
     }
   }
 

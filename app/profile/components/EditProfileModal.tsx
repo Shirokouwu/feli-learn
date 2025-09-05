@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useOptimistic } from "react"
+import { useActionState, startTransition } from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -61,14 +61,16 @@ export default function EditProfileModal({
 
                 <form
                     action={async (formData) => {
-                        // Optimistic update
-                        const updates = {
-                            full_name: localProfile.full_name,
-                            bio: localProfile.bio,
-                            location: localProfile.location,
-                            website: localProfile.website,
-                        }
-                        onOptimisticUpdate(updates)
+                        // Wrap optimistic update in startTransition
+                        startTransition(() => {
+                            const updates = {
+                                full_name: localProfile.full_name,
+                                bio: localProfile.bio,
+                                location: localProfile.location,
+                                website: localProfile.website,
+                            }
+                            onOptimisticUpdate(updates)
+                        })
 
                         // Submit dan tutup modal
                         await formAction(formData)
@@ -124,9 +126,9 @@ export default function EditProfileModal({
                         </div>
                     </div>
 
-                    {state?.message && (
+                    {state?.error && (
                         <p className={`text-sm ${state.success ? "text-green-600" : "text-red-600"}`}>
-                            {state.message}
+                            {state.error}
                         </p>
                     )}
 

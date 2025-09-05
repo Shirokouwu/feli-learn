@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getCurrentUser, updateUserProfile } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/auth"
 import { createServer } from "@/utils/supabase/server"
 
 export async function GET() {

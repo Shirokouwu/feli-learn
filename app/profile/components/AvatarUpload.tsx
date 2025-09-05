@@ -1,17 +1,9 @@
 "use client"
 
 import { useRef, useState, useActionState, useEffect, startTransition } from 'react'
-import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { uploadAvatarAction } from '../actions'
-import type { Profile } from '@/types'
 
-// Type for upload result
-type UploadState = {
-    success: boolean
-    message: string
-    avatarUrl?: string
-} | null
 
 import { Upload, Trash2, Camera } from 'lucide-react'
 import {
@@ -27,7 +19,6 @@ interface AvatarUploadProps {
     onOptimisticUpdate?: (avatarUrl: string | null) => void
     size?: 'sm' | 'md' | 'lg'
     className?: string
-    userId?: string
 }
 
 export function AvatarUpload({
@@ -35,15 +26,11 @@ export function AvatarUpload({
     userName,
     onOptimisticUpdate,
     size = 'lg',
-    className = '',
-    userId
+    className = ''
 }: AvatarUploadProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [dragOver, setDragOver] = useState(false)
-    const [uploadState, uploadAction, uploading] = useActionState<UploadState, FormData>(uploadAvatarAction, null)
-
-    // Track preview URLs for cleanup
-    const [previewUrls, setPreviewUrls] = useState<string[]>([])
+    const [uploadState, uploadAction, uploading] = useActionState(uploadAvatarAction, null)
 
     const sizeClasses = {
         sm: 'h-16 w-16',
@@ -88,9 +75,6 @@ export function AvatarUpload({
         // Create preview URL for optimistic update
         const previewUrl = URL.createObjectURL(file)
 
-        // Track preview URL for cleanup later
-        setPreviewUrls(prev => [...prev, previewUrl])
-
         // Use startTransition for both optimistic update and action call
         startTransition(() => {
             // Optimistic update with persistent URL
@@ -104,33 +88,14 @@ export function AvatarUpload({
     // Handle upload state changes
     useEffect(() => {
         if (uploadState && !uploading) {
-            if (uploadState.success) {
-                // Cleanup preview URLs after successful upload
-                setPreviewUrls(currentUrls => {
-                    currentUrls.forEach(url => URL.revokeObjectURL(url))
-                    return []
-                })
-            } else {
-                // Revert optimistic update on error
-                onOptimisticUpdate?.(currentAvatar || null)
-                // Cleanup preview URLs on error
-                setPreviewUrls(currentUrls => {
-                    currentUrls.forEach(url => URL.revokeObjectURL(url))
-                    return []
+            if (uploadState.error) {
+                // Revert optimistic update on error using startTransition
+                startTransition(() => {
+                    onOptimisticUpdate?.(currentAvatar || null)
                 })
             }
         }
     }, [uploadState, uploading, currentAvatar, onOptimisticUpdate])
-
-    // Cleanup preview URLs on unmount
-    useEffect(() => {
-        return () => {
-            setPreviewUrls(currentUrls => {
-                currentUrls.forEach(url => URL.revokeObjectURL(url))
-                return []
-            })
-        }
-    }, [])
 
     const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -187,7 +152,10 @@ export function AvatarUpload({
 
         } catch (error) {
             console.error('Remove avatar error:', error)
-            onOptimisticUpdate?.(currentAvatar || null)
+            // Revert optimistic update on error using startTransition
+            startTransition(() => {
+                onOptimisticUpdate?.(currentAvatar || null)
+            })
         }
     }
 
@@ -204,7 +172,7 @@ export function AvatarUpload({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <div className="cursor-pointer relative">
-                            <Avatar className={`${sizeClasses[size]} shadow-lg hover:shadow-xl transition-shadow`}>
+                            <Avatar className={`${sizeClasses[size]} shadow-lg hover:shadow-xl transition-shadow border-2 border-white`}>
                                 <AvatarImage src={currentAvatar || undefined} alt={userName} />
                                 <AvatarFallback className="bg-emerald-100 text-emerald-700 font-semibold">
                                     {getInitials(userName)}

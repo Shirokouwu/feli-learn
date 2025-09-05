@@ -30,11 +30,9 @@ export default async function Home() {
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           {avatarUrl ? (
-            <Image
+            <img
               src={avatarUrl}
               alt="User Avatar"
-              width={100}
-              height={100}
               className="rounded-full"
             />
           ) : (

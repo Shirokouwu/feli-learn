@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         })
 
         // Upload file to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
             .from('avatars')
             .upload(filePath, fileWithCorrectType, {
                 cacheControl: '3600',
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
             .getPublicUrl(filePath)
 
         // Update user profile in users table
-        const { data: userData, error: updateError } = await supabase
+        const { error: updateError } = await supabase
             .from("users")
             .update({
                 avatar_url: publicUrl,
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
     }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE() {
     try {
         const { data: { user } } = await (await createServer()).auth.getUser()
 

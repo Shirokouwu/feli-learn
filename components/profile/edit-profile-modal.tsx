@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useOptimistic, useEffect, useState, useRef } from "react"
+import { useActionState, useEffect, useState, useOptimistic } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,8 +14,11 @@ import {
 } from "@/components/ui/dialog"
 import { Edit, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { updateProfile } from "@/lib/actions/profile"
+
 import { ActionState } from "@/lib/types/profile"
+import { updateProfileAction } from "@/app/profile/actions"
+
+
 
 interface ProfileData {
     id: string
@@ -38,8 +41,8 @@ export function EditProfileModal({
     profile,
     onOptimisticUpdate,
 }: EditProfileModalProps) {
-    const initialState: ActionState = { error: undefined, success: undefined }
-    const [state, formAction, isPending] = useActionState(updateProfile, initialState)
+    const initialState: ActionState = {}
+    const [state, formAction, isPending] = useActionState(updateProfileAction, initialState)
     const [hasBeenSubmitted, setHasBeenSubmitted] = useState(false)
     const [modalKey, setModalKey] = useState(0)
 
@@ -70,8 +73,8 @@ export function EditProfileModal({
         }
     }, [isOpen])
 
-    const handleSubmit = async (formData: FormData) => {
-        // Optimistically update the profile
+    // Handle form submission with optimistic updates
+    const handleOptimisticUpdate = (formData: FormData) => {
         const newProfile = {
             full_name: formData.get('full_name') as string,
             bio: formData.get('bio') as string,
@@ -88,14 +91,11 @@ export function EditProfileModal({
         // Update optimistic state in parent component  
         onOptimisticUpdate?.(newProfile)
 
-        // Mark as submitted before closing
+        // Mark as submitted
         setHasBeenSubmitted(true)
 
-        // Close modal immediately after optimistic update
+        // Close modal after optimistic update
         onClose()
-
-        // Execute the server action
-        formAction(formData)
     }
 
     return (
@@ -111,7 +111,14 @@ export function EditProfileModal({
                     </DialogDescription>
                 </DialogHeader>
 
-                <form action={handleSubmit} className="flex flex-col flex-1">
+                <form
+                    action={formAction}
+                    className="flex flex-col flex-1"
+                    onSubmit={(e) => {
+                        const formData = new FormData(e.currentTarget)
+                        handleOptimisticUpdate(formData)
+                    }}
+                >
                     <div className="flex-1 overflow-y-auto px-4 sm:px-6">
                         <div className="space-y-2 sm:space-y-4 py-1 sm:py-2">
                             <div className="space-y-1 sm:space-y-2">
