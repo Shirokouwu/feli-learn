@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Lock, Unlock } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from "next/link"
+import { useMobile } from "@/hooks/use-mobile"
 
 interface GlassNavigationProps {
    isScrolled: boolean
@@ -25,16 +26,19 @@ export function GlassNavigation({
    className = "",
    profilePicture = ""
 }: GlassNavigationProps) {
+   const isMobile = useMobile()
+
+
    return (
       <motion.div
          className={`fixed z-50 ${className}`}
          initial={false}
          animate={{
             backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0)',
-            width: isScrolled ? '50%' : '90%',
+            width: isScrolled ? '50%' : isMobile ? '100%' : '90%',
             height: isScrolled ? '60px' : '80px',
             top: isScrolled ? '16px' : '0px',
-            borderRadius: isScrolled ? '30px' : '20px',
+            borderRadius: isScrolled ? '20px' : '10px',
             backdropFilter: isScrolled ? 'blur(20px)' : 'blur(0px)',
             boxShadow: isScrolled
                ? '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
@@ -52,10 +56,11 @@ export function GlassNavigation({
             left: '50%',
             transform: 'translateX(-50%)',
             willChange: 'width, height, top, border-radius, background-color',
-            overflow: 'hidden' // Prevent content from showing outside during transition
+            overflow: 'hidden', // Prevent content from showing outside during transition
+            padding: isScrolled ? '0px' : '10px' // Add padding when not scrolled
          }}
       >
-         <div className="container mx-auto px-6 h-full">
+         <div className="container mx-auto h-full">
             <motion.div
                className="flex items-center justify-between h-full"
                animate={{
@@ -131,9 +136,6 @@ export function GlassNavigation({
                      ) : (
                         <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
                            <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
-                           <span className="inline">
-                              Login Diperlukan
-                           </span>
                            <Link href="/login" className="underline ml-1 transition-all duration-300 text-teal-700 hover:text-teal-800 font-medium">
                               Login
                            </Link>
