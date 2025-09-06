@@ -3,7 +3,7 @@
 import { useRef, useState, useActionState, useEffect, startTransition } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { uploadAvatarAction } from '../actions'
-
+import { SimpleImageEditor } from '@/components/image-editor'
 
 import { Upload, Trash2, Camera } from 'lucide-react'
 import {
@@ -31,6 +31,10 @@ export function AvatarUpload({
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [dragOver, setDragOver] = useState(false)
     const [uploadState, uploadAction, uploading] = useActionState(uploadAvatarAction, null)
+
+    // State untuk image editor
+    const [showImageEditor, setShowImageEditor] = useState(false)
+    const [imageToEdit, setImageToEdit] = useState<string>('')
 
     const sizeClasses = {
         sm: 'h-16 w-16',
@@ -68,21 +72,33 @@ export function AvatarUpload({
     const handleFileSelect = async (file: File) => {
         if (!validateImageFile(file)) return
 
-        // Create FormData with file directly (no cropping)
+        // Buat URL untuk preview dan buka image editor
+        const imageUrl = URL.createObjectURL(file)
+        setImageToEdit(imageUrl)
+        setShowImageEditor(true)
+    }
+
+    const handleCropComplete = async (croppedImageBlob: Blob) => {
+        // Create FormData dengan cropped image
         const formData = new FormData()
-        formData.append('avatar', file)
+        formData.append('avatar', croppedImageBlob, 'avatar.jpg')
 
-        // Create preview URL for optimistic update
-        const previewUrl = URL.createObjectURL(file)
+        // Create preview URL untuk optimistic update
+        const previewUrl = URL.createObjectURL(croppedImageBlob)
 
-        // Use startTransition for both optimistic update and action call
+        // Use startTransition untuk both optimistic update dan action call
         startTransition(() => {
-            // Optimistic update with persistent URL
+            // Optimistic update dengan persistent URL
             onOptimisticUpdate?.(previewUrl)
 
             // Trigger the action inside startTransition
             uploadAction(formData)
         })
+
+        // Cleanup
+        URL.revokeObjectURL(imageToEdit)
+        setShowImageEditor(false)
+        setImageToEdit('')
     }
 
     // Handle upload state changes
@@ -216,6 +232,22 @@ export function AvatarUpload({
                 accept="image/*"
                 onChange={handleFileInputChange}
                 className="hidden"
+            />
+
+            {/* Image Editor Modal */}
+            <SimpleImageEditor
+                open={showImageEditor}
+                onOpenChange={(open) => {
+                    setShowImageEditor(open)
+                    if (!open) {
+                        URL.revokeObjectURL(imageToEdit)
+                        setImageToEdit('')
+                    }
+                }}
+                imageSrc={imageToEdit}
+                onCropComplete={handleCropComplete}
+                aspectRatio={1}
+                cropShape="round"
             />
         </div>
     )

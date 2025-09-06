@@ -7,7 +7,7 @@ import { Camera, Upload, Trash2, Loader2, Edit } from 'lucide-react'
 import { validateImageFile } from '@/lib/upload/validation'
 import { compressImage } from '@/lib/upload/client'
 import { toast } from 'sonner'
-import { SimpleImageEditor } from '@/components/ui/simple-image-editor'
+import { SimpleImageEditor } from '@/components/image-editor'
 import {
    DropdownMenu,
    DropdownMenuContent,
