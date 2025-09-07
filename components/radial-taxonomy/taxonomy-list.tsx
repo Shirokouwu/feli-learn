@@ -19,7 +19,8 @@ import {
   Cat,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { supabase } from "@/lib/supabase"
+
+import { createClient } from "@/utils/supabase/client"
 
 interface TaxonomyListProps {
   onSelectNode: (nodeId: string) => void
@@ -45,6 +46,10 @@ interface SpeciesItem {
 }
 
 export function TaxonomyList({ onSelectNode, isOpen: externalIsOpen, onToggle }: TaxonomyListProps) {
+
+
+  const supabase = createClient()
+
   // Gunakan state internal jika tidak ada external control
   const [internalIsOpen, setInternalIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")

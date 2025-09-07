@@ -5,12 +5,12 @@ import type React from "react"
 import { Search, X, ArrowLeft, Loader2, TrendingUp, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
 import { useState, useEffect, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { createClient } from "@/utils/supabase/client"
 
 interface RadialSearchProps {
   searchQuery: string
@@ -29,6 +29,10 @@ export function RadialSearch({
   onNodeSelect,
   onClose,
 }: RadialSearchProps) {
+
+
+  const supabase = createClient()
+
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [activeFilter, setActiveFilter] = useState<string>("all")

@@ -9,16 +9,11 @@ import { useTaxonomyExplorer } from "@/hooks/use-taxonomy-explorer"
 // Import radial taxonomy components
 import { RadialControls } from "./radial-controls"
 import { RadialSearch } from "./radial-search"
-import { RadialStoryMode } from "./radial-story-mode"
 import { RadialTourGuide } from "./radial-tour-guide"
 import { RadialDiagram } from "./radial-diagram"
 import { RadialIntro } from "./radial-intro"
 import { RadialActionButtons } from "./radial-action-buttons"
 import { SpeciesCard } from "./radial-species-card"
-
-// Tambahkan import useQuery
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
 import { motion } from "framer-motion"
 
 // Tambahkan import untuk TaxonomyList
@@ -57,8 +52,6 @@ export function RadialExplorer() {
   const [showIntro, setShowIntro] = useState(true)
   const [showSearch, setShowSearch] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [currentStory, setCurrentStory] = useState(0)
-  const [showStoryMode, setShowStoryMode] = useState(false)
   const [showTour, setShowTour] = useState(false)
   const [tourStep, setTourStep] = useState(1)
   const [captureMode, setCaptureMode] = useState(false)
@@ -698,277 +691,11 @@ export function RadialExplorer() {
     )
     : []
 
-  // Fetch story content from database
-  const { data: storyContentData, isLoading: isLoadingStoryContent } = useQuery({
-    queryKey: ["story-content"],
-    queryFn: async () => {
-      // First try to get family info
-      const { data: familyData, error: familyError } = await supabase
-        .from("taksonomi_genus")
-        .select("*")
-        .eq("nama", "Felidae")
-        .single()
 
-      if (familyError && familyError.code !== "PGRST116") {
-        console.error("Error fetching family data:", familyError)
-      }
 
-      // Get some representative genera
-      const { data: generaData, error: generaError } = await supabase.from("taksonomi_genus").select("*").limit(3)
 
-      if (generaError) {
-        console.error("Error fetching genera data:", generaError)
-      }
 
-      // Get some interesting species - removed click_count ordering
-      const { data: speciesData, error: speciesError } = await supabase
-        .from("taksonomi_spesies")
-        .select("*, taksonomi_deskripsi(*), taksonomi_konservasi(*)")
-        .limit(5)
 
-      if (speciesError) {
-        console.error("Error fetching species data:", speciesError)
-      }
-
-      // Build story content
-      const storyContent = []
-
-      // Add family story
-      storyContent.push({
-        title: "Keluarga Felidae",
-        description:
-          familyData?.deskripsi ||
-          "Felidae adalah keluarga mamalia karnivora yang mencakup kucing-kucing liar dan domestik. Keluarga ini merupakan salah satu kelompok karnivora paling sukses secara evolusi.",
-        image: familyData?.url_gambar || "https://images.unsplash.com/photo-1589652717521-10c0d092dea9",
-        focusNodeId: "felidae",
-      })
-
-      // Add genus stories
-      if (generaData && generaData.length > 0) {
-        generaData.forEach((genus) => {
-          if (genus.nama !== "Felidae") {
-            // Skip if it's the family again
-            storyContent.push({
-              title: `Genus ${genus.nama}`,
-              description:
-                genus.deskripsi ||
-                `${genus.nama} adalah genus dalam keluarga Felidae yang mencakup beberapa spesies kucing dengan karakteristik serupa.`,
-              image: genus.url_gambar || "/placeholder.svg?height=400&width=600&text=Genus",
-              focusNodeId: genus.id,
-            })
-          }
-        })
-      }
-
-      // Add species stories
-      if (speciesData && speciesData.length > 0) {
-        speciesData.forEach((species) => {
-          // Get conservation status if available
-          const conservationStatus = species.taksonomi_konservasi?.status_konservasi_alam || "Unknown"
-
-          // Get population info if available
-          const population = species.taksonomi_konservasi?.total_populasi || "Unknown"
-
-          // Create rich description
-          let description = species.deskripsi || ""
-          if (conservationStatus !== "Unknown") {
-            description += ` Status konservasi: ${conservationStatus}.`
-          }
-          if (population !== "Unknown") {
-            description += ` Populasi: ${population}.`
-          }
-
-          storyContent.push({
-            title: species.nama_umum || species.nama,
-            description: description,
-            image: species.url_gambar || "/placeholder.svg?height=400&width=600&text=Species",
-            focusNodeId: species.id,
-          })
-        })
-      }
-
-      // Ensure we have at least some default content if database is empty
-      if (storyContent.length < 2) {
-        storyContent.push({
-          title: "Harimau Sumatera",
-          description:
-            "Harimau Sumatera (Panthera tigris sumatrae) adalah subspesies harimau yang hanya ditemukan di Pulau Sumatera, Indonesia. Mereka terancam punah dengan populasi kurang dari 400 individu di alam liar.",
-          image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5",
-          focusNodeId: "panthera-tigris-sumatrae",
-        })
-
-        storyContent.push({
-          title: "Kucing Domestik",
-          description:
-            "Kucing domestik (Felis catus) adalah salah satu hewan peliharaan paling populer di dunia. Meskipun telah didomestikasi, mereka masih mempertahankan banyak insting berburu dari leluhur liar mereka.",
-          image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-          focusNodeId: "felis-catus",
-        })
-      }
-
-      return storyContent
-    },
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-  })
-
-  // Fetch interesting facts about Felidae
-  const { data: interestingFacts, isLoading: isLoadingFacts } = useQuery({
-    queryKey: ["interesting-facts"],
-    queryFn: async () => {
-      // Mengambil fakta menarik dari tabel taksonomi_deskripsi
-      const { data: descriptionsData, error: descriptionsError } = await supabase
-        .from("taksonomi_deskripsi")
-        .select("*, taksonomi_spesies(nama, nama_umum)")
-        .not("fitur_unik", "is", null)
-        .limit(10)
-
-      if (descriptionsError) {
-        console.error("Error fetching descriptions:", descriptionsError)
-      }
-
-      // Mengambil fakta menarik dari tabel taksonomi_perilaku
-      const { data: behaviorData, error: behaviorError } = await supabase
-        .from("taksonomi_perilaku")
-        .select("*, taksonomi_spesies(nama, nama_umum)")
-        .limit(10)
-
-      if (behaviorError) {
-        console.error("Error fetching behavior data:", behaviorError)
-      }
-
-      // Mengambil fakta menarik dari tabel taksonomi_konservasi
-      const { data: conservationData, error: conservationError } = await supabase
-        .from("taksonomi_konservasi")
-        .select("*, taksonomi_spesies(nama, nama_umum)")
-        .limit(10)
-
-      if (conservationError) {
-        console.error("Error fetching conservation data:", conservationError)
-      }
-
-      // Kumpulkan semua fakta menarik
-      const facts: { content: any; species: any; category: string }[] = []
-
-      // Tambahkan fakta dari fitur unik
-      if (descriptionsData) {
-        descriptionsData.forEach((desc) => {
-          if (desc.fitur_unik && Array.isArray(desc.fitur_unik)) {
-            desc.fitur_unik.forEach((feature: any) => {
-              facts.push({
-                content: feature,
-                species: desc.taksonomi_spesies?.nama_umum || desc.taksonomi_spesies?.nama || "Felidae",
-                category: "Fitur Unik",
-              })
-            })
-          }
-        })
-      }
-
-      // Tambahkan fakta dari perilaku
-      if (behaviorData) {
-        behaviorData.forEach((behavior) => {
-          if (behavior.perilaku_berburu) {
-            facts.push({
-              content: `${behavior.taksonomi_spesies?.nama_umum || behavior.taksonomi_spesies?.nama || "Felidae"} memiliki teknik berburu: ${behavior.perilaku_berburu}`,
-              species: behavior.taksonomi_spesies?.nama_umum || behavior.taksonomi_spesies?.nama || "Felidae",
-              category: "Perilaku Berburu",
-            })
-          }
-          if (behavior.pola_aktivitas) {
-            facts.push({
-              content: `${behavior.taksonomi_spesies?.nama_umum || behavior.taksonomi_spesies?.nama || "Felidae"} aktif pada: ${behavior.pola_aktivitas}`,
-              species: behavior.taksonomi_spesies?.nama_umum || behavior.taksonomi_spesies?.nama || "Felidae",
-              category: "Pola Aktivitas",
-            })
-          }
-        })
-      }
-
-      // Tambahkan fakta dari konservasi
-      if (conservationData) {
-        conservationData.forEach((conservation) => {
-          if (conservation.status_konservasi_alam) {
-            facts.push({
-              content: `${conservation.taksonomi_spesies?.nama_umum || conservation.taksonomi_spesies?.nama || "Felidae"} memiliki status konservasi: ${conservation.status_konservasi_alam}`,
-              species: conservation.taksonomi_spesies?.nama_umum || conservation.taksonomi_spesies?.nama || "Felidae",
-              category: "Status Konservasi",
-            })
-          }
-        })
-      }
-
-      // Acak urutan fakta
-      return facts.sort(() => Math.random() - 0.5).slice(0, 10)
-    },
-    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
-  })
-
-  // Use the dynamic story content or fallback to static content
-  const storyContent = storyContentData || [
-    {
-      title: "Keluarga Felidae",
-      description:
-        "Felidae adalah keluarga mamalia karnivora yang mencakup kucing-kucing liar dan domestik. Keluarga ini merupakan salah satu kelompok karnivora paling sukses secara evolusi.",
-      image: "https://images.unsplash.com/photo-1589652717521-10c0d092dea9",
-      focusNodeId: "felidae",
-    },
-    {
-      title: "Genus Panthera",
-      description:
-        "Panthera adalah genus yang mencakup kucing-kucing besar seperti singa, harimau, jaguar, dan macan tutul. Mereka memiliki kemampuan mengaum yang khas.",
-      image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d",
-      focusNodeId: "panthera",
-    },
-    {
-      title: "Harimau Sumatera",
-      description:
-        "Harimau Sumatera (Panthera tigris sumatrae) adalah subspesies harimau yang hanya ditemukan di Pulau Sumatera, Indonesia. Mereka terancam punah dengan populasi kurang dari 400 individu di alam liar.",
-      image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5",
-      focusNodeId: "panthera-tigris-sumatrae",
-    },
-    {
-      title: "Kucing Domestik",
-      description:
-        "Kucing domestik (Felis catus) adalah salah satu hewan peliharaan paling populer di dunia. Meskipun telah didomestikasi, mereka masih mempertahankan banyak insting berburu dari leluhur liar mereka.",
-      image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-      focusNodeId: "felis-catus",
-    },
-  ]
-
-  // Handle story navigation
-  const nextStory = useCallback(() => {
-    if (currentStory < storyContent.length - 1) {
-      setCurrentStory((prev) => prev + 1)
-
-      // Focus on the relevant node
-      const nodeId = storyContent[currentStory + 1].focusNodeId
-      const node = radialNodes.find((n) => n.id === nodeId)
-      if (node) {
-        // First clear any selected species
-        originalHandleSpeciesSelect(null)
-        // Always reset zoom and center for story mode
-        resetAndCenterNode(node)
-      }
-    } else {
-      setShowStoryMode(false)
-    }
-  }, [currentStory, storyContent, radialNodes, resetAndCenterNode, originalHandleSpeciesSelect])
-
-  const prevStory = useCallback(() => {
-    if (currentStory > 0) {
-      setCurrentStory((prev) => prev - 1)
-
-      // Focus on the relevant node
-      const nodeId = storyContent[currentStory - 1].focusNodeId
-      const node = radialNodes.find((n) => n.id === nodeId)
-      if (node) {
-        // First clear any selected species
-        originalHandleSpeciesSelect(null)
-        // Always reset zoom and center for story mode
-        resetAndCenterNode(node)
-      }
-    }
-  }, [currentStory, storyContent, radialNodes, resetAndCenterNode, originalHandleSpeciesSelect])
 
   // Tour guide steps
   const tourSteps = [
@@ -1072,98 +799,7 @@ export function RadialExplorer() {
     }, 100)
   }, [])
 
-  // Tambahkan fakta menarik ke story mode
-  // Modifikasi fungsi handleStoryModeActivation
 
-  const handleStoryModeActivation = useCallback(() => {
-    setShowStoryMode(true)
-    setCurrentStory(0)
-
-    // Clear any selected species first
-    originalHandleSpeciesSelect(null)
-
-    // Create a structured story flow with proper levels
-    const structuredStoryContent = [
-      // Start with Felidae family
-      {
-        title: "Keluarga Felidae",
-        description:
-          "Felidae adalah keluarga mamalia karnivora yang mencakup kucing-kucing liar dan domestik. Keluarga ini merupakan salah satu kelompok karnivora paling sukses secara evolusi, dengan berbagai spesies yang tersebar di seluruh dunia.",
-        image: "https://images.unsplash.com/photo-1589652717521-10c0d092dea9",
-        focusNodeId: "felidae",
-        level: "family",
-      },
-    ]
-
-    // Add genus stories
-    const genusStories = [
-      {
-        title: "Genus Panthera",
-        description:
-          "Panthera adalah genus yang mencakup kucing-kucing besar seperti singa, harimau, jaguar, dan macan tutul. Mereka memiliki kemampuan mengaum yang khas berkat struktur tulang hyoid yang unik.",
-        image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d",
-        focusNodeId: "panthera",
-        level: "genus",
-      },
-      {
-        title: "Genus Felis",
-        description:
-          "Felis adalah genus kucing kecil yang mencakup kucing domestik dan beberapa spesies kucing liar kecil. Genus ini dikenal dengan kemampuan adaptasi yang luar biasa di berbagai habitat.",
-        image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-        focusNodeId: "felis",
-        level: "genus",
-      },
-    ]
-
-    // Add species stories
-    const speciesStories = [
-      {
-        title: "Harimau Sumatera",
-        description:
-          "Harimau Sumatera (Panthera tigris sumatrae) adalah subspesies harimau yang hanya ditemukan di Pulau Sumatera, Indonesia. Mereka terancam punah dengan populasi kurang dari 400 individu di alam liar.",
-        image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5",
-        focusNodeId: "panthera-tigris-sumatrae",
-        level: "species",
-      },
-      {
-        title: "Kucing Domestik",
-        description:
-          "Kucing domestik (Felis catus) adalah salah satu hewan peliharaan paling populer di dunia. Meskipun telah didomestikasi, mereka masih mempertahankan banyak insting berburu dari leluhur liar mereka.",
-        image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-        focusNodeId: "felis-catus",
-        level: "species",
-      },
-    ]
-
-    // Combine all stories in logical order
-    const combinedStories = [...structuredStoryContent, ...genusStories, ...speciesStories]
-
-    // If there are interesting facts, add them at the end
-    if (interestingFacts && interestingFacts.length > 0) {
-      const factStory = {
-        title: "Fakta Menarik Felidae",
-        description: interestingFacts.map((fact) => `• ${fact.content}`).join("\n\n"),
-        image: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=2015&auto=format&fit=crop",
-        focusNodeId: "felidae",
-      }
-      // @ts-ignore
-      combinedStories.push(factStory)
-    }
-
-    // Replace the storyContent with our structured version if storyContent is an array
-    if (Array.isArray(storyContent) && storyContent.length > 0) {
-      storyContent.splice(0, storyContent.length, ...combinedStories)
-    }
-
-    // Focus on the first story node (Felidae) with a small delay for smoother transition
-    setTimeout(() => {
-      const node = radialNodes.find((n) => n && n.id === "felidae")
-      if (node) {
-        // Always reset zoom and center for story mode
-        resetAndCenterNode(node)
-      }
-    }, 100)
-  }, [resetAndCenterNode, originalHandleSpeciesSelect, radialNodes, storyContent, interestingFacts])
 
   // Perbaiki fungsi untuk menangani pencarian dengan transisi yang lebih halus
   const handleNodeSearchNavigation = useCallback(
@@ -1721,7 +1357,7 @@ export function RadialExplorer() {
       {/* Action buttons */}
       <RadialActionButtons
         onSearchClick={() => setShowSearch(true)}
-        onStoryClick={handleStoryModeActivation}
+        onStoryClick={() => {}} // Remove story functionality
         onTourClick={() => setShowTour(true)}
         onCaptureClick={captureScreenshot}
         onTaxonomyListClick={() => setShowTaxonomyList(!showTaxonomyList)} // Tambahkan handler untuk toggle daftar
@@ -1737,20 +1373,6 @@ export function RadialExplorer() {
             radialNodes={radialNodes}
             onNodeSelect={handleNodeSearchNavigation}
             onClose={() => setShowSearch(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Story mode panel */}
-      <AnimatePresence>
-        {showStoryMode && (
-          <RadialStoryMode
-            storyContent={storyContent}
-            currentStory={currentStory}
-            onNext={nextStory}
-            onPrev={prevStory}
-            onClose={() => setShowStoryMode(false)}
-            isLoading={isLoadingStoryContent || isLoadingFacts}
           />
         )}
       </AnimatePresence>
