@@ -1,6 +1,8 @@
 # 🐾 FelLearn - Felidae Species Identification & Learning Platform
 
-**FelLearn** adalah aplikasi web edukasi yang menggunakan teknologi AI untuk mengidentifikasi spesies dalam keluarga Felidae (kucing liar) dan memberikan informasi edukatif tentang konservasi satwa liar.
+**FelLearn** adalah aplikasi web edukasi yang menggunakan teknologi AI untuk mengidentifikasi
+spesies dalam keluarga Felidae (kucing liar) dan memberikan informasi edukatif tentang konservasi
+satwa liar.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.4.6-black)
 ![React](https://img.shields.io/badge/React-19.1.1-blue)
@@ -12,35 +14,43 @@
 ## 🌟 Fitur Utama
 
 ### 🔍 **AI Scanner**
-- **Identifikasi Otomatis**: Menggunakan Convolutional Neural Network (CNN) dengan akurasi hingga **98.5%**
-- **41 Spesies Felidae**: Mendukung identifikasi spesies dari Cheetah, Singa, Macan Tutul, hingga Kucing Domestik
+
+- **Identifikasi Otomatis**: Menggunakan Convolutional Neural Network (CNN) dengan akurasi hingga
+  **98.5%**
+- **30 Spesies Felidae**: Mendukung identifikasi spesies dari Cheetah, Singa, Macan Tutul, hingga
+  Kucing Domestik
 - **Real-time Processing**: Upload gambar dan dapatkan hasil identifikasi dalam hitungan detik
 - **Confidence Score**: Menampilkan tingkat kepercayaan AI dalam identifikasi
 
 ### 📊 **Taksonomi Interaktif**
+
 - **Diagram Radial**: Visualisasi hierarki taksonomi dari Kingdom hingga Spesies
 - **Navigasi Interaktif**: Eksplorasi data taksonomi dengan antarmuka yang menarik
 - **Detail Ilmiah**: Informasi lengkap nomenclature dan klasifikasi
 
 ### 📚 **Database Komprehensif**
+
 - **Informasi Lengkap**: Karakteristik fisik, habitat, distribusi geografis
 - **Status Konservasi**: Data terkini dari IUCN Red List
 - **Galeri Media**: Foto dan video berkualitas tinggi
 - **Perilaku & Diet**: Informasi mendalam tentang ekologi spesies
 
 ### 📱 **Antarmuka Modern**
+
 - **Responsive Design**: Optimized untuk desktop, tablet, dan mobile
 - **Glass Morphism UI**: Desain modern dengan efek glass
 - **Dark/Light Mode**: Dukungan tema gelap dan terang
 - **Progressive Enhancement**: Loading states dan error handling yang baik
 
 ### 👤 **Sistem Autentikasi**
+
 - **Google OAuth**: Login mudah dengan akun Google
 - **Supabase Auth**: Sistem autentikasi yang aman dan scalable
 - **Profile Management**: Kelola profil dan riwayat scan
 - **Avatar Upload**: Upload dan edit foto profil dengan crop tool
 
 ### 📈 **Riwayat & Statistik**
+
 - **Scan History**: Simpan dan review hasil identifikasi sebelumnya
 - **Personal Stats**: Statistik personal scanning dan learning progress
 - **Export Data**: Download riwayat dalam format yang mudah dibaca
@@ -48,6 +58,7 @@
 ## 🛠️ Teknologi & Stack
 
 ### **Frontend**
+
 - **Next.js 15.4.6** - React framework dengan App Router
 - **React 19.1.1** - UI library terbaru
 - **TypeScript** - Type safety dan developer experience
@@ -57,18 +68,21 @@
 - **React Query** - State management dan data fetching
 
 ### **Backend & Database**
+
 - **Supabase** - Backend-as-a-Service (BaaS)
 - **PostgreSQL** - Relational database untuk data taksonomi
 - **Supabase Storage** - File storage untuk gambar dan media
 - **Row Level Security** - Database security dan authorization
 
 ### **AI & Machine Learning**
+
 - **TensorFlow/Keras** - Model CNN untuk klasifikasi gambar
 - **Python FastAPI** - API server untuk ML inference
 - **Image Preprocessing** - Resize, normalisasi, dan augmentasi
 - **Species Matching** - Algoritma pencocokan dengan database
 
 ### **Development Tools**
+
 - **Bun** - Fast package manager dan runtime
 - **ESLint** - Code linting dan quality
 - **Prettier** - Code formatting
@@ -77,6 +91,7 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 18+ atau **Bun** 1.0+
 - **Git**
 - **Supabase** account (untuk database)
@@ -84,12 +99,14 @@
 ### Installation
 
 1. **Clone repository**
+
 ```bash
 git clone https://github.com/Shirokouwu/feli-learn.git
 cd feli-learn-2
 ```
 
 2. **Install dependencies**
+
 ```bash
 # Menggunakan Bun (recommended)
 bun install
@@ -99,11 +116,13 @@ npm install
 ```
 
 3. **Setup environment variables**
+
 ```bash
 cp .env.example .env.local
 ```
 
 Isi file `.env.local` dengan:
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -113,6 +132,7 @@ NEXTAUTH_URL=http://localhost:3000
 ```
 
 4. **Run development server**
+
 ```bash
 # Menggunakan Bun
 bun dev
@@ -121,8 +141,7 @@ bun dev
 npm run dev
 ```
 
-5. **Open browser**
-Buka [http://localhost:3000](http://localhost:3000) untuk melihat aplikasi.
+5. **Open browser** Buka [http://localhost:3000](http://localhost:3000) untuk melihat aplikasi.
 
 ## 📁 Struktur Proyek
 
@@ -179,6 +198,7 @@ Lihat [API Documentation](./docs/API-DOCS.md) untuk detail lengkap.
 ## 📊 Database Schema
 
 ### Tabel Utama:
+
 - `taksonomi_spesies` - Data spesies lengkap
 - `taksonomi_genus` - Informasi genus
 - `taksonomi_gambar` - Galeri foto spesies
@@ -191,6 +211,7 @@ Lihat [Database Setup](./docs/DATABASE_SETUP.md) untuk migrasi lengkap.
 ## 🎯 Roadmap
 
 ### Phase 1 ✅ (Completed)
+
 - [x] AI Scanner dengan CNN model
 - [x] Supabase integration
 - [x] Google OAuth authentication
@@ -198,12 +219,14 @@ Lihat [Database Setup](./docs/DATABASE_SETUP.md) untuk migrasi lengkap.
 - [x] Taxonomy visualization
 
 ### Phase 2 🚧 (In Progress)
+
 - [ ] Advanced filtering dan search
 - [ ] Offline mode dengan PWA
 - [ ] Multi-language support (ID/EN)
 - [ ] Enhanced analytics dashboard
 
 ### Phase 3 📋 (Planned)
+
 - [ ] Community features (user contributions)
 - [ ] Educational quizzes dan games
 - [ ] Mobile app (React Native)
@@ -243,4 +266,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-**FelLearn** - *Mengenal dan Melestarikan Keluarga Felidae Melalui Teknologi* 🐾
+**FelLearn** - _Mengenal dan Melestarikan Keluarga Felidae Melalui Teknologi_ 🐾
