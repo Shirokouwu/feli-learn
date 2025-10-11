@@ -426,6 +426,7 @@ export const RadialDiagram = memo(
     scale(${transform.scale}) 
     rotate(${transform.rotation}deg)`,
               transformOrigin: "0 0",
+              willChange: "transform",
               transition: showOverlay
                 ? "transform 1.8s cubic-bezier(0.16, 1, 0.3, 1)"
                 : "none",
