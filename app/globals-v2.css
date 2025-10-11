@@ -122,6 +122,7 @@
   }
 }
 
+
 @keyframes borderAnimation {
 
   0%,
@@ -146,172 +147,6 @@
   }
 }
 
-.bento-card {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-font-smoothing: subpixel-antialiased;
-  perspective: 1000px;
-}
-
-.bento-card img {
-  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.bento-card:hover img {
-  transform: scale(1.05);
-  transition-duration: 0.5s;
-}
-
-.bento-card:hover {
-  transform: translateY(-2px);
-  transition-duration: 0.3s;
-}
-
-.bento-card::before,
-.bento-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 2px solid transparent;
-  border-radius: inherit;
-  animation: borderAnimation 8s linear infinite;
-}
-
-.bento-card::before {
-  border-color: rgba(16, 185, 129, 0.2);
-  animation-delay: -4s;
-}
-
-.bento-card::after {
-  border-color: rgba(16, 185, 129, 0.4);
-}
-
-.bento-card:hover {
-  transform: translateY(-2px);
-}
-
-.bento-card:hover::before,
-.bento-card:hover::after {
-  animation-duration: 4s;
-}
-
-@media (min-width: 768px) {
-  .bento-card {
-    height: 100%;
-  }
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-}
-
-.taxonomy-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.taxonomy-card {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform;
-}
-
-.taxonomy-card::before,
-.taxonomy-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 2px solid transparent;
-  border-radius: inherit;
-  animation: borderAnimation 8s linear infinite;
-}
-
-.taxonomy-card::before {
-  border-color: rgba(16, 185, 129, 0.15);
-  animation-delay: -4s;
-}
-
-.taxonomy-card::after {
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.taxonomy-card:hover::before,
-.taxonomy-card:hover::after {
-  animation-duration: 4s;
-}
-
-.taxonomy-item {
-  position: relative;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-  overflow: hidden;
-}
-
-.taxonomy-item:hover {
-  transform: translateX(8px);
-  border-color: rgba(16, 185, 129, 0.2);
-  background: none;
-}
-
-.taxonomy-item img {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.taxonomy-item:hover img {
-  transform: scale(1.1);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
-}
-
-.stats-card {
-  position: relative;
-  overflow: hidden;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform;
-}
-
-.stats-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.stats-card:hover::before {
-  transform: translateX(100%);
-}
-
 h1,
 h2,
 h3,
@@ -324,103 +159,6 @@ html {
   scroll-behavior: smooth;
   -ms-content-zooming: none;
   -webkit-text-size-adjust: none;
-}
-
-@media (max-width: 768px) {
-  .taxonomy-card {
-    padding: 1rem;
-  }
-
-  .taxonomy-item {
-    padding: 0.75rem;
-  }
-}
-
-/* Add the glow animation */
-@keyframes glow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-  }
-
-  50% {
-    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-  }
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
-}
-
-/* Improve card animations */
-.group:hover .group-hover\:scale-110 {
-  transform: scale(1.1) rotate(3deg);
-}
-
-/* Prevent default zoom behavior when ctrl + scroll */
-.scroll-none {
-  -webkit-user-select: none;
-  user-select: none;
-  overscroll-behavior: none;
-  overflow: hidden;
-}
-
-/* Add smooth transitions for zoom */
-svg g {
-  transition: transform 0.1s ease-out;
-}
-
-/* Ensure proper event handling on the SVG */
-svg {
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-* {
-  scroll-behavior: smooth;
-}
-
-/* Add these to your existing styles */
-@media (hover: none) and (pointer: coarse) {
-  svg {
-    touch-action: none;
-    -ms-touch-action: none;
-  }
-
-  /* Prevent pull-to-refresh and other browser gestures */
-  body,
-  html {
-    overscroll-behavior: none;
-    overscroll-behavior-y: none;
-    overflow-x: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Ensure the container takes full height */
-  #__next,
-  main {
-    height: 100%;
-  }
-}
-
-/* Custom breakpoint for extra small screens */
-@media (max-width: 639px) {
-  .xs\:right-1\/2 {
-    right: 50%;
-  }
-
-  .xs\:transform {
-    transform: translateX(50%);
-  }
-
-  .xs\:translate-x-1\/2 {
-    --tw-translate-x: 50%;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
 }
 
 button,
@@ -455,30 +193,95 @@ a,
   transform: translateX(100%);
 }
 
-.scan-pulse {
-  animation: scanPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes scanPulse {
+/* Add the glow animation */
+@keyframes glow {
 
   0%,
   100% {
-    opacity: 1;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
   }
 
   50% {
-    opacity: 0.5;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
   }
 }
 
-/* Improve existing animations */
-
-.hover-scale {
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
 }
 
-.hover-scale:hover {
-  transform: scale(1.02);
+/* Improve card animations */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1) rotate(3deg);
+}
+
+
+/* Prevent default zoom behavior when ctrl + scroll */
+.scroll-none {
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
+/* Add smooth transitions for zoom */
+svg g {
+  transition: transform 0.1s ease-out;
+}
+
+/* Ensure proper event handling on the SVG */
+svg {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Add these to your existing styles */
+@media (hover: none) and (pointer: coarse) {
+  /* .taxonomy-explorer-container {
+    touch-action: none;
+    -webkit-overflow-scrolling: auto;
+  } */
+
+  svg {
+    touch-action: none;
+    -ms-touch-action: none;
+  }
+
+  /* Prevent pull-to-refresh and other browser gestures */
+  body,
+  html {
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    overflow-x: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ensure the container takes full height */
+  #__next,
+  main {
+    height: 100%;
+  }
+}
+
+
+
+/* Custom breakpoint for extra small screens */
+@media (max-width: 639px) {
+  .xs\:right-1\/2 {
+    right: 50%;
+  }
+
+  .xs\:transform {
+    transform: translateX(50%);
+  }
+
+  .xs\:translate-x-1\/2 {
+    --tw-translate-x: 50%;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
 }
 
 /* Improve mobile card handling */
@@ -594,11 +397,15 @@ a,
     overflow: hidden;
   }
 
+
+
   /* Ensure the diagram takes full height */
   .radial-diagram {
     height: 100%;
     width: 100%;
   }
+
+  
 }
 
 /* Add styles for the mobile bottom controls */
@@ -610,6 +417,7 @@ a,
   display: flex;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
+  /* border-radius: 9999px; */
   padding: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 50;
@@ -642,6 +450,17 @@ a,
 .control-panel {
   transition: all 0.3s ease;
 }
+
+/* Add these styles at the end of the file for smoother transitions */
+/* .diagram-container {
+  transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+} */
+
+
 
 /* Improve the radial diagram dragging experience */
 .radial-diagram {
@@ -764,6 +583,7 @@ a,
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
+
 }
 
 /* Add this CSS class to enable text selection */

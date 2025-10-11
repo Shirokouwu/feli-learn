@@ -66,6 +66,9 @@ export default async function Home() {
           <Link href="/profile" className="hover:text-blue-500">
             👤 Profile
           </Link>
+          <Link href="/database" className="hover:text-blue-500">
+            🗄️ Database
+          </Link>
         </nav>
       </div>
     );
