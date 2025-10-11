@@ -157,9 +157,8 @@ export function SpeciesHero({
             <button
               key={index}
               onClick={() => goToImage(index)}
-              className={`h-2 rounded-full transition-all duration-300 hover:scale-125 ${
-                index === activeImage ? "bg-white w-8" : "bg-white/50 hover:bg-white/80 w-2"
-              }`}
+              className={`h-2 rounded-full transition-all duration-300 hover:scale-125 ${index === activeImage ? "bg-white w-8" : "bg-white/50 hover:bg-white/80 w-2"
+                }`}
             />
           ))}
         </div>
@@ -188,8 +187,8 @@ export function SpeciesHero({
               )}
             </div>
 
-            {/* Quick Info Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            {/* Quick Info Cards (hidden on mobile) */}
+            <div className="hidden sm:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {/* Conservation Status */}
               {details.konservasi?.status_konservasi_alam && (
                 <motion.div
