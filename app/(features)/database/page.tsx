@@ -26,7 +26,7 @@ export default function DatabasePage() {
 
           {/* Floating Breadcrumb */}
           <div className="absolute top-3 sm:top-4 md:top-8 left-0 right-0 z-10">
-            <div className="container max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl px-3 sm:px-4 md:px-6">
               <div className="bg-white/10 backdrop-blur-xl rounded-xl px-2 sm:px-3 md:px-4 py-2 sm:py-3 border border-white/20 shadow-lg shadow-black/10 w-fit">
                 <Breadcrumb>
                   <BreadcrumbList>
@@ -53,7 +53,7 @@ export default function DatabasePage() {
 
           {/* Hero Content */}
           <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-4 md:p-8 text-white">
-            <div className="container max-w-7xl mx-auto px-4 sm:px-4 md:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl px-3 sm:px-4 md:px-6">
               <div className="opacity-100">
                 <Badge className="mb-3 sm:mb-3 md:mb-4 bg-white/10 text-white border-white/20 text-sm sm:text-sm backdrop-blur-xl shadow-lg shadow-black/10">
                   <span className="font-semibold">Database Penelitian</span>
@@ -71,7 +71,7 @@ export default function DatabasePage() {
         </div>
 
         {/* Database Content with Suspense for Streaming */}
-        <div className="container max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-8 md:py-16">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4 md:px-6 py-4 sm:py-8 md:py-16">
           <Suspense fallback={<DatabaseContentSkeleton />}>
             <DatabaseContent />
           </Suspense>

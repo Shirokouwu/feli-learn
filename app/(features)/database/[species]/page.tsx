@@ -26,6 +26,7 @@ import {
   fetchRelatedSpecies,
   fetchSpeciesVideos,
 } from "@/lib/supabase-v2"
+import { getUserClient } from "@/lib/auth-client"
 
 // Import all the components
 import { SpeciesHero } from "@/components/database-spesies/species-hero"
@@ -46,32 +47,39 @@ export default function SpeciesDetailPage() {
   const params = useParams<{ species: string }>()
 
   // ============================================
-  // 🔐 LOGIN STATUS CHECK - MUDAH DIUBAH DISINI
+  // 🔐 REAL AUTH INTEGRATION
   // ============================================
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // ← UBAH JADI true/false sesuai kebutuhan
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userInfo, setUserInfo] = useState({
-    name: "Guest User", // ← UBAH nama user disini
-    email: "guest@example.com", // ← UBAH email user disini
-    avatar: null, // ← UBAH avatar URL disini
+    name: "Guest User",
+    email: "guest@example.com",
+    avatar: null as string | null,
   })
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true)
 
-  // Function untuk toggle login status (untuk testing)
-  const toggleLoginStatus = () => {
-    setIsLoggedIn(!isLoggedIn)
-    if (!isLoggedIn) {
-      setUserInfo({
-        name: "John Doe",
-        email: "john@example.com",
-        avatar: null,
-      })
-    } else {
-      setUserInfo({
-        name: "Guest User",
-        email: "guest@example.com",
-        avatar: null,
-      })
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const userData = await getUserClient()
+        if (userData) {
+          setIsLoggedIn(true)
+          setUserInfo({
+            name: userData.profile?.full_name || userData.user_metadata?.full_name || userData.email?.split('@')[0] || 'User',
+            email: userData.email || 'user@example.com',
+            avatar: userData.profile?.avatar_url || userData.user_metadata?.avatar_url || null,
+          })
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        setIsLoggedIn(false)
+      } finally {
+        setIsLoadingAuth(false)
+      }
     }
-  }
+
+    checkAuth()
+  }, [])
   // ============================================
 
   const [activeHeroImage, setActiveHeroImage] = useState(0)
@@ -332,7 +340,6 @@ export default function SpeciesDetailPage() {
           details={speciesData.details}
           isLoggedIn={isLoggedIn}
           userInfo={userInfo}
-          onToggleLogin={toggleLoginStatus}
         />
 
         {/* Main Content Container */}

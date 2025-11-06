@@ -148,7 +148,7 @@ export default function RegisterPage() {
             {state.errors?.terms && <p className="text-sm text-red-500 -mt-4">{state.errors.terms[0]}</p>}
 
             <div>
-              <Button type="submit" className="w-full" disabled={pending}>
+              <Button type="submit" className="w-full cursor-pointer" disabled={pending}>
                 {pending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

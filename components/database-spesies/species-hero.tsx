@@ -21,7 +21,6 @@ interface SpeciesHeroProps {
     email: string
     avatar?: string | null
   }
-  onToggleLogin?: () => void
 }
 
 export function SpeciesHero({
@@ -34,7 +33,6 @@ export function SpeciesHero({
   details,
   isLoggedIn,
   userInfo,
-  onToggleLogin,
 }: SpeciesHeroProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [direction, setDirection] = useState(0)
@@ -97,7 +95,6 @@ export function SpeciesHero({
         speciesName={species.nama_umum || species.nama}
         isLoggedIn={isLoggedIn}
         userInfo={userInfo}
-        onToggleLogin={onToggleLogin}
       />
 
       {/* Background Image with Smooth Slide Effect */}

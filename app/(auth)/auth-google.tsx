@@ -20,7 +20,7 @@ export default function AuthGoogle() {
             <Button
                 type="submit"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-2 hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 hover:bg-gray-50 cursor-pointer"
                 disabled={isPending}
                 onClick={handleSubmit}
             >

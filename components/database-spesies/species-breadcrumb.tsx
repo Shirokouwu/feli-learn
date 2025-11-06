@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,6 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Home, Database, User, LogIn } from "lucide-react"
 
 interface SpeciesBreadcrumbProps {
@@ -19,16 +21,15 @@ interface SpeciesBreadcrumbProps {
     email: string
     avatar?: string | null
   }
-  onToggleLogin?: () => void
 }
 
 export function SpeciesBreadcrumb({
   speciesName,
   isLoggedIn = false,
   userInfo = { name: "Guest", email: "", avatar: null },
-  onToggleLogin,
 }: SpeciesBreadcrumbProps) {
   const [isScrolled, setIsScrolled] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,7 +95,7 @@ export function SpeciesBreadcrumb({
           {/* Login Status */}
           <div className="flex items-center gap-3 ml-4 flex-shrink-0">
             {isLoggedIn ? (
-              // User sudah login
+              // User sudah login - dengan Avatar
               <div className="flex items-center gap-2">
                 <div
                   className={`
@@ -103,21 +104,24 @@ export function SpeciesBreadcrumb({
                   `}
                 >
                   <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-sm"></div>
-                  <span className="hidden lg:inline">{userInfo.name}</span>
-                  <span className="lg:hidden">Online</span>
+                  <span className="hidden lg:inline">Online</span>
                 </div>
                 <button
-                  onClick={onToggleLogin}
+                  onClick={() => router.push('/profile')}
                   className={`
-                    flex items-center gap-1 px-2 py-1 text-xs rounded-md transition-all duration-200
+                    flex items-center gap-2 p-1 rounded-full transition-all duration-200
                     ${isScrolled
-                      ? "text-neutral-600 hover:text-emerald-600 hover:bg-emerald-50"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
+                      ? "hover:bg-emerald-50"
+                      : "hover:bg-white/10"
                     }
                   `}
                 >
-                  <User className="h-3 w-3" />
-                  <span className="hidden sm:inline">Profile</span>
+                  <Avatar className="h-10 w-10 ring-2 ring-white/20">
+                    <AvatarImage src={userInfo.avatar || undefined} alt={userInfo.name} />
+                    <AvatarFallback className="bg-emerald-500 text-white text-base font-medium">
+                      {userInfo.name?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
                 </button>
               </div>
             ) : (
@@ -139,7 +143,7 @@ export function SpeciesBreadcrumb({
                   <span className="lg:hidden">Offline</span>
                 </div>
                 <button
-                  onClick={onToggleLogin}
+                  onClick={() => router.push('/login')}
                   className={`
                     flex items-center gap-1 px-2 py-1 text-xs rounded-md transition-all duration-200
                     ${isScrolled
