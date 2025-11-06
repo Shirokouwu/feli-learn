@@ -2,20 +2,35 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Leaf } from "lucide-react"
+import { Leaf, Loader2 } from "lucide-react"
 import { useState } from "react"
 import type React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { requestPasswordReset } from "./actions"
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle reset password logic here
-    console.log("Reset password attempt for:", email)
+    setIsLoading(true)
+    setMessage(null)
+
+    // Call server action untuk kirim reset email
+    const result = await requestPasswordReset(email)
+
+    if (result.success) {
+      setMessage({ type: "success", text: result.message || "" })
+      setEmail("") // Clear input setelah berhasil
+    } else {
+      setMessage({ type: "error", text: result.error || "" })
+    }
+
+    setIsLoading(false)
   }
 
   return (
@@ -34,6 +49,18 @@ export default function ResetPasswordPage() {
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            {/* Success/Error Message */}
+            {message && (
+              <div
+                className={`rounded-md p-4 ${message.type === "success"
+                    ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                  }`}
+              >
+                <p className="text-sm">{message.text}</p>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="email">Alamat Email</Label>
               <Input
@@ -45,12 +72,20 @@ export default function ResetPasswordPage() {
                 className="mt-2"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
 
             <div>
-              <Button type="submit" className="w-full">
-                Kirim Tautan Reset
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Mengirim...
+                  </>
+                ) : (
+                  "Kirim Tautan Reset"
+                )}
               </Button>
             </div>
           </form>

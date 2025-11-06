@@ -27,6 +27,7 @@ import {
 import EditProfileModal from "./EditProfileModal"
 import { AvatarUpload } from "./AvatarUpload"
 import { useMobile } from "@/hooks/use-mobile"
+import { UserScanStatsCard } from "./UserScanStatsCard"
 
 interface ProfileData {
     id: string
@@ -301,39 +302,35 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                         </div>
 
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div className="bg-white rounded-xl p-6 shadow-md shadow-gray-200/50 border border-gray-100">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-emerald-100 rounded-lg">
-                                        <Scan className="h-6 w-6 text-emerald-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-2xl font-bold text-gray-900">0</p>
-                                        <p className="text-sm text-gray-500">Total Scan</p>
-                                    </div>
-                                </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                            {/* Detailed Scan Stats Card */}
+                            <div className="lg:col-span-2">
+                                <UserScanStatsCard />
                             </div>
 
-                            <div className="bg-white rounded-xl p-6 shadow-md shadow-gray-200/50 border border-gray-100">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-blue-100 rounded-lg">
-                                        <BookmarkIcon className="h-6 w-6 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-2xl font-bold text-gray-900">0</p>
-                                        <p className="text-sm text-gray-500">Spesies Disimpan</p>
+                            {/* Other Stats */}
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-xl p-6 shadow-md shadow-gray-200/50 border border-gray-100">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-blue-100 rounded-lg">
+                                            <BookmarkIcon className="h-6 w-6 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-900">0</p>
+                                            <p className="text-sm text-gray-500">Spesies Disimpan</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="bg-white rounded-xl p-6 shadow-md shadow-gray-200/50 border border-gray-100">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-purple-100 rounded-lg">
-                                        <LayoutGrid className="h-6 w-6 text-purple-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-2xl font-bold text-gray-900">0</p>
-                                        <p className="text-sm text-gray-500">Eksplorasi</p>
+                                <div className="bg-white rounded-xl p-6 shadow-md shadow-gray-200/50 border border-gray-100">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-purple-100 rounded-lg">
+                                            <LayoutGrid className="h-6 w-6 text-purple-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-900">0</p>
+                                            <p className="text-sm text-gray-500">Eksplorasi</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

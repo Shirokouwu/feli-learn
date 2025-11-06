@@ -26,6 +26,8 @@ export interface ScannerHook {
   apiChecking: boolean
   apiResponse: { data: { status: string } }
   clearFileInput: () => void
+  notFelidae: boolean
+  notFelidaeMessage: string
 }
 
 export const useScannerLogic = (): ScannerHook => {
@@ -39,6 +41,8 @@ export const useScannerLogic = (): ScannerHook => {
   const [imageUrl, setImageUrl] = useState<string>("")
   const [scanStartTime, setScanStartTime] = useState<number>(0)
   const [scanDuration, setScanDuration] = useState<number>(0)
+  const [notFelidae, setNotFelidae] = useState<boolean>(false)
+  const [notFelidaeMessage, setNotFelidaeMessage] = useState<string>("")
 
   // Scan stats mutation
   const incrementScanMutation = useIncrementScan()
@@ -137,6 +141,8 @@ export const useScannerLogic = (): ScannerHook => {
     setShowConfetti(false)
     setScanDuration(0)
     setScanStartTime(0) // Reset start time
+    setNotFelidae(false)
+    setNotFelidaeMessage("")
   }
 
   const processScanResult = (apiData: ApiClassificationResponse, enhancedData: EnhancedSpeciesData | null, imageSource: string, scannerDuration: number, fetchDuration: number) => {
@@ -310,7 +316,13 @@ export const useScannerLogic = (): ScannerHook => {
         setIsScanning(false)
         setScanProgress(0)
         setScanStage("")
-        toast("Gambar ini bukan termasuk keluarga Felidae (kucing). Silakan coba gambar kucing lain.")
+        setNotFelidae(true)
+        setNotFelidaeMessage(
+          "Foto tidak terdeteksi sebagai kucing, atau subjek kurang jelas. Coba foto ulang dengan fokus pada kucing (wajah/badan terlihat), pencahayaan cukup, dan latar sederhana."
+        )
+        toast(
+          "Bukan kucing atau gambar kurang jelas. Coba foto ulang dengan subjek yang lebih jelas."
+        )
         return
       }
 
@@ -402,7 +414,13 @@ export const useScannerLogic = (): ScannerHook => {
         setIsScanning(false)
         setScanProgress(0)
         setScanStage("")
-        toast("Gambar ini bukan termasuk keluarga Felidae (kucing). Silakan coba gambar kucing lain.")
+        setNotFelidae(true)
+        setNotFelidaeMessage(
+          "Foto tidak terdeteksi sebagai kucing, atau subjek kurang jelas. Coba foto ulang dengan fokus pada kucing (wajah/badan terlihat), pencahayaan cukup, dan latar sederhana."
+        )
+        toast(
+          "Bukan kucing atau gambar kurang jelas. Coba foto ulang dengan subjek yang lebih jelas."
+        )
         return
       }
 
@@ -580,6 +598,8 @@ export const useScannerLogic = (): ScannerHook => {
     apiReady,
     apiChecking,
     apiResponse,
-    clearFileInput
+    clearFileInput,
+    notFelidae,
+    notFelidaeMessage
   }
 }

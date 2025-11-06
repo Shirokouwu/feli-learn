@@ -5,6 +5,7 @@ import { createServer } from "@/utils/supabase/server";
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
+    const type = searchParams.get("type"); // Check if this is password recovery
     // if "next" is in param, use it as the redirect URL
     const next = searchParams.get("next") ?? "/";
 
@@ -14,6 +15,13 @@ export async function GET(request: Request) {
 
         if (!error && data.user) {
             console.log('user', data.user);
+
+            // Check if this is a password recovery flow
+            // If type=recovery, redirect to password reset page instead of home
+            if (type === 'recovery') {
+                console.log('🔐 Password recovery detected, redirecting to confirm page');
+                return NextResponse.redirect(`${origin}/reset-password/confirm`);
+            }
 
             // Check if user exists in our users table
             const { data: existingUser } = await supabase

@@ -27,9 +27,28 @@ export async function loginAction(prevState: any, formData: FormData) {
     const { data, error } = await supabase.auth.signInWithPassword(formDataLogin)
 
     if (error) {
+        console.error("❌ Login error:", error)
+        console.error("Error details:", {
+            message: error.message,
+            status: error.status,
+            name: error.name
+        })
+
+        // Return user-friendly error messages
+        let errorMessage = "Login gagal. Periksa email dan kata sandi Anda."
+
+        if (error.message.includes("Invalid login credentials")) {
+            errorMessage = "Email atau kata sandi salah. Silakan coba lagi."
+        } else if (error.message.includes("Email not confirmed")) {
+            errorMessage = "Email Anda belum diverifikasi. Silakan cek email Anda."
+        } else if (error.message.includes("Too many requests")) {
+            errorMessage = "Terlalu banyak percobaan login. Silakan coba lagi nanti."
+        }
+
         return {
             success: false,
-            message: error.message || "Login gagal. Periksa email dan kata sandi Anda.",
+            message: errorMessage,
+            errors: {}
         }
     }
 
@@ -87,10 +106,30 @@ export async function registerAction(prevState: any, formData: FormData) {
     console.log("Sign up result:", { data, error });
 
     if (error) {
-        console.log("Registration error:", error)
+        console.error("❌ Registration error:", error)
+        console.error("Error details:", {
+            message: error.message,
+            status: error.status,
+            name: error.name
+        })
+
+        // Return user-friendly error messages
+        let errorMessage = "Registrasi gagal. Silakan coba lagi."
+
+        if (error.message.includes("User already registered")) {
+            errorMessage = "Email sudah terdaftar. Silakan gunakan email lain atau login."
+        } else if (error.message.includes("Password should be")) {
+            errorMessage = "Password terlalu lemah. Minimal 6 karakter."
+        } else if (error.message.includes("Invalid email")) {
+            errorMessage = "Format email tidak valid."
+        } else if (error.message.includes("rate limit")) {
+            errorMessage = "Terlalu banyak percobaan. Silakan coba lagi nanti."
+        }
+
         return {
             success: false,
-            message: error.message || "Registrasi gagal. Silakan coba lagi.",
+            message: errorMessage,
+            errors: {}
         }
     }
 

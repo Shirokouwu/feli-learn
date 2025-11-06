@@ -30,11 +30,22 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
 }) => {
   const router = useRouter()
 
-  // const navigateToTaxonomy = () => {
-  //   if (scanResult) {
-  //     router.push(`/taxonomy?species=${scanResult.id}&highlight=true&search=${encodeURIComponent(scanResult.name)}`)
-  //   }
-  // }
+  // Convert scientific name to URL-friendly slug
+  const getSpeciesSlug = (scientificName: string): string => {
+    return scientificName
+      .toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, '') // Remove special characters
+      .trim()
+  }
+
+  // Navigate to species detail page in database
+  const navigateToDatabase = () => {
+    if (!scanResult) return
+    const scientificName = enhancedSpeciesData?.identifikasi.nama_ilmiah || scanResult.scientific_name
+    const slug = getSpeciesSlug(scientificName)
+    router.push(`/database/${slug}`)
+  }
 
   if (!scanResult) return null
 
@@ -66,18 +77,30 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
           // Enhanced display with database data
           <div className="mb-6 ">
             {/* Scientific Name - Most Prominent */}
-            <div className="text-center mb-4 p-3 md:p-4 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/50 rounded-lg border border-emerald-100 shadow-sm relative overflow-hidden">
+            <div
+              className="text-center mb-4 p-3 md:p-4 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/50 rounded-lg border border-emerald-100 shadow-sm relative overflow-hidden cursor-pointer hover:shadow-md transition-all group"
+              onClick={navigateToDatabase}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && navigateToDatabase()}
+            >
               {/* Subtle decorative elements */}
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/20 via-transparent to-teal-50/20 opacity-40"></div>
-              <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-100/30 rounded-full -translate-y-6 translate-x-6"></div>
-              <div className="absolute bottom-0 left-0 w-10 h-10 bg-teal-100/30 rounded-full translate-y-5 -translate-x-5"></div>
+              <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-100/30 rounded-full -translate-y-6 translate-x-6 group-hover:scale-110 transition-transform"></div>
+              <div className="absolute bottom-0 left-0 w-10 h-10 bg-teal-100/30 rounded-full translate-y-5 -translate-x-5 group-hover:scale-110 transition-transform"></div>
 
               <div className="relative z-10">
-                <p className="text-lg md:text-2xl font-bold text-emerald-800 italic mb-2 tracking-wide break-words">
-                  {enhancedSpeciesData.identifikasi.nama_ilmiah}
-                </p>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <p className="text-lg md:text-2xl font-bold text-emerald-800 italic tracking-wide break-words group-hover:text-emerald-600 transition-colors">
+                    {enhancedSpeciesData.identifikasi.nama_ilmiah}
+                  </p>
+                  <ArrowRight className="h-5 w-5 text-emerald-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
                 <p className="text-base md:text-lg font-medium text-emerald-600">
                   {enhancedSpeciesData.identifikasi.nama_umum}
+                </p>
+                <p className="text-xs text-emerald-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Klik untuk melihat informasi lengkap di database
                 </p>
               </div>
             </div>
@@ -105,18 +128,30 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
           // Fallback display with basic scan result
           <div className="mb-6">
             {/* Scientific Name - Most Prominent */}
-            <div className="text-center mb-4 p-3 md:p-4 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/50 rounded-lg border border-emerald-100 shadow-sm relative overflow-hidden">
+            <div
+              className="text-center mb-4 p-3 md:p-4 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/50 rounded-lg border border-emerald-100 shadow-sm relative overflow-hidden cursor-pointer hover:shadow-md transition-all group"
+              onClick={navigateToDatabase}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && navigateToDatabase()}
+            >
               {/* Subtle decorative elements */}
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/20 via-transparent to-teal-50/20 opacity-40"></div>
-              <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-100/30 rounded-full -translate-y-6 translate-x-6"></div>
-              <div className="absolute bottom-0 left-0 w-10 h-10 bg-teal-100/30 rounded-full translate-y-5 -translate-x-5"></div>
+              <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-100/30 rounded-full -translate-y-6 translate-x-6 group-hover:scale-110 transition-transform"></div>
+              <div className="absolute bottom-0 left-0 w-10 h-10 bg-teal-100/30 rounded-full translate-y-5 -translate-x-5 group-hover:scale-110 transition-transform"></div>
 
               <div className="relative z-10">
-                <p className="text-lg md:text-2xl font-bold text-emerald-800 italic mb-2 tracking-wide break-words">
-                  {scanResult.scientific_name}
-                </p>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <p className="text-lg md:text-2xl font-bold text-emerald-800 italic tracking-wide break-words group-hover:text-emerald-600 transition-colors">
+                    {scanResult.scientific_name}
+                  </p>
+                  <ArrowRight className="h-5 w-5 text-emerald-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
                 <p className="text-base md:text-lg font-medium text-emerald-600">
                   {scanResult.name}
+                </p>
+                <p className="text-xs text-emerald-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Klik untuk melihat informasi lengkap di database
                 </p>
               </div>
             </div>
@@ -555,22 +590,26 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
         </Tabs>
 
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
-          {/* <Button
-            onClick={navigateToTaxonomy}
-            className="flex-1 bg-emerald-600 hover:bg-emerald-700 group"
-          >
-            <Search className="h-4 w-4 mr-2" />
-            Lihat di Diagram Taksonomi
-            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button> */}
-
+          {/* Primary Action - View in Database */}
           <Button
-            variant="outline"
-            className="flex-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-            onClick={() => router.push("/database")}
+            className="flex-1 bg-emerald-600 hover:bg-emerald-700 group shadow-md hover:shadow-lg transition-all"
+            onClick={navigateToDatabase}
           >
             <Info className="h-4 w-4 mr-2" />
-            Informasi Lengkap di Database
+            <span className="hidden sm:inline">Informasi Lengkap di Database</span>
+            <span className="sm:hidden">Lihat Detail</span>
+            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Button>
+
+          {/* Secondary Action - Explore Database */}
+          <Button
+            variant="outline"
+            className="sm:w-auto border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+            onClick={() => router.push("/database")}
+          >
+            <Search className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">Jelajahi Database</span>
+            <span className="sm:hidden">Database</span>
           </Button>
         </div>
       </motion.div>

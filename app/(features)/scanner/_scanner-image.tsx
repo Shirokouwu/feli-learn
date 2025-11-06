@@ -18,6 +18,8 @@ import { ScanHistory } from "@/components/scanner/scan-history"
 import { ScanCounter } from "@/components/scanner/scan-counter"
 import { AboutAiScanner } from "@/components/scanner/about-ai-scanner"
 import ScanStatusApi from "@/components/scanner/scan-check-api"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertTriangle } from "lucide-react"
 
 export default function ScannerImage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -145,7 +147,7 @@ export default function ScannerImage() {
             <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
                 <div className="space-y-6">
-                  <ScanCounter className="mb-4 pb-4 border-b border-emerald-50" />
+                  <ScanCounter className="mb-3" showUserStats={true} />
 
                   {/* Upload Area */}
                   <ScannerUploadArea
@@ -172,6 +174,17 @@ export default function ScannerImage() {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {/* Non-Felidae Alert */}
+                  {scanner.notFelidae && (
+                    <Alert className="bg-red-50 border-red-200 text-red-800">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertTitle>Bukan kucing atau gambar kurang jelas</AlertTitle>
+                      <AlertDescription>
+                        {scanner.notFelidaeMessage ||
+                          "Coba foto ulang dengan fokus pada kucing (wajah/badan terlihat), pencahayaan cukup, dan latar sederhana."}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                   {/* Preview with loading overlay */}
                   <ScannerPreview
                     previewImage={scanner.previewImage}

@@ -38,12 +38,14 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     // Redirect authenticated users away from auth pages
+    // EXCEPT for reset-password/confirm (allow password change even when logged in)
     if (
         user &&
         (request.nextUrl.pathname.startsWith('/login') ||
             request.nextUrl.pathname.startsWith('/register') ||
             request.nextUrl.pathname.startsWith('/confirm-email') ||
-            request.nextUrl.pathname.startsWith('/reset-password') ||
+            (request.nextUrl.pathname.startsWith('/reset-password') &&
+                !request.nextUrl.pathname.startsWith('/reset-password/confirm')) ||
             request.nextUrl.pathname.startsWith('/new-password'))
     ) {
         const url = request.nextUrl.clone()
