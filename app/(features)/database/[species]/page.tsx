@@ -478,8 +478,8 @@ export default function SpeciesDetailPage() {
                         size="sm"
                         variant={autoSlideshow ? "default" : "outline"}
                         className={`flex items-center gap-2 flex-1 sm:flex-none ${autoSlideshow
-                            ? "bg-emerald-600 hover:bg-emerald-700"
-                            : "border-emerald-200 hover:bg-emerald-50"
+                          ? "bg-emerald-600 hover:bg-emerald-700"
+                          : "border-emerald-200 hover:bg-emerald-50"
                           }`}
                       >
                         {autoSlideshow ? "ON" : "OFF"}
