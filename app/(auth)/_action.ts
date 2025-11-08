@@ -24,6 +24,18 @@ export async function loginAction(prevState: any, formData: FormData) {
         }
     }
 
+    const checkUserRegistered = await supabase.from('users').select('id').eq('email', formDataLogin.email).single()
+
+    console.log(checkUserRegistered)
+
+    if (checkUserRegistered.error || !checkUserRegistered.data.id) {
+        return {
+            success: false,
+            message: "Email tidak terdaftar. Silakan daftar terlebih dahulu.",
+            errors: { email: ["Email tidak terdaftar. Silakan daftar terlebih dahulu."] }
+        }
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword(formDataLogin)
 
     if (error) {
