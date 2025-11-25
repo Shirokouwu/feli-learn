@@ -8,13 +8,13 @@ import { useScrollDetection } from "@/hooks/use-scroll-detection"
 import { getUserClient } from "@/lib/auth-client"
 import { GlassNavigation } from "@/components/glass-navigation"
 
-import { ScannerHeader } from "@/components/scanner/scanner-header"
 import { ScannerUploadArea } from "@/components/scanner/scanner-upload-area"
 import { ScannerPreview } from "@/components/scanner/scanner-preview"
 import { ScannerResultDisplay } from "@/components/scanner/scanner-result-display"
 import { ScannerActionButtons } from "@/components/scanner/scanner-action-buttons"
 import { ScannerConfetti } from "@/components/scanner/scanner-confetti"
 import { ScanHistory } from "@/components/scanner/scan-history"
+import { RecentScans } from "@/components/scanner/recent-scans"
 import { ScanCounter } from "@/components/scanner/scan-counter"
 import { AboutAiScanner } from "@/components/scanner/about-ai-scanner"
 import ScanStatusApi from "@/components/scanner/scan-check-api"
@@ -124,17 +124,10 @@ export default function ScannerImage() {
         className=""
       />
 
-      {/* Scanner Header */}
-      <ScannerHeader
-        isLoggedIn={isLoggedIn}
-        onToggleLogin={handleToggleLogin}
-        onShowHistory={() => setShowHistory(true)}
-      />
-
       {/* Confetti effect */}
       <ScannerConfetti isVisible={scanner.showConfetti} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-24 md:pt-28">{/* API Status */}
         {/* API Status */}
         <ScanStatusApi
           apiChecking={scanner.apiChecking}
@@ -213,6 +206,9 @@ export default function ScannerImage() {
 
           {/* About AI Scanner */}
           <AboutAiScanner />
+
+          {/* Recent Scans - Only show for logged in users */}
+          {isLoggedIn && <RecentScans />}
         </div>
       </div>
 
@@ -220,7 +216,6 @@ export default function ScannerImage() {
       <ScanHistory
         isOpen={showHistory && isLoggedIn}
         onOpenChange={setShowHistory}
-        onClearHistory={handleClearHistory}
       />
     </div>
   )

@@ -59,7 +59,7 @@ export default function DatabasePage() {
                   <span className="font-semibold">Database Penelitian</span>
                 </Badge>
                 <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-3 md:mb-4 leading-tight">
-                  Database Global Felidae
+                  Explopedia Database Felidae
                 </h1>
                 <p className="text-white/95 text-sm sm:text-sm md:text-lg lg:text-xl leading-relaxed max-w-3xl font-medium">
                   Jelajahi keanekaragaman keluarga Felidae melalui database komprehensif kami, mencakup karakteristik,

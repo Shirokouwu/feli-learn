@@ -17,6 +17,7 @@ export interface ApiClassificationResponse {
 
 export interface EnhancedSpeciesData {
     identifikasi: {
+        id: string; // ID from taksonomi_spesies table
         akurasi: number;
         nama_umum: string;
         nama_ilmiah: string;
@@ -169,6 +170,7 @@ export async function matchAndFetchSpeciesData(
         // Step 3: Process and structure the data according to the desired format
         const enhancedData: EnhancedSpeciesData = {
             identifikasi: {
+                id: spesies_id, // Add the ID from taksonomi_spesies
                 akurasi: confidence,
                 nama_umum: speciesData.nama_umum || predicted_class,
                 nama_ilmiah: speciesData.nama || "",

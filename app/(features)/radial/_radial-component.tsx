@@ -84,13 +84,13 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
               <p className="text-neutral-600 text-lg md:text-xl leading-relaxed mb-4">
                 Jelajahi{" "}
                 <span className="bg-gradient-to-r from-teal-100/70 to-blue-100/70 px-2 py-0.5 rounded-md font-medium text-teal-800">
-                  hubungan evolusi
+                  hierarki taksonomi
                 </span>{" "}
                 keluarga Felidae melalui{" "}
                 <span className="bg-gradient-to-r from-amber-100/70 to-orange-100/70 px-2 py-0.5 rounded-md font-medium text-orange-800">
                   visualisasi radial yang inovatif
                 </span>{" "}
-                . Temukan koneksi antar spesies dengan cara yang lebih intuitif.
+                . Lihat node hierarki dari Famili ke Genus hingga Spesies untuk memahami struktur klasifikasi.
               </p>
               <div className="flex flex-wrap justify-center gap-3 mt-4">
                 <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">

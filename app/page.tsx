@@ -37,6 +37,8 @@ export default async function Home() {
                   src={avatarUrl}
                   alt="User Avatar"
                   className="w-24 h-24 rounded-full border-2 border-black shadow-[4px_4px_0_#111] object-cover"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
                 />
               ) : (
                 <div className="w-24 h-24 bg-emerald-300 border-2 border-black rounded-full flex items-center justify-center shadow-[4px_4px_0_#111]">

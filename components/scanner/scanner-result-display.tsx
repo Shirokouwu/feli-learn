@@ -220,16 +220,6 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
 
                     {enhancedSpeciesData ? (
                       <div className="space-y-4">
-                        {/* Nama Ilmiah yang Prominent */}
-                        <div className="text-center mb-6 p-4 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-lg border border-emerald-200">
-                          <p className="text-xl font-bold text-emerald-800 italic mb-1">
-                            {enhancedSpeciesData.identifikasi.nama_ilmiah}
-                          </p>
-                          <p className="text-md text-emerald-600 font-medium">
-                            {enhancedSpeciesData.identifikasi.nama_umum}
-                          </p>
-                        </div>
-
                         {/* Hirarki Taksonomi */}
                         <div className="space-y-3">
                           {[

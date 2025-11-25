@@ -279,7 +279,10 @@ export function DatabaseContent() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Katalog Spesies Felidae</h2>
-                <p className="text-sm text-gray-700 mt-1">
+                <p className="text-sm text-gray-600 mt-1">
+                  Jelajahi koleksi lengkap spesies kucing besar dan kecil dari seluruh dunia
+                </p>
+                {/* <p className="text-sm text-gray-700 mt-1">
                   {isLoading ? (
                     <span className="inline-flex items-center gap-2">
                       <Loader2 className="h-3 w-3 animate-spin" />
@@ -294,7 +297,7 @@ export function DatabaseContent() {
                       )}
                     </>
                   )}
-                </p>
+                </p> */}
               </div>
               <div className="flex items-center gap-3">
                 {/* Clear filters button */}

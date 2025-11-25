@@ -27,8 +27,9 @@ export function RadialIntro({ onClose }: RadialIntroProps) {
         </div>
         <h2 className="text-2xl font-bold text-teal-900 mb-2">Jelajahi Taksonomi Felidae</h2>
         <p className="text-neutral-600 mb-6">
-          Selamat datang di visualisasi radial taksonomi Felidae. Jelajahi hubungan evolusi yang menakjubkan dalam
-          keluarga kucing melalui pendekatan visual yang unik.
+          Visualisasi hierarki taksonomi dalam bentuk node radial. Lihat bagaimana spesies kucing dikelompokkan dari
+          Famili Felidae ke berbagai Genus, hingga masing-masing Spesies. Klik node untuk menjelajahi setiap tingkat
+          klasifikasi dan memahami hubungan evolusi di dalamnya.
         </p>
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="bg-teal-50 p-3 rounded-xl">

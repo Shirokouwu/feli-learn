@@ -6,6 +6,7 @@ import { ArrowLeft, Lock, Unlock } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from "next/link"
 import { useMobile } from "@/hooks/use-mobile"
+import Image from "next/image"
 
 interface GlassNavigationProps {
    isScrolled: boolean
@@ -126,12 +127,27 @@ export function GlassNavigation({
                                  {fullName}
                               </span>
                            </span>
-                           <Avatar className={`border-2 border-white/40 transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
-                              <AvatarImage src={profilePicture} alt={fullName} />
-                              <AvatarFallback className="bg-white/20 text-teal-800 font-semibold">
-                                 {fullName.charAt(0)}
-                              </AvatarFallback>
-                           </Avatar>
+                           {profilePicture ? (
+                              <div className={`relative border-2 border-white/40 rounded-full overflow-hidden transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
+                                 <img
+                                    src={profilePicture}
+                                    alt={fullName}
+                                    className="w-full h-full object-cover"
+                                    referrerPolicy="no-referrer"
+                                    crossOrigin="anonymous"
+                                    onError={(e) => {
+                                       console.error('Image load error:', profilePicture)
+                                       e.currentTarget.style.display = 'none'
+                                    }}
+                                 />
+                              </div>
+                           ) : (
+                              <Avatar className={`border-2 border-white/40 transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
+                                 <AvatarFallback className="bg-white/20 text-teal-800 font-semibold">
+                                    {fullName.charAt(0)}
+                                 </AvatarFallback>
+                              </Avatar>
+                           )}
                         </div>
                      ) : (
                         <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
