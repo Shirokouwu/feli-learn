@@ -358,3 +358,91 @@ export async function getScanStats(): Promise<{
         return { data: null, error: "Internal server error" }
     }
 }
+
+/**
+ * Mengambil leaderboard - top users berdasarkan jumlah scan
+ */
+export async function getLeaderboard(
+    limit: number = 10
+): Promise<{
+    data: Array<{
+        user_id: string
+        full_name: string | null
+        avatar_url: string | null
+        total_scans: number
+        average_accuracy: number
+        rank: number
+    }> | null
+    error: string | null
+}> {
+    try {
+        const supabase = await createServer()
+
+        // Aggregate scan counts per user
+        const { data: scanCounts, error: scanError } = await supabase
+            .from("hasil_identifikasi")
+            .select("user_id, akurasi")
+
+        if (scanError) {
+            console.error("Error fetching scan counts:", scanError)
+            return { data: null, error: scanError.message }
+        }
+
+        if (!scanCounts || scanCounts.length === 0) {
+            return { data: [], error: null }
+        }
+
+        // Group by user_id and calculate stats
+        const userStats = scanCounts.reduce((acc, scan) => {
+            if (!acc[scan.user_id]) {
+                acc[scan.user_id] = {
+                    total_scans: 0,
+                    total_accuracy: 0,
+                }
+            }
+            acc[scan.user_id].total_scans += 1
+            acc[scan.user_id].total_accuracy += scan.akurasi
+            return acc
+        }, {} as Record<string, { total_scans: number; total_accuracy: number }>)
+
+        // Convert to array and sort by total_scans
+        const sortedUsers = Object.entries(userStats)
+            .map(([user_id, stats]) => ({
+                user_id,
+                total_scans: stats.total_scans,
+                average_accuracy: Number((stats.total_accuracy / stats.total_scans).toFixed(2)),
+            }))
+            .sort((a, b) => b.total_scans - a.total_scans)
+            .slice(0, limit)
+
+        // Fetch user profiles
+        const userIds = sortedUsers.map((u) => u.user_id)
+        const { data: profiles, error: profileError } = await supabase
+            .from("users")
+            .select("id, full_name, avatar_url")
+            .in("id", userIds)
+
+        if (profileError) {
+            console.error("Error fetching user profiles:", profileError)
+            return { data: null, error: profileError.message }
+        }
+
+        // Merge stats with profiles
+        const leaderboard = sortedUsers.map((user, index) => {
+            const profile = profiles?.find((p) => p.id === user.user_id)
+            return {
+                user_id: user.user_id,
+                full_name: profile?.full_name || null,
+                avatar_url: profile?.avatar_url || null,
+                total_scans: user.total_scans,
+                average_accuracy: user.average_accuracy,
+                rank: index + 1,
+            }
+        })
+
+        return { data: leaderboard, error: null }
+    } catch (error) {
+        console.error("Unexpected error in getLeaderboard:", error)
+        return { data: null, error: "Internal server error" }
+    }
+}
