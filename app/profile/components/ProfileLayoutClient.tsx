@@ -37,6 +37,15 @@ export function ProfileLayoutClient({ children, userInfo }: ProfileLayoutClientP
   const showScanHistory = process.env.NEXT_PUBLIC_FEATURE_SCAN_HISTORY === 'true'
 
   const sidebarItems = [
+    // Profile Section
+    {
+      category: "Profile",
+      items: [
+        { icon: <User className="h-4 w-4" />, label: "Profile Saya", href: "/profile" },
+        // Conditional: Only show if feature flag is enabled
+        ...(showScanHistory ? [{ icon: <History className="h-4 w-4" />, label: "Riwayat Scan", href: "/profile/scans" }] : []),
+      ]
+    },
     // Main Navigation
     {
       category: "Utama",
@@ -45,15 +54,6 @@ export function ProfileLayoutClient({ children, userInfo }: ProfileLayoutClientP
         { icon: <Scan className="h-4 w-4" />, label: "Scanner", href: "/scanner" },
         { icon: <LayoutGrid className="h-4 w-4" />, label: "Radial Taksonomi", href: "/radial" },
         { icon: <Database className="h-4 w-4" />, label: "Felidae Explorer", href: "/database-explorer" },
-      ]
-    },
-    // Profile Section
-    {
-      category: "Profile",
-      items: [
-        { icon: <User className="h-4 w-4" />, label: "Profile Saya", href: "/profile" },
-        // Conditional: Only show if feature flag is enabled
-        ...(showScanHistory ? [{ icon: <History className="h-4 w-4" />, label: "Riwayat Scan", href: "/profile/scans" }] : []),
       ]
     },
     // Info Section

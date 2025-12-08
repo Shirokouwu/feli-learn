@@ -136,7 +136,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Button
                                 onClick={() => setIsEditing(true)}
-                                className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200/50"
+                                className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200/50 cursor-pointer"
                             >
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit Profile

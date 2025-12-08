@@ -54,7 +54,7 @@ const components: { title: string; href: string; description: string; icon: Reac
   },
   {
     title: "Felidae Encyclopedia",
-    href: "/database",
+    href: "/database-explorer",
     description: "Akses 2,400+ data spesies Felidae dengan update berkala dari peneliti global.",
     icon: <Database className="h-4 w-4" />,
   },

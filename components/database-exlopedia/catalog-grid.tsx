@@ -120,7 +120,7 @@ export function CatalogGrid({ species, getStatusConfig, getConservationStatus }:
               onHoverEnd={() => setHoveredCard(null)}
               className="group"
             >
-              <Link href={`/database/${species.kunci}`} className="block">
+              <Link href={`/database-explorer/${species.kunci}`} className="block">
                 <motion.div
                   className="relative rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-500 h-full"
                   whileHover={{ y: -8, scale: 1.02 }}

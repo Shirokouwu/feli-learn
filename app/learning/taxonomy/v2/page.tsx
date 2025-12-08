@@ -2352,7 +2352,7 @@ export default function TaxonomyV2Page() {
             >
               <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }}>
                 <Link
-                  href="/database"
+                  href="/database-explorer"
                   className="bg-white hover:bg-gray-100 text-emerald-600 px-8 py-4 rounded-lg font-medium text-lg flex items-center gap-3 transition-all shadow-lg"
                 >
                   Jelajahi Database Felidae

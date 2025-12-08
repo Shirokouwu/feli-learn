@@ -35,7 +35,7 @@ export default function TentangKami() {
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
                 <Button asChild className="bg-emerald-500 hover:bg-emerald-600 text-white border-2 border-black rounded-none shadow-[4px_4px_0_#111] hover:translate-x-[-2px] hover:translate-y-[-2px]">
-                  <Link href="/database">Lihat Database</Link>
+                  <Link href="/database-explorer">Lihat Database</Link>
                 </Button>
                 <Button variant="outline" asChild className="bg-white border-2 border-black rounded-none shadow-[4px_4px_0_#111] hover:translate-x-[-2px] hover:translate-y-[-2px]">
                   <Link href="/radial">Eksplorasi Radial</Link>
@@ -226,7 +226,7 @@ export default function TentangKami() {
                 icon: <DatabaseIcon className="h-5 w-5 text-green-700" />,
                 title: "Database Felidae",
                 why: "Mengumpulkan data yang tercecer menjadi satu tempat yang mudah dijelajahi.",
-                href: "/database",
+                href: "/database-explorer",
                 cta: "Buka Database",
               },
               {
@@ -261,7 +261,7 @@ export default function TentangKami() {
                 icon: <Search className="h-5 w-5 text-green-700" />,
                 title: "Pencarian & Filter",
                 why: "Mempercepat menemukan spesies/genus yang diinginkan.",
-                href: "/database",
+                href: "/database-explorer",
                 cta: "Cari Sekarang",
               },
             ].map((f, i) => (
@@ -340,7 +340,7 @@ export default function TentangKami() {
               </ul>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" asChild className="bg-white border-2 border-black rounded-none shadow-[4px_4px_0_#111] hover:translate-x-[-2px] hover:translate-y-[-2px]">
-                  <Link href="/database">Bandingkan di Database</Link>
+                  <Link href="/database-explorer">Bandingkan di Database</Link>
                 </Button>
                 <Button size="sm" variant="secondary" asChild className="bg-white border-2 border-black rounded-none shadow-[4px_4px_0_#111] hover:translate-x-[-2px] hover:translate-y-[-2px]">
                   <Link href="/radial">Lihat Kedekatan Taksonomi</Link>
@@ -438,7 +438,7 @@ export default function TentangKami() {
           >
             <div className="inline-flex flex-wrap items-center justify-center gap-3">
               <Button size="lg" className="bg-emerald-500 text-black border-2 border-black rounded-none shadow-[4px_4px_0_#111] hover:translate-x-[-2px] hover:translate-y-[-2px]" asChild>
-                <Link href="/database">Mulai dari Database</Link>
+                <Link href="/database-explorer">Mulai dari Database</Link>
               </Button>
               <Button size="lg" variant="secondary" className="bg-white border-2 border-black rounded-none shadow-[4px_4px_0_#111] hover:translate-x-[-2px] hover:translate-y-[-2px]" asChild>
                 <Link href="/radial">Lihat Struktur Taksonomi</Link>

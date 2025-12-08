@@ -25,26 +25,29 @@ Edit `.env.local` dan ubah value `true` atau `false`
 ## Available Feature Flags
 
 ### `NEXT_PUBLIC_FEATURE_SCAN_HISTORY`
+
 **Default:** `false`  
 **Location:** Sidebar menu & `/profile/scans` route
 
 **Enabled (`true`):**
+
 - Menu "Riwayat Scan" muncul di sidebar
 - Halaman `/profile/scans` bisa diakses
 - User bisa lihat full scan history
 - Tombol "Lihat Semua" muncul di Recent Scans (jika enabled)
 
 **Disabled (`false`):**
+
 - Menu "Riwayat Scan" hilang dari sidebar
 - Halaman `/profile/scans` **DIBLOCK** - redirect ke `/profile` jika diakses langsung via URL
 - User tidak bisa navigate ke history page dari sidebar
 - Tombol "Lihat Semua" disembunyikan di Recent Scans
 - **Route Protection:** Server-side guard mencegah akses via direct URL
 
-**Security:**
-✅ **Route Guard Active** - User tidak bisa bypass dengan mengetik URL manual
+**Security:** ✅ **Route Guard Active** - User tidak bisa bypass dengan mengetik URL manual
 
 **Use Case:**
+
 - Sembunyikan fitur saat development
 - Hide untuk demo/presentation yang fokus ke fitur lain
 - Disable saat masih testing database
@@ -71,21 +74,25 @@ Edit `.env.local` dan ubah value `true` atau `false`
 - Hide saat belum setup RLS policy
 
 ### `NEXT_PUBLIC_FEATURE_RECENT_SCANS`
+
 **Default:** `false`  
 **Location:** Profile page content
 
 **Enabled (`true`):**
+
 - Section "Scan Terbaru" muncul
 - Menampilkan 3 scan terakhir user
 - Tombol "Lihat Semua" muncul di header dan footer (jika `FEATURE_SCAN_HISTORY=true`)
 - Tombol "Lihat Semua" disembunyikan jika `FEATURE_SCAN_HISTORY=false` (tidak ada halaman tujuan)
 
 **Disabled (`false`):**
+
 - Section "Scan Terbaru" tidak render
 - Profile page lebih minimalis
 - User cuma lihat "oh barusan scan" (scan stats aja)
 
 **Behavior dengan Feature Flag Lain:**
+
 - `RECENT_SCANS=true` + `SCAN_HISTORY=true` → Section muncul dengan tombol "Lihat Semua"
 - `RECENT_SCANS=true` + `SCAN_HISTORY=false` → Section muncul tanpa tombol "Lihat Semua"
 - `RECENT_SCANS=false` → Section tidak muncul sama sekali
@@ -231,28 +238,34 @@ bun dev
 ```
 
 ### ⚠️ Build Time Variables
+
 Environment variables dengan prefix `NEXT_PUBLIC_` di-inject saat build time, jadi:
+
 - Change .env.local → restart dev server
 - Production: re-deploy untuk apply changes
 
 ### ✅ Route Protection
+
 **Route Guard Active** untuk `/profile/scans`:
+
 - Jika `FEATURE_SCAN_HISTORY=false`, halaman **DIBLOCK** sepenuhnya
 - User yang coba akses via direct URL akan auto-redirect ke `/profile`
 - Server-side check mencegah bypass
 - Keamanan: User tidak bisa "ngakalin" dengan mengetik URL manual
 
 **Implementation:**
+
 ```typescript
 // app/profile/scans/page.tsx
 if (!isScanHistoryEnabled) {
-    redirect('/profile')
+  redirect("/profile")
 }
 ```
 
 ## Troubleshooting
 
 ### Feature flag tidak work?
+
 1. ✅ Check typo di `.env.local`
 2. ✅ Pastikan value `'true'` atau `'false'` (string, bukan boolean)
 3. ✅ Restart dev server

@@ -120,7 +120,7 @@ export function GlassNavigation({
                      }}
                   >
                      {fullName ? (
-                        <div className="flex items-center space-x-2">
+                        <Link href="/profile" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                            <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
                               <Unlock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
                               <span className="inline">
@@ -148,7 +148,7 @@ export function GlassNavigation({
                                  </AvatarFallback>
                               </Avatar>
                            )}
-                        </div>
+                        </Link>
                      ) : (
                         <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
                            <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />

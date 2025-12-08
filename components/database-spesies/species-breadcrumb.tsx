@@ -68,7 +68,7 @@ export function SpeciesBreadcrumb({
               <BreadcrumbSeparator className={isScrolled ? "text-neutral-400" : "text-white/60"} />
               <BreadcrumbItem>
                 <BreadcrumbLink
-                  href="/database"
+                  href="/database-explorer"
                   className={`
                     flex items-center gap-1 transition-colors
                     ${isScrolled ? "text-neutral-600 hover:text-emerald-600" : "text-white/80 hover:text-white"}

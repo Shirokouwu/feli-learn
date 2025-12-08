@@ -1060,7 +1060,7 @@ export default function TaxonomyLearningPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
-                href="/database"
+                href="/database-explorer"
                 className="bg-white hover:bg-gray-100 text-emerald-600 px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all"
               >
                 Jelajahi Database Felidae <ArrowRight size={18} />

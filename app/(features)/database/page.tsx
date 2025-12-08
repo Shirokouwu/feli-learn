@@ -12,12 +12,6 @@ import { Navbar } from "@/components/navbar-v2"
 import { DatabaseContent } from "@/components/database-exlopedia/database-content"
 import { Suspense } from "react"
 import { DatabaseContentSkeleton } from "@/components/database-exlopedia/database-content-skeleton"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 export default function DatabasePage() {
   return (
@@ -64,25 +58,9 @@ export default function DatabasePage() {
                 <Badge className="mb-3 sm:mb-3 md:mb-4 bg-white/10 text-white border-white/20 text-sm sm:text-sm backdrop-blur-xl shadow-lg shadow-black/10">
                   <span className="font-semibold">Database Penelitian</span>
                 </Badge>
-                <TooltipProvider>
-                  <Tooltip delayDuration={200}>
-                    <TooltipTrigger asChild>
-                      <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-3 md:mb-4 leading-tight cursor-help">
-                        Explopedia Felidae
-                      </h1>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="max-w-xs bg-white/95 backdrop-blur-sm border-emerald-200">
-                      <div className="space-y-1.5 p-1">
-                        <p className="text-sm font-medium text-emerald-700">
-                          <span className="font-bold">Explopedia</span> = Eksplorasi + Ensiklopedia
-                        </p>
-                        <p className="text-sm text-neutral-600">
-                          <span className="font-bold">Felidae</span> = Fokus family kucing
-                        </p>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-3 md:mb-4 leading-tight">
+                  Explopedia Database Felidae
+                </h1>
                 <p className="text-white/95 text-sm sm:text-sm md:text-lg lg:text-xl leading-relaxed max-w-3xl font-medium">
                   Jelajahi keanekaragaman keluarga Felidae melalui database komprehensif kami, mencakup karakteristik,
                   habitat, perilaku, dan status konservasi setiap spesies.

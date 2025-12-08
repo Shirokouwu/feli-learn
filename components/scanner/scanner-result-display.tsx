@@ -44,7 +44,7 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
     if (!scanResult) return
     const scientificName = enhancedSpeciesData?.identifikasi.nama_ilmiah || scanResult.scientific_name
     const slug = getSpeciesSlug(scientificName)
-    router.push(`/database/${slug}`)
+    router.push(`/database-explorer/${slug}`)
   }
 
   if (!scanResult) return null
@@ -595,7 +595,7 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
           <Button
             variant="outline"
             className="sm:w-auto border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-            onClick={() => router.push("/database")}
+            onClick={() => router.push("/database-explorer")}
           >
             <Search className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Jelajahi Database</span>

@@ -66,7 +66,7 @@ export default async function Home() {
             {[
               { href: "/scanner", label: "Scanner", emoji: "🔍" },
               { href: "/radial", label: "Radial", emoji: "🌀" },
-              { href: "/database", label: "Database", emoji: "🗄️" },
+              { href: "/database-explorer", label: "Database", emoji: "🗄️" },
               { href: "/profile", label: "Profile", emoji: "👤" },
             ].map((item) => (
               <Link
@@ -98,7 +98,7 @@ export default async function Home() {
         {/* CTAs */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
-            href="/database"
+            href="/database-explorer"
             className="bg-emerald-500 text-white border-2 border-black rounded-none shadow-[4px_4px_0_#111] px-5 py-3 font-semibold hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
           >
             Mulai dari Database
@@ -122,7 +122,7 @@ export default async function Home() {
           {[
             { href: "/scanner", label: "Scanner", emoji: "🔍" },
             { href: "/radial", label: "Radial", emoji: "🌀" },
-            { href: "/database", label: "Database", emoji: "🗄️" },
+            { href: "/database-explorer", label: "Database", emoji: "🗄️" },
             { href: "/profile", label: "Profile", emoji: "👤" },
           ].map((item) => (
             <Link

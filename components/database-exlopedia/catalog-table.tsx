@@ -99,7 +99,7 @@ export function CatalogTable({ species, getStatusConfig, getConservationStatus }
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Link href={`/database/${species.kunci}`}>
+                    <Link href={`/database-explorer/${species.kunci}`}>
                       <Button
                         variant="ghost"
                         size="sm"

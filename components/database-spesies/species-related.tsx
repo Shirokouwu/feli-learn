@@ -46,7 +46,7 @@ export function SpeciesRelated({ relatedSpecies }: RelatedSpeciesProps) {
               onHoverStart={() => setHoveredSpecies(species.id)}
               onHoverEnd={() => setHoveredSpecies(null)}
             >
-              <Link href={`/database/${species.key}`}>
+              <Link href={`/database-explorer/${species.key}`}>
                 <div
                   className={`group flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
                     hoveredSpecies === species.id ? "bg-emerald-50 shadow-sm" : "hover:bg-neutral-50"
@@ -102,7 +102,7 @@ export function SpeciesRelated({ relatedSpecies }: RelatedSpeciesProps) {
         <div className="mt-4 pt-4 border-t border-neutral-100">
           <div className="flex items-center justify-between text-xs text-neutral-500">
             <span>Genus yang sama</span>
-            <Link href="/database" className="text-emerald-600 hover:text-emerald-700 font-medium">
+            <Link href="/database-explorer" className="text-emerald-600 hover:text-emerald-700 font-medium">
               Jelajahi semua →
             </Link>
           </div>
