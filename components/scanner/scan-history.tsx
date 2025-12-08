@@ -9,15 +9,13 @@ import {
   History,
   SearchX,
   Trash2,
-  Calendar,
-  Clock,
-  ChevronRight,
   Filter,
-  Download,
   SortDesc,
   Eye,
   X,
   AlertTriangle,
+  ChevronRight,
+  Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -41,144 +39,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { getConservationStatusColor } from "@/lib/conservation-utils"
-
-// Define the history item type
-export type ScanHistoryItem = {
-  id: string
-  name: string
-  scientificName: string
-  imageUrl: string
-  accuracy: number
-  date: Date
-  conservationStatus?: string
-  family?: string
-  genus?: string
-}
-
-// Sample hardcoded data
-const SAMPLE_HISTORY_DATA: ScanHistoryItem[] = [
-  {
-    id: "hist-001",
-    name: "Harimau Sumatera",
-    scientificName: "Panthera tigris sumatrae",
-    imageUrl: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 98.7,
-    date: new Date(2023, 10, 15, 14, 30),
-    conservationStatus: "Critically Endangered",
-    family: "Felidae",
-    genus: "Panthera",
-  },
-  {
-    id: "hist-002",
-    name: "Singa Afrika",
-    scientificName: "Panthera leo",
-    imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 97.3,
-    date: new Date(2023, 10, 14, 9, 45),
-    conservationStatus: "Vulnerable",
-    family: "Felidae",
-    genus: "Panthera",
-  },
-  {
-    id: "hist-003",
-    name: "Macan Tutul",
-    scientificName: "Panthera pardus",
-    imageUrl: "https://images.unsplash.com/photo-1456926631375-92c8ce872def?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 95.8,
-    date: new Date(2023, 10, 12, 16, 20),
-    conservationStatus: "Vulnerable",
-    family: "Felidae",
-    genus: "Panthera",
-  },
-  {
-    id: "hist-004",
-    name: "Kucing Domestik",
-    scientificName: "Felis catus",
-    imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2943&auto=format&fit=crop",
-    accuracy: 99.2,
-    date: new Date(2023, 10, 10, 11, 15),
-    conservationStatus: "Least Concern",
-    family: "Felidae",
-    genus: "Felis",
-  },
-  {
-    id: "hist-005",
-    name: "Cheetah",
-    scientificName: "Acinonyx jubatus",
-    imageUrl: "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 96.5,
-    date: new Date(2023, 10, 8, 13, 50),
-    conservationStatus: "Vulnerable",
-    family: "Felidae",
-    genus: "Acinonyx",
-  },
-  {
-    id: "hist-006",
-    name: "Lynx",
-    scientificName: "Lynx lynx",
-    imageUrl: "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?q=80&w=2940&auto=format&fit=crop",
-    accuracy: 93.1,
-    date: new Date(2023, 10, 5, 10, 30),
-    conservationStatus: "Least Concern",
-    family: "Felidae",
-    genus: "Lynx",
-  },
-]
+import { useScanHistory } from "@/hooks/use-scan-history"
+import { ScanHistoryCard } from "./scan-history-card"
 
 interface ScanHistoryProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
-  onClearHistory?: () => void
 }
 
-export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistoryProps) {
-  const [historyData, setHistoryData] = useState<ScanHistoryItem[]>(SAMPLE_HISTORY_DATA)
+export function ScanHistory({ isOpen, onOpenChange }: ScanHistoryProps) {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "accuracy">("newest")
   const [filterText, setFilterText] = useState("")
-  const [selectedItem, setSelectedItem] = useState<ScanHistoryItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<any | null>(null)
   const [showDetailDialog, setShowDetailDialog] = useState(false)
 
-  // Sort and filter history data
-  const processedHistory = historyData
-    .filter(
-      (item) =>
-        item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        item.scientificName.toLowerCase().includes(filterText.toLowerCase()),
-    )
-    .sort((a, b) => {
-      if (sortOrder === "newest") return b.date.getTime() - a.date.getTime()
-      if (sortOrder === "oldest") return a.date.getTime() - b.date.getTime()
-      return b.accuracy - a.accuracy
-    })
-
-  // Handle clearing history
-  const handleClearHistory = () => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus semua riwayat scan?")) {
-      setHistoryData([])
-      if (onClearHistory) onClearHistory()
-      toast("Riwayat scan telah dihapus")
-    }
-  }
-
-  // Handle deleting a single history item
-  const handleDeleteItem = (id: string) => {
-    setHistoryData((prev) => prev.filter((item) => item.id !== id))
-    toast("Item riwayat telah dihapus")
-  }
+  // Gunakan hook untuk fetch real data
+  const { historyData, loading, deleteItem, clearAll, clearingAll, deletingItem } = useScanHistory({
+    search: filterText,
+    sortBy: sortOrder,
+  })
 
   // Handle viewing details of an item
-  const handleViewDetails = (item: ScanHistoryItem) => {
+  const handleViewDetails = (item: any) => {
     setSelectedItem(item)
     setShowDetailDialog(true)
   }
-
-  // // Handle exporting history (mock function)
-  // const handleExportHistory = () => {
-  //   toast({
-  //     title: "Ekspor Riwayat",
-  //     description: "Fitur ekspor riwayat akan segera tersedia",
-  //   })
-  // }
 
   return (
     <>
@@ -248,7 +133,12 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-            {processedHistory.length === 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+                <p className="ml-3 text-gray-500">Memuat riwayat...</p>
+              </div>
+            ) : historyData.length === 0 ? (
               <div className="text-center py-12 text-neutral-500">
                 <SearchX className="h-16 w-16 mx-auto mb-4 text-neutral-300" />
                 <p className="text-lg font-medium mb-2">Tidak Ada Riwayat</p>
@@ -259,60 +149,21 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AnimatePresence>
-                  {processedHistory.map((item) => (
-                    <motion.div
+                  {historyData.map((item) => (
+                    <ScanHistoryCard
                       key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="border border-emerald-100 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-all group"
-                    >
-                      <div className="relative h-40">
-                        <Image
-                          src={item.imageUrl || "/placeholder.svg"}
-                          alt={item.name}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                          <div className="flex justify-between items-start">
-                            <h4 className="font-medium text-lg drop-shadow-sm">{item.name}</h4>
-                            <Badge className="bg-emerald-500 text-white border-emerald-600">
-                              {item.accuracy.toFixed(1)}%
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-white/90 italic drop-shadow-sm">{item.scientificName}</p>
-                        </div>
-                      </div>
-                      <div className="p-3 flex justify-between items-center">
-                        <div className="flex items-center text-xs text-neutral-500">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {format(item.date, "d MMM yyyy", { locale: id })}
-                          <Clock className="h-3 w-3 ml-2 mr-1" />
-                          {format(item.date, "HH:mm", { locale: id })}
-                        </div>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => handleViewDetails(item)}
-                          >
-                            <Eye className="h-3.5 w-3.5 text-emerald-600" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => handleDeleteItem(item.id)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5 text-red-500" />
-                          </Button>
-                        </div>
-                      </div>
-                    </motion.div>
+                      id={item.id}
+                      name={item.name}
+                      scientificName={item.scientificName}
+                      imageUrl={item.imageUrl}
+                      accuracy={item.accuracy}
+                      date={item.date}
+                      conservationStatus={item.conservationStatus}
+                      onView={() => handleViewDetails(item)}
+                      onDelete={() => deleteItem(item.id)}
+                      showActions={true}
+                      compact={false}
+                    />
                   ))}
                 </AnimatePresence>
               </div>
@@ -321,7 +172,7 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
 
           <DialogFooter className="flex justify-between items-center gap-2 flex-wrap sm:flex-nowrap">
             <div className="text-xs text-neutral-500">
-              {processedHistory.length} item{processedHistory.length !== 1 ? "" : ""} ditampilkan
+              {historyData.length} item ditampilkan
               {filterText && ` (filter: "${filterText}")`}
             </div>
             <div className="flex gap-2">
@@ -333,9 +184,23 @@ export function ScanHistory({ isOpen, onOpenChange, onClearHistory }: ScanHistor
                 Tutup
               </Button>
               {historyData.length > 0 && (
-                <Button variant="destructive" onClick={handleClearHistory} className="bg-red-600 hover:bg-red-700">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Hapus Semua
+                <Button
+                  variant="destructive"
+                  onClick={clearAll}
+                  disabled={clearingAll}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {clearingAll ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Menghapus...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Hapus Semua
+                    </>
+                  )}
                 </Button>
               )}
             </div>

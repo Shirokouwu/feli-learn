@@ -175,6 +175,7 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
                     await supabase.auth.updateUser({
                         data: {
                             ...currentMetadata,
+                            picture: publicUrl,
                             avatar_url: publicUrl
                         }
                     })

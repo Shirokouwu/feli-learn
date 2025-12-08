@@ -8,16 +8,18 @@ import { useScrollDetection } from "@/hooks/use-scroll-detection"
 import { getUserClient } from "@/lib/auth-client"
 import { GlassNavigation } from "@/components/glass-navigation"
 
-import { ScannerHeader } from "@/components/scanner/scanner-header"
 import { ScannerUploadArea } from "@/components/scanner/scanner-upload-area"
 import { ScannerPreview } from "@/components/scanner/scanner-preview"
 import { ScannerResultDisplay } from "@/components/scanner/scanner-result-display"
 import { ScannerActionButtons } from "@/components/scanner/scanner-action-buttons"
 import { ScannerConfetti } from "@/components/scanner/scanner-confetti"
 import { ScanHistory } from "@/components/scanner/scan-history"
+import { RecentScans } from "@/components/scanner/recent-scans"
 import { ScanCounter } from "@/components/scanner/scan-counter"
 import { AboutAiScanner } from "@/components/scanner/about-ai-scanner"
 import ScanStatusApi from "@/components/scanner/scan-check-api"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertTriangle } from "lucide-react"
 
 export default function ScannerImage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -122,17 +124,10 @@ export default function ScannerImage() {
         className=""
       />
 
-      {/* Scanner Header */}
-      <ScannerHeader
-        isLoggedIn={isLoggedIn}
-        onToggleLogin={handleToggleLogin}
-        onShowHistory={() => setShowHistory(true)}
-      />
-
       {/* Confetti effect */}
       <ScannerConfetti isVisible={scanner.showConfetti} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-24 md:pt-28">{/* API Status */}
         {/* API Status */}
         <ScanStatusApi
           apiChecking={scanner.apiChecking}
@@ -145,7 +140,7 @@ export default function ScannerImage() {
             <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
                 <div className="space-y-6">
-                  <ScanCounter className="mb-4 pb-4 border-b border-emerald-50" />
+                  <ScanCounter className="mb-3" showUserStats={true} />
 
                   {/* Upload Area */}
                   <ScannerUploadArea
@@ -172,6 +167,17 @@ export default function ScannerImage() {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {/* Non-Felidae Alert */}
+                  {scanner.notFelidae && (
+                    <Alert className="bg-red-50 border-red-200 text-red-800">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertTitle>Bukan kucing atau gambar kurang jelas</AlertTitle>
+                      <AlertDescription>
+                        {scanner.notFelidaeMessage ||
+                          "Coba foto ulang dengan fokus pada kucing (wajah/badan terlihat), pencahayaan cukup, dan latar sederhana."}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                   {/* Preview with loading overlay */}
                   <ScannerPreview
                     previewImage={scanner.previewImage}
@@ -200,6 +206,9 @@ export default function ScannerImage() {
 
           {/* About AI Scanner */}
           <AboutAiScanner />
+
+          {/* Recent Scans - Only show for logged in users */}
+          {isLoggedIn && <RecentScans />}
         </div>
       </div>
 
@@ -207,7 +216,6 @@ export default function ScannerImage() {
       <ScanHistory
         isOpen={showHistory && isLoggedIn}
         onOpenChange={setShowHistory}
-        onClearHistory={handleClearHistory}
       />
     </div>
   )

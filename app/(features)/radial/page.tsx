@@ -5,7 +5,7 @@ import RadialWithTimer from "./_radial-with-timer";
 
 export const metadata: Metadata = {
   title: "Radial Taxonomy",
-  description: "Explore the radial taxonomy of species and genera.",
+  description: "Visualisasi interaktif hierarki taksonomi Felidae dalam bentuk node radial. Jelajahi hubungan dari Famili ke Genus hingga Spesies untuk memahami struktur klasifikasi kucing besar dan kecil.",
 }
 
 export default async function RadialPage() {

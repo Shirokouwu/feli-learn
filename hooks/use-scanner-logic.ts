@@ -5,6 +5,11 @@ import axios from 'axios'
 import { matchAndFetchSpeciesData, type ApiClassificationResponse, type EnhancedSpeciesData } from "@/lib/species-matcher"
 import type { Species } from "@/types"
 import { useIncrementScan } from "./use-scan-stats"
+import { saveScanResult } from "@/lib/actions/scan-history-actions"
+import { uploadScanImage } from "@/lib/actions/upload-scan-actions"
+import { useQueryClient } from "@tanstack/react-query"
+import { recentScansQueryKeys } from "./use-recent-scans"
+import { scanHistoryQueryKeys } from "./use-scan-history"
 
 export interface ScannerHook {
   previewImage: string | null
@@ -26,6 +31,8 @@ export interface ScannerHook {
   apiChecking: boolean
   apiResponse: { data: { status: string } }
   clearFileInput: () => void
+  notFelidae: boolean
+  notFelidaeMessage: string
 }
 
 export const useScannerLogic = (): ScannerHook => {
@@ -39,9 +46,15 @@ export const useScannerLogic = (): ScannerHook => {
   const [imageUrl, setImageUrl] = useState<string>("")
   const [scanStartTime, setScanStartTime] = useState<number>(0)
   const [scanDuration, setScanDuration] = useState<number>(0)
+  const [notFelidae, setNotFelidae] = useState<boolean>(false)
+  const [notFelidaeMessage, setNotFelidaeMessage] = useState<string>("")
+  const [currentBase64Image, setCurrentBase64Image] = useState<string | null>(null) // Store base64 for upload
 
   // Scan stats mutation
   const incrementScanMutation = useIncrementScan()
+
+  // Query client untuk invalidate cache
+  const queryClient = useQueryClient()
 
   // API health check state
   const [apiChecking, setApiChecking] = useState<boolean>(true)
@@ -137,9 +150,12 @@ export const useScannerLogic = (): ScannerHook => {
     setShowConfetti(false)
     setScanDuration(0)
     setScanStartTime(0) // Reset start time
+    setNotFelidae(false)
+    setNotFelidaeMessage("")
+    setCurrentBase64Image(null) // Clear base64 cache
   }
 
-  const processScanResult = (apiData: ApiClassificationResponse, enhancedData: EnhancedSpeciesData | null, imageSource: string, scannerDuration: number, fetchDuration: number) => {
+  const processScanResult = async (apiData: ApiClassificationResponse, enhancedData: EnhancedSpeciesData | null, imageSource: string, scannerDuration: number, fetchDuration: number) => {
     const totalDuration = scannerDuration + fetchDuration
 
     console.log("Timing breakdown:", {
@@ -194,6 +210,36 @@ export const useScannerLogic = (): ScannerHook => {
         lifespan: enhancedData.ringkasan.karakteristik.umur || "Unknown",
         genus: "Felidae"
       } as Species)
+
+      // Simpan hasil scan ke database
+      try {
+        // Normalize confidence to 0-100 range
+        const normalizedAccuracy = apiData.confidence > 1
+          ? Math.min(apiData.confidence, 100) // Already in percentage
+          : apiData.confidence * 100 // Convert from 0-1 to percentage
+
+        // Upload image to Supabase storage
+        setScanStage("Menyimpan foto scan...")
+        const uploadResult = await uploadScanImage(imageSource)
+
+        const imageUrl = uploadResult.url || imageSource // Fallback to original if upload fails
+
+        const result = await saveScanResult({
+          spesies_id: enhancedData.identifikasi.id || null,
+          akurasi: Number(normalizedAccuracy.toFixed(2)), // Ensure 2 decimal places
+          foto_scan: imageUrl, // Use uploaded URL
+          catatan: `Teridentifikasi sebagai ${enhancedData.identifikasi.nama_umum} dengan akurasi ${normalizedAccuracy.toFixed(1)}%`
+        })
+
+        if (result.success) {
+          // Invalidate cache untuk refresh recent scans dan stats
+          queryClient.invalidateQueries({ queryKey: recentScansQueryKeys.all })
+          queryClient.invalidateQueries({ queryKey: scanHistoryQueryKeys.all })
+        }
+      } catch (error) {
+        console.error("Error saving scan result:", error)
+        // Non-critical error, tidak perlu toast
+      }
     } else {
       // Fallback to basic data if database enhancement fails
       setScanResult({
@@ -216,6 +262,32 @@ export const useScannerLogic = (): ScannerHook => {
         lifespan: "Unknown",
         genus: "Felidae"
       } as Species)
+
+      // Simpan hasil scan tanpa spesies_id
+      try {
+        // Normalize confidence to 0-100 range
+        const normalizedAccuracy = apiData.confidence > 1
+          ? Math.min(apiData.confidence, 100) // Already in percentage
+          : apiData.confidence * 100 // Convert from 0-1 to percentage
+
+        // Upload image to Supabase storage
+        setScanStage("Menyimpan foto scan...")
+        const uploadResult = await uploadScanImage(imageSource)
+
+        const imageUrl = uploadResult.url || imageSource // Fallback to original if upload fails
+
+        await saveScanResult({
+          spesies_id: null,
+          akurasi: Number(normalizedAccuracy.toFixed(2)), // Ensure 2 decimal places
+          foto_scan: imageUrl, // Use uploaded URL
+          catatan: `Teridentifikasi sebagai ${apiData.predicted_class} (data lengkap tidak tersedia)`
+        })
+
+        queryClient.invalidateQueries({ queryKey: recentScansQueryKeys.all })
+        queryClient.invalidateQueries({ queryKey: scanHistoryQueryKeys.all })
+      } catch (error) {
+        console.error("Error saving scan result:", error)
+      }
 
       toast("Spesies berhasil diidentifikasi, namun data lengkap tidak tersedia.")
     }
@@ -255,6 +327,16 @@ export const useScannerLogic = (): ScannerHook => {
         return newProgress < 95 ? newProgress : 95 // Stop at 95% until complete
       })
     }, 100) // Faster interval
+  }
+
+  // Helper function to convert File to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = (error) => reject(error)
+    })
   }
 
   const handleFilePrediction = async (file: File) => {
@@ -310,7 +392,13 @@ export const useScannerLogic = (): ScannerHook => {
         setIsScanning(false)
         setScanProgress(0)
         setScanStage("")
-        toast("Gambar ini bukan termasuk keluarga Felidae (kucing). Silakan coba gambar kucing lain.")
+        setNotFelidae(true)
+        setNotFelidaeMessage(
+          "Foto tidak terdeteksi sebagai kucing, atau subjek kurang jelas. Coba foto ulang dengan fokus pada kucing (wajah/badan terlihat), pencahayaan cukup, dan latar sederhana."
+        )
+        toast(
+          "Bukan kucing atau gambar kurang jelas. Coba foto ulang dengan subjek yang lebih jelas."
+        )
         return
       }
 
@@ -330,7 +418,11 @@ export const useScannerLogic = (): ScannerHook => {
       const fetchDuration = Math.round((fetchEndTime - fetchStartTime) / 1000)
 
       clearInterval(fetchProgressInterval)
-      processScanResult(apiData, enhancedData, URL.createObjectURL(file), scannerDuration, fetchDuration)
+
+      // Use stored base64 image or convert file to base64
+      const base64Image = currentBase64Image || await fileToBase64(file)
+
+      processScanResult(apiData, enhancedData, base64Image, scannerDuration, fetchDuration)
 
     } catch (error) {
       console.error("Error during image prediction:", error)
@@ -402,7 +494,13 @@ export const useScannerLogic = (): ScannerHook => {
         setIsScanning(false)
         setScanProgress(0)
         setScanStage("")
-        toast("Gambar ini bukan termasuk keluarga Felidae (kucing). Silakan coba gambar kucing lain.")
+        setNotFelidae(true)
+        setNotFelidaeMessage(
+          "Foto tidak terdeteksi sebagai kucing, atau subjek kurang jelas. Coba foto ulang dengan fokus pada kucing (wajah/badan terlihat), pencahayaan cukup, dan latar sederhana."
+        )
+        toast(
+          "Bukan kucing atau gambar kurang jelas. Coba foto ulang dengan subjek yang lebih jelas."
+        )
         return
       }
 
@@ -490,7 +588,9 @@ export const useScannerLogic = (): ScannerHook => {
       // Start processing immediately for better UX
       const reader = new FileReader()
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string)
+        const base64Result = reader.result as string
+        setPreviewImage(base64Result)
+        setCurrentBase64Image(base64Result) // Store for later upload
 
         // Start processing without waiting for image dimension validation
         // Most modern cameras produce images > 100x100, so this check is often unnecessary
@@ -580,6 +680,8 @@ export const useScannerLogic = (): ScannerHook => {
     apiReady,
     apiChecking,
     apiResponse,
-    clearFileInput
+    clearFileInput,
+    notFelidae,
+    notFelidaeMessage
   }
 }

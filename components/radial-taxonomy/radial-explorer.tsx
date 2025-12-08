@@ -98,6 +98,36 @@ export function RadialExplorer() {
   const velocityHistoryRef = useRef<Velocity[]>([])
   const inertiaAnimationRef = useRef<number | null>(null)
 
+  // Cached container size to avoid layout thrashing and smoother updates
+  const containerSizeRef = useRef({ width: 0, height: 0 })
+  const frameRequestedRef = useRef(false)
+
+  // Helper to apply DOM transform using cached container size
+  const applyTransformDOM = useCallback(() => {
+    if (!diagramElementRef.current) return
+    const { width, height } = containerSizeRef.current
+    diagramElementRef.current.style.transform = `
+      translate(${width / 2 + dragTransformRef.current.x}px, ${height / 2 + dragTransformRef.current.y}px) 
+      scale(${dragTransformRef.current.scale}) 
+      rotate(${dragTransformRef.current.rotation}deg)
+    `
+    frameRequestedRef.current = false
+  }, [])
+
+  // Initialize and track container size
+  useEffect(() => {
+    const updateSize = () => {
+      if (!containerRef.current) return
+      containerSizeRef.current = {
+        width: containerRef.current.clientWidth,
+        height: containerRef.current.clientHeight,
+      }
+    }
+    updateSize()
+    window.addEventListener('resize', updateSize)
+    return () => window.removeEventListener('resize', updateSize)
+  }, [])
+
   // Tambahkan fungsi cubic bezier untuk easing yang lebih halus
   const cubicBezier = useCallback((x1: number, y1: number, x2: number, y2: number, t: number): number => {
     // Implementasi fungsi cubic bezier untuk easing yang lebih halus
@@ -291,9 +321,7 @@ export function RadialExplorer() {
   // Add zoom functions with center-point zooming
   const handleZoomIn = useCallback(() => {
     if (!diagramElementRef.current || !containerRef.current) return
-
-    const containerWidth = containerRef.current.clientWidth
-    const containerHeight = containerRef.current.clientHeight
+    const { width: containerWidth, height: containerHeight } = containerSizeRef.current
     const zoomFactor = 1.2
     const oldScale = dragTransformRef.current.scale
     const newScale = Math.min(5, oldScale * zoomFactor)
@@ -332,9 +360,7 @@ export function RadialExplorer() {
 
   const handleZoomOut = useCallback(() => {
     if (!diagramElementRef.current || !containerRef.current) return
-
-    const containerWidth = containerRef.current.clientWidth
-    const containerHeight = containerRef.current.clientHeight
+    const { width: containerWidth, height: containerHeight } = containerSizeRef.current
     const zoomFactor = 1 / 1.2
     const oldScale = dragTransformRef.current.scale
     const newScale = Math.max(0.1, oldScale * zoomFactor)
@@ -371,10 +397,10 @@ export function RadialExplorer() {
     `
   }, [])
 
-  // Add wheel zoom handler with Ctrl requirement and cursor-centered zoom
+  // Add wheel zoom handler with Alt requirement and cursor-centered zoom
   const handleWheel = useCallback((event: React.WheelEvent<SVGSVGElement>) => {
-    // Only zoom when Ctrl key is pressed (like Google Maps, etc.)
-    if (!event.ctrlKey) {
+    // Only zoom when Alt key is pressed
+    if (!event.altKey) {
       return // Let normal scroll behavior happen
     }
 
@@ -389,8 +415,7 @@ export function RadialExplorer() {
     const mouseY = event.clientY - rect.top
 
     // Convert to SVG coordinates (relative to container center)
-    const containerWidth = containerRef.current.clientWidth
-    const containerHeight = containerRef.current.clientHeight
+    const { width: containerWidth, height: containerHeight } = containerSizeRef.current
     const svgX = mouseX - containerWidth / 2
     const svgY = mouseY - containerHeight / 2
 
@@ -905,8 +930,7 @@ export function RadialExplorer() {
       return
     }
 
-    const containerWidth = containerRef.current?.clientWidth || 0
-    const containerHeight = containerRef.current?.clientHeight || 0
+    const { width: containerWidth, height: containerHeight } = containerSizeRef.current
 
     const inertiaStep = (timestamp: number) => {
       // Calculate time delta for frame-rate independent physics
@@ -981,16 +1005,11 @@ export function RadialExplorer() {
       y: dragTransformRef.current.y + dy,
     }
 
-    // Directly apply transform to the DOM element for maximum smoothness
-    // Use 2D translate for sharper rendering
-    const containerWidth = containerRef.current?.clientWidth || 0
-    const containerHeight = containerRef.current?.clientHeight || 0
-
-    diagramElementRef.current.style.transform = `
-    translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
-    scale(${dragTransformRef.current.scale}) 
-    rotate(${dragTransformRef.current.rotation}deg)
-  `
+    // Batch DOM updates via requestAnimationFrame
+    if (!frameRequestedRef.current) {
+      frameRequestedRef.current = true
+      requestAnimationFrame(applyTransformDOM)
+    }
 
     // Update last position
     lastMousePosRef.current = { x: event.clientX, y: event.clientY }
@@ -1076,9 +1095,7 @@ export function RadialExplorer() {
 
   const handleTouchMove = useCallback((event: React.TouchEvent<SVGSVGElement>) => {
     if (!diagramElementRef.current) return
-
-    const containerWidth = containerRef.current?.clientWidth || 0
-    const containerHeight = containerRef.current?.clientHeight || 0
+    const { width: containerWidth, height: containerHeight } = containerSizeRef.current
 
     if (event.touches.length === 1 && isGrabbingRef.current) {
       // Single touch panning
@@ -1111,12 +1128,11 @@ export function RadialExplorer() {
         dragTransformRef.current.x += dx
         dragTransformRef.current.y += dy
 
-        // Apply transform
-        diagramElementRef.current.style.transform = `
-          translate(${containerWidth / 2 + dragTransformRef.current.x}px, ${containerHeight / 2 + dragTransformRef.current.y}px) 
-          scale(${dragTransformRef.current.scale}) 
-          rotate(${dragTransformRef.current.rotation}deg)
-        `
+        // Batch DOM updates via requestAnimationFrame
+        if (!frameRequestedRef.current) {
+          frameRequestedRef.current = true
+          requestAnimationFrame(applyTransformDOM)
+        }
 
         // Update touch tracking
         lastTouchRef.current[touch.identifier] = { x: touch.clientX, y: touch.clientY }
@@ -1154,28 +1170,16 @@ export function RadialExplorer() {
         const newX = svgCenterX - worldCenterX * newScale
         const newY = svgCenterY - worldCenterY * newScale
 
-        // Debug logging (comment out in production)
-        console.log('Zoom Debug:', {
-          fingerCenter: { x: currentCenterX, y: currentCenterY },
-          svgCenter: { x: svgCenterX, y: svgCenterY },
-          worldCenter: { x: worldCenterX, y: worldCenterY },
-          oldScale: initialScaleRef.current,
-          newScale,
-          oldPos: { x: initialTransformRef.current.x, y: initialTransformRef.current.y },
-          newPos: { x: newX, y: newY }
-        })
-
         // Update transform
         dragTransformRef.current.scale = newScale
         dragTransformRef.current.x = newX
         dragTransformRef.current.y = newY
 
-        // Apply transform immediately
-        diagramElementRef.current.style.transform = `
-          translate(${containerWidth / 2 + newX}px, ${containerHeight / 2 + newY}px) 
-          scale(${newScale}) 
-          rotate(${dragTransformRef.current.rotation}deg)
-        `
+        // Batch DOM updates via requestAnimationFrame
+        if (!frameRequestedRef.current) {
+          frameRequestedRef.current = true
+          requestAnimationFrame(applyTransformDOM)
+        }
 
         // Update React state
         setTransform(prev => ({
@@ -1273,7 +1277,7 @@ export function RadialExplorer() {
 
     // Restore cursor
     if (svgRef.current) {
-      svgRef.current.style.cursor = "default"
+      svgRef.current.style.cursor = "grab"
     }
   }, [applyInertia])
 

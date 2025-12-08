@@ -1,5 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import {
+    getScanHistory,
+    deleteScanHistory,
+    clearAllScanHistory,
+    getRecentScans,
+    getScanStats,
+    type ScanHistoryItem as ServerScanHistoryItem,
+} from '@/lib/actions/scan-history-actions'
 
 export interface ScanHistoryItem {
     id: string
@@ -11,36 +19,43 @@ export interface ScanHistoryItem {
     conservationStatus: string
     family: string
     genus: string
-    userId: string
-    created_at: string
 }
 
-// API functions
-const fetchScanHistory = async (): Promise<ScanHistoryItem[]> => {
-    const response = await fetch('/api/scan-history')
-    if (!response.ok) {
-        throw new Error('Failed to fetch scan history')
+// Transform server data to client format
+const transformScanHistory = (items: ServerScanHistoryItem[]): ScanHistoryItem[] => {
+    return items.map((item) => ({
+        id: item.id,
+        name: item.spesies?.nama_umum || item.spesies?.nama || 'Unknown Species',
+        scientificName: item.spesies?.nama || 'Unknown',
+        imageUrl: item.foto_scan || '/placeholder.svg',
+        accuracy: Number(item.akurasi),
+        date: new Date(item.tanggal_identifikasi),
+        conservationStatus: 'Unknown', // Not available in taksonomi_spesies
+        family: 'Felidae',
+        genus: 'Unknown',
+    }))
+}
+
+// API functions using server actions
+const fetchScanHistory = async (limit: number = 50, offset: number = 0): Promise<ScanHistoryItem[]> => {
+    const result = await getScanHistory(limit, offset)
+    if (result.error || !result.data) {
+        throw new Error(result.error || 'Failed to fetch scan history')
     }
-    return response.json()
+    return transformScanHistory(result.data)
 }
 
 const deleteScanHistoryItem = async (id: string): Promise<void> => {
-    const response = await fetch(`/api/scan-history/${id}`, {
-        method: 'DELETE',
-    })
-
-    if (!response.ok) {
-        throw new Error('Failed to delete scan history item')
+    const result = await deleteScanHistory(id)
+    if (!result.success) {
+        throw new Error(result.error || 'Failed to delete scan history item')
     }
 }
 
-const clearAllScanHistory = async (): Promise<void> => {
-    const response = await fetch('/api/scan-history', {
-        method: 'DELETE',
-    })
-
-    if (!response.ok) {
-        throw new Error('Failed to clear scan history')
+const clearAllScanHistoryFn = async (): Promise<void> => {
+    const result = await clearAllScanHistory()
+    if (!result.success) {
+        throw new Error(result.error || 'Failed to clear scan history')
     }
 }
 
@@ -86,7 +101,7 @@ export function useScanHistory(filters: { search?: string; sortBy?: string } = {
 
     // Mutation untuk clear all history
     const clearAllMutation = useMutation({
-        mutationFn: clearAllScanHistory,
+        mutationFn: clearAllScanHistoryFn,
         onSuccess: () => {
             queryClient.setQueryData(scanHistoryQueryKeys.list(filters), [])
             toast.success('Semua riwayat scan telah dihapus')

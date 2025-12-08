@@ -1,142 +1,166 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { BarChart3, RefreshCw } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { useScanStats } from "@/hooks"
+import { motion, AnimatePresence } from "framer-motion"
+import { Globe, User } from "lucide-react"
+import { useScanStats, useUserScanStats } from "@/hooks"
 
 interface ScanCounterProps {
   className?: string
+  showUserStats?: boolean
 }
 
-export function ScanCounter({ className = "" }: ScanCounterProps) {
-  // Fetch real data from Redis using TanStack Query
-  const { data: stats, isLoading, isError, refetch } = useScanStats()
+export function ScanCounter({ className = "", showUserStats = false }: ScanCounterProps) {
+  // Fetch global and user data
+  const { data: globalStats } = useScanStats()
+  const { data: userStats } = useUserScanStats()
 
-  // Fallback data while loading or on error
-  const fallbackStats = {
-    totalScans: 0,
-    todayScans: 0,
-  }
+  // Alternating display state for global stats (total/today)
+  const [showGlobalToday, setShowGlobalToday] = useState(false)
 
-  const currentStats = stats || fallbackStats
+  // Animated counter values
+  const [displayedGlobalTotal, setDisplayedGlobalTotal] = useState(0)
+  const [displayedGlobalToday, setDisplayedGlobalToday] = useState(0)
+  const [displayedUserTotal, setDisplayedUserTotal] = useState(0)
 
-  // Simulate counter animation on load
-  const [displayedTotal, setDisplayedTotal] = useState(0)
-  const [displayedToday, setDisplayedToday] = useState(0)
-
+  // Alternate between total and today every 3 seconds
   useEffect(() => {
-    // Only animate when we have data and it's not loading
-    if (!currentStats || isLoading) return
+    const interval = setInterval(() => {
+      setShowGlobalToday(prev => !prev)
+    }, 3000)
 
-    // Reset counters when new data comes in
-    setDisplayedTotal(0)
-    setDisplayedToday(0)
+    return () => clearInterval(interval)
+  }, [])
 
-    // Animate total count
-    const totalDuration = 1500 // ms
-    const totalInterval = 30 // ms
-    const totalIncrement = Math.ceil(currentStats.totalScans / (totalDuration / totalInterval))
+  // Animate global total counter
+  useEffect(() => {
+    if (!globalStats?.totalScans) return
 
-    const totalTimer = setInterval(() => {
-      setDisplayedTotal((prev) => {
-        const next = prev + totalIncrement
-        if (next >= currentStats.totalScans) {
-          clearInterval(totalTimer)
-          return currentStats.totalScans
-        }
-        return next
-      })
-    }, totalInterval)
+    let current = 0
+    const target = globalStats.totalScans
+    const increment = Math.ceil(target / 50)
 
-    // Animate today count
-    const todayDuration = 1000 // ms
-    const todayInterval = 20 // ms
-    const todayIncrement = Math.ceil(currentStats.todayScans / (todayDuration / todayInterval))
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= target) {
+        setDisplayedGlobalTotal(target)
+        clearInterval(timer)
+      } else {
+        setDisplayedGlobalTotal(current)
+      }
+    }, 20)
 
-    const todayTimer = setInterval(() => {
-      setDisplayedToday((prev) => {
-        const next = prev + todayIncrement
-        if (next >= currentStats.todayScans) {
-          clearInterval(todayTimer)
-          return currentStats.todayScans
-        }
-        return next
-      })
-    }, todayInterval)
+    return () => clearInterval(timer)
+  }, [globalStats?.totalScans])
 
-    return () => {
-      clearInterval(totalTimer)
-      clearInterval(todayTimer)
-    }
-  }, [currentStats.totalScans, currentStats.todayScans, isLoading])
+  // Animate global today counter
+  useEffect(() => {
+    if (!globalStats?.todayScans) return
 
-  const handleRefresh = () => {
-    refetch()
-  }
+    let current = 0
+    const target = globalStats.todayScans
+    const increment = Math.ceil(target / 40)
+
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= target) {
+        setDisplayedGlobalToday(target)
+        clearInterval(timer)
+      } else {
+        setDisplayedGlobalToday(current)
+      }
+    }, 15)
+
+    return () => clearInterval(timer)
+  }, [globalStats?.todayScans])
+
+  // Animate user total counter
+  useEffect(() => {
+    if (!userStats?.totalScans) return
+
+    let current = 0
+    const target = userStats.totalScans
+    const increment = Math.ceil(target / 50)
+
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= target) {
+        setDisplayedUserTotal(target)
+        clearInterval(timer)
+      } else {
+        setDisplayedUserTotal(current)
+      }
+    }, 20)
+
+    return () => clearInterval(timer)
+  }, [userStats?.totalScans])
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`${className}`}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-1.5">
-          <BarChart3 className="h-4 w-4 text-emerald-600" />
-          <span className="text-sm font-medium text-emerald-800">Statistik Scanner</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {isLoading && (
-            <RefreshCw className="h-3 w-3 text-emerald-600 animate-spin" />
-          )}
-          <Badge
-            variant="outline"
-            className={`text-xs bg-white px-1.5 py-0 cursor-pointer transition-colors ${isError
-                ? 'text-red-700 hover:bg-red-50'
-                : 'text-emerald-700 hover:bg-emerald-50'
-              }`}
-            onClick={isError ? handleRefresh : undefined}
-            title={isError ? 'Click to retry' : undefined}
-          >
-            <span className={`inline-block h-1.5 w-1.5 rounded-full mr-1  animate-ping  ${isError ? 'bg-red-500' : isLoading ? 'bg-yellow-500' : 'bg-emerald-500'
-              }`}></span>
-            {isError ? 'Error' : isLoading ? 'Loading' : 'Live'}
-          </Badge>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-1.5">
-          {isLoading && !stats ? (
-            <div className="flex items-baseline gap-1.5">
-              <div className="h-8 w-20 bg-emerald-100 rounded animate-pulse"></div>
-              <div className="h-3 w-16 bg-emerald-100 rounded animate-pulse"></div>
-            </div>
-          ) : (
-            <>
-              <span className="text-2xl font-bold text-emerald-800">{displayedTotal.toLocaleString()}</span>
-              <span className="text-xs text-emerald-600 font-medium">total scans</span>
-            </>
-          )}
+    <div className={`flex items-center justify-between ${className}`}>
+      {/* Left: Global Stats (alternating total/today) */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex items-center gap-2"
+      >
+        <div className="p-1 bg-emerald-50 rounded-full">
+          <Globe className="h-3 w-3 text-emerald-600" />
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {isLoading && !stats ? (
-            <div className="flex items-baseline gap-1.5">
-              <div className="h-6 w-8 bg-emerald-100 rounded animate-pulse"></div>
-              <div className="h-3 w-12 bg-emerald-100 rounded animate-pulse"></div>
-            </div>
+        <AnimatePresence mode="wait">
+          {showGlobalToday ? (
+            <motion.div
+              key="today"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col"
+            >
+              <span className="text-base font-bold text-emerald-700 leading-tight">
+                +{displayedGlobalToday.toLocaleString()}
+              </span>
+              <span className="text-[9px] text-emerald-600 font-medium uppercase tracking-wide">hari ini</span>
+            </motion.div>
           ) : (
-            <div className="flex items-baseline">
-              <span className="text-lg font-bold text-emerald-700">+{displayedToday}</span>
-              <span className="text-xs text-emerald-600 ml-1">hari ini</span>
-            </div>
+            <motion.div
+              key="total"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col"
+            >
+              <span className="text-base font-bold text-emerald-700 leading-tight">
+                {displayedGlobalTotal.toLocaleString()}
+              </span>
+              <span className="text-[9px] text-emerald-600 font-medium uppercase tracking-wide">total global</span>
+            </motion.div>
           )}
-        </div>
-      </div>
-    </motion.div>
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Right: User Stats (only show if enabled and has data) */}
+      {showUserStats && userStats && (
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-2"
+        >
+          <div className="flex flex-col text-right">
+            <span className="text-base font-bold text-blue-700 leading-tight">
+              {displayedUserTotal.toLocaleString()}
+            </span>
+            <span className="text-[9px] text-blue-600 font-medium uppercase tracking-wide">scan saya</span>
+          </div>
+
+          <div className="p-1 bg-blue-50 rounded-full">
+            <User className="h-3 w-3 text-blue-600" />
+          </div>
+        </motion.div>
+      )}
+    </div>
   )
 }

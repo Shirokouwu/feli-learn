@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Leaf, Eye, EyeOff } from "lucide-react"
+import { Leaf, Eye, EyeOff, Loader2 } from "lucide-react"
 import { useActionState, useState } from "react"
 import type React from "react"
 import { Button } from "@/components/ui/button"
@@ -46,6 +46,24 @@ export default function LoginPage() {
           </div>
 
           <form action={formAction} className="mt-8 space-y-6">
+            {/* General Error Message - untuk error login seperti salah password */}
+            {state.message && !state.success && (
+              <div className="rounded-md bg-red-50 border border-red-200 p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-red-800">
+                      {state.message}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="email">Alamat Email</Label>
               <div>
@@ -73,7 +91,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -100,9 +118,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <Button type="submit" className="w-full" disabled={pending}>
+              <Button type="submit" className="w-full cursor-pointer" disabled={pending}>
                 {pending ? (
-                  <div className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin" />
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Memproses...
+                  </>
                 ) : (
                   "Masuk"
                 )}
