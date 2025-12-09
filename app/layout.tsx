@@ -6,6 +6,8 @@ import "./globals.css"
 import { QueryProvider } from "@/providers/query-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/providers/theme-provider"
+import { LayoutHeader } from "@/components/layout-header"
+import { getCurrentUser } from "@/lib/auth"
 
 const _inter = Inter({ subsets: ["latin"] })
 const _playfair = Playfair_Display({ subsets: ["latin"] })
@@ -34,15 +36,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const user = await getCurrentUser()
+
   return (
     <html lang="id" className={_inter.className}>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider>
+          <LayoutHeader user={user} />
           <main>
             <QueryProvider>{children}</QueryProvider>
           </main>

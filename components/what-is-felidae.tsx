@@ -14,22 +14,22 @@ export function WhatIsFelidae() {
     {
       name: "Harimau",
       latin: "Panthera tigris",
-      image: "https://images.unsplash.com/photo-1501706362039-c06b2d715385?auto=format&fit=crop&w=900&q=80",
+      image: "https://www.rekoforest.org/wp-content/uploads/2021/07/rer-sumatran-tiger.png",
     },
     {
       name: "Singa",
       latin: "Panthera leo",
-      image: "https://images.unsplash.com/photo-1618826411640-d6df44ddf3d0?auto=format&fit=crop&w=900&q=80",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNantoDdnl9CtdcNEinc5Rv6CjozLqivQ1oA&s",
     },
     {
       name: "Macan Tutul",
       latin: "Panthera pardus",
-      image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=900&q=80",
+      image: "https://upload.wikimedia.org/wikipedia/commons/3/35/Panthera_pardus_japonensis_JdP.jpg",
     },
     {
       name: "Kucing Hutan",
       latin: "Felis silvestris",
-      image: "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
+      image: "https://www.wiesbaden.de/leben-in-wiesbaden/freizeit/natur-erleben/fasanerie/Europaeische-Wildkatze.php.media/302435/Fasanerie-Wildkatze_2018-Kordesch-aF-13-_2.jpg.scaled/a75ed65886262b06a1399250280e2c1c.jpg",
     },
   ]
 
@@ -187,24 +187,31 @@ export function WhatIsFelidae() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.4 + index * 0.06 }}
-                  className="group relative overflow-hidden rounded-xl lg:rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
+                  className="group relative overflow-hidden rounded-xl lg:rounded-2xl bg-transparent border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
                 >
                   <div className="aspect-[3/4] relative">
-                    <Image
+                    <img
                       src={felid.image || "/placeholder.svg"}
                       alt={felid.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0) 80%)",
+                      }}
+                    />
                     <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-primary group-hover:scale-125 transition-transform" />
-                      <p className="font-semibold text-foreground text-base lg:text-lg">{felid.name}</p>
+                    <div className="rounded-xl bg-black/45 backdrop-blur-sm border border-white/12 px-3 py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
+                        <p className="font-semibold text-white text-base lg:text-lg">{felid.name}</p>
+                      </div>
+                      <p className="text-sm text-white/80 italic">{felid.latin}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground italic">{felid.latin}</p>
                   </div>
                 </motion.div>
               ))}
@@ -215,9 +222,9 @@ export function WhatIsFelidae() {
         {/* Bottom decorative line */}
         <div className="mt-14 flex justify-center">
           <div className="flex items-center gap-3">
-            <span className="w-16 h-0.5 bg-gradient-to-r from-transparent to-primary/50 rounded-full" />
+            <span className="w-16 h-0.5 bg-linear-to-r from-transparent to-primary/50 rounded-full" />
             <Cat className="text-primary/50" size={18} />
-            <span className="w-16 h-0.5 bg-gradient-to-l from-transparent to-primary/50 rounded-full" />
+            <span className="w-16 h-0.5 bg-linear-to-l from-transparent to-primary/50 rounded-full" />
           </div>
         </div>
       </div>

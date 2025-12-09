@@ -19,14 +19,11 @@ import { RadialOnboarding } from "@/components/radial-taxonomy/radial-onboarding
 import { RadialExplorer } from "@/components/radial-taxonomy"
 import { RadialDiagramGuide } from "@/components/radial-taxonomy/radial-diagram-guide"
 import { TaxonomyLoading } from "@/components/radial-taxonomy/radial-loading"
-import { GlassNavigation } from "@/components/glass-navigation"
-import { useScrollDetection } from "@/hooks/use-scroll-detection"
 
 export default function RadialTaxonomy({ fullName, profilePicture }: { fullName: string, profilePicture: string }) {
   const [showInfo, setShowInfo] = useState(false)
   const [showLegend, setShowLegend] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
-  const isScrolled = useScrollDetection({ threshold: 80 })
   const diagramRef = useRef<HTMLDivElement>(null)
 
   const scrollToDiagram = () => {
@@ -37,26 +34,14 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
 
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-teal-50/50 via-white to-teal-50/50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background via-background to-muted/20 dark:to-background">
       {/* Onboarding modal - now controlled by button click */}
       <AnimatePresence>
         {showOnboarding && <RadialOnboarding isOpen={showOnboarding} onClose={() => setShowOnboarding(false)} />}
       </AnimatePresence>
 
-      {/* Navigation bar with glass effect */}
-      <GlassNavigation
-        isScrolled={isScrolled}
-        fullName={fullName}
-        backHref="/"
-        backLabel="Kembali"
-        showUserInfo={true}
-        profilePicture={profilePicture}
-      />
-
-
       {/* Header section - always shown */}
-      <div className={`container mx-auto px-4 transition-all duration-500 ${isScrolled ? 'pt-20 pb-8' : 'pt-20 pb-8'
-        }`}>
+      <div className="container mx-auto px-4 pt-20 pb-8 transition-all duration-500">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,44 +50,44 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
         >
           <div className="relative mb-12">
             {/* Decorative elements */}
-            <div className="absolute -top-20 -left-20 w-40 h-40 bg-teal-200/30 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-200/30 rounded-full blur-3xl"></div>
+            <div className="absolute -top-20 -left-20 w-40 h-40 bg-primary/18 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/12 rounded-full blur-3xl"></div>
 
             <Badge
               variant="secondary"
-              className="mb-6 text-sm bg-gradient-to-r from-teal-100 to-blue-100 text-teal-800 hover:from-teal-200 hover:to-blue-200 border-teal-300 shadow-sm"
+              className="mb-6 text-sm bg-primary/15 text-primary border border-primary/25 shadow-sm"
             >
-              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-teal-600" />
+              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-primary" />
               Visualisasi Interaktif
             </Badge>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600 mb-6 drop-shadow-sm">
+            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 drop-shadow-sm">
               Eksplorasi Radial Felidae
             </h1>
 
             <div className="max-w-2xl mx-auto">
-              <p className="text-neutral-600 text-lg md:text-xl leading-relaxed mb-4">
+              <p className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-4">
                 Jelajahi{" "}
-                <span className="bg-gradient-to-r from-teal-100/70 to-blue-100/70 px-2 py-0.5 rounded-md font-medium text-teal-800">
+                <span className="bg-primary/10 px-2 py-0.5 rounded-md font-medium text-primary">
                   hierarki taksonomi
                 </span>{" "}
                 keluarga Felidae melalui{" "}
-                <span className="bg-gradient-to-r from-amber-100/70 to-orange-100/70 px-2 py-0.5 rounded-md font-medium text-orange-800">
+                <span className="bg-accent/15 px-2 py-0.5 rounded-md font-medium text-foreground">
                   visualisasi radial yang inovatif
                 </span>{" "}
                 . Lihat node hierarki dari Famili ke Genus hingga Spesies untuk memahami struktur klasifikasi.
               </p>
               <div className="flex flex-wrap justify-center gap-3 mt-4">
-                <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-                  <div className="h-2 w-2 rounded-full bg-teal-400 animate-pulse mr-2"></div>
+                <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border shadow-sm text-primary">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse mr-2"></div>
                   38 Spesies
                 </Badge>
-                <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-                  <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse mr-2"></div>
+                <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border shadow-sm text-primary">
+                  <div className="h-2 w-2 rounded-full bg-primary/80 animate-pulse mr-2"></div>
                   14 Genus
                 </Badge>
-                <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-                  <div className="h-2 w-2 rounded-full bg-red-400 animate-pulse mr-2"></div>
+                <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border shadow-sm text-primary">
+                  <div className="h-2 w-2 rounded-full bg-destructive animate-pulse mr-2"></div>
                   Status Konservasi
                 </Badge>
               </div>
@@ -112,14 +97,14 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
           <div className="flex flex-wrap justify-center gap-4 mt-8">
             <Button
               variant="outline"
-              className="flex items-center gap-2 border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 group shadow-sm"
+              className="flex items-center gap-2 border-border hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all duration-300 group shadow-sm text-foreground"
               onClick={() => setShowInfo(!showInfo)}
             >
-              <Dna className="h-4 w-4 text-teal-600 group-hover:rotate-12 transition-transform duration-300" />
+              <Dna className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform duration-300" />
               <span>Tentang Visualisasi</span>
             </Button>
             <Button
-              className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl group"
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-xl group"
               onClick={scrollToDiagram}
             >
               <Zap className="h-4 w-4 group-hover:scale-110 transition-transform duration-300" />
@@ -127,7 +112,7 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
             </Button>
             <Button
               variant="outline"
-              className="flex items-center gap-2 border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300 transition-all duration-300 shadow-sm group"
+              className="flex items-center gap-2 border-border hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all duration-300 shadow-sm group text-foreground"
               onClick={() => setShowLegend(!showLegend)}
             >
               <Info className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" />
@@ -142,15 +127,15 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="mt-8 bg-gradient-to-br from-teal-50 to-white p-6 rounded-xl border border-teal-100 text-left shadow-lg"
+                className="mt-8 bg-card/80 p-6 rounded-xl border border-border text-left shadow-lg"
               >
                 <div className="flex items-start gap-4">
-                  <div className="bg-teal-100 p-3 rounded-xl">
-                    <Compass className="h-5 w-5 text-teal-600" />
+                  <div className="bg-primary/15 p-3 rounded-xl">
+                    <Compass className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-teal-800 text-lg mb-4">Visualisasi Radial & Storytelling</h3>
-                    <p className="text-neutral-600 mb-4">
+                    <h3 className="font-medium text-foreground text-lg mb-4">Visualisasi Radial & Storytelling</h3>
+                    <p className="text-muted-foreground mb-4">
                       Visualisasi radial menampilkan taksonomi dalam bentuk lingkaran konsentris, dengan keluarga
                       Felidae di tengah, dikelilingi oleh genus, dan spesies di lingkaran terluar. Pendekatan ini
                       memudahkan pemahaman hubungan antar spesies.
@@ -187,12 +172,12 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3, delay: i * 0.1 }}
-                          className={`bg-gradient-to-br ${item.highlight} p-4 rounded-lg border shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1`}
+                          className={`bg-card/70 p-4 rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1`}
                         >
-                          <div className={`bg-white/80 p-2 rounded-lg shadow-inner mb-2`}>{item.icon}</div>
+                          <div className={`bg-muted/40 p-2 rounded-lg shadow-inner mb-2`}>{item.icon}</div>
                           <div>
-                            <h4 className="font-medium text-teal-700 mb-1">{item.title}</h4>
-                            <p className="text-sm text-neutral-600">{item.desc}</p>
+                            <h4 className="font-medium text-foreground mb-1">{item.title}</h4>
+                            <p className="text-sm text-muted-foreground">{item.desc}</p>
                           </div>
                         </motion.div>
                       ))}
@@ -208,15 +193,15 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="mt-8 bg-gradient-to-br from-teal-50 to-white p-6 rounded-xl border border-teal-100 text-left shadow-lg"
+                className="mt-8 bg-card/80 p-6 rounded-xl border border-border text-left shadow-lg"
               >
                 <div className="flex items-start gap-4">
-                  <div className="bg-teal-100 p-3 rounded-xl">
-                    <Shield className="h-5 w-5 text-teal-600" />
+                  <div className="bg-primary/15 p-3 rounded-xl">
+                    <Shield className="h-5 w-5 text-primary" />
                   </div>
                   <div className="w-full">
-                    <h3 className="font-medium text-teal-800 text-lg mb-4">Status Konservasi & Efek Visual</h3>
-                    <p className="text-neutral-600 mb-4">
+                    <h3 className="font-medium text-foreground text-lg mb-4">Status Konservasi & Efek Visual</h3>
+                    <p className="text-muted-foreground mb-4">
                       Warna glow effect pada diagram menunjukkan status konservasi setiap spesies. Berikut adalah
                       panduan warna yang digunakan:
                     </p>
@@ -312,8 +297,8 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
                       ))}
                     </div>
 
-                    <div className="mt-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
-                      <p className="text-sm text-blue-700">
+                    <div className="mt-4 bg-primary/10 p-3 rounded-lg border border-primary/20">
+                      <p className="text-sm text-foreground">
                         <Info className="h-4 w-4 inline mr-2" />
                         Efek glow pada diagram akan menyala sesuai dengan status konservasi spesies ketika Anda memilih
                         spesies tersebut.
@@ -330,7 +315,7 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
       {/* Diagram container */}
       <div
         ref={diagramRef}
-        className="flex-1 bg-gradient-to-br from-white to-teal-50/30 border-y border-teal-100 touch-none relative overflow-hidden"
+        className="flex-1 bg-gradient-to-br from-background via-background to-muted/15 border-y border-border touch-none relative overflow-hidden"
       >
 
         <div className="absolute inset-0 pointer-events-none z-0 opacity-5">
@@ -356,15 +341,15 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
           transition={{ duration: 0.5, delay: 0.2 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <div className="bg-gradient-to-r from-teal-50/80 to-blue-50/80 backdrop-blur-sm p-4 rounded-xl border border-teal-100 mb-4 shadow-sm">
-            <h3 className="text-sm font-medium text-teal-800 mb-2">Tentang Visualisasi Radial</h3>
-            <p className="text-neutral-600 text-sm">
+          <div className="bg-card/80 backdrop-blur-sm p-4 rounded-xl border border-border mb-4 shadow-sm">
+            <h3 className="text-sm font-medium text-foreground mb-2">Tentang Visualisasi Radial</h3>
+            <p className="text-muted-foreground text-sm">
               Visualisasi radial ini menampilkan hubungan taksonomi dalam bentuk lingkaran konsentris, memberikan
-              <span className="bg-gradient-to-r from-teal-100/70 to-blue-100/70 px-1.5 mx-1 rounded-md font-medium text-teal-800">
+              <span className="bg-primary/10 px-1.5 mx-1 rounded-md font-medium text-primary">
                 cara yang lebih intuitif
               </span>
               untuk memahami keterkaitan antar spesies.
-              <span className="bg-gradient-to-r from-amber-100/70 to-orange-100/70 px-1.5 mx-1 rounded-md font-medium text-orange-800">
+              <span className="bg-accent/20 px-1.5 mx-1 rounded-md font-medium text-foreground">
                 Efek cahaya dinamis
               </span>
               menunjukkan status konservasi spesies, dari hijau (aman) hingga merah (terancam punah).
@@ -372,16 +357,16 @@ export default function RadialTaxonomy({ fullName, profilePicture }: { fullName:
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
-            <div className="flex items-center gap-2 text-teal-600">
-              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
               <span>Klik dan tahan untuk navigasi</span>
             </div>
-            <div className="flex items-center gap-2 text-teal-600">
-              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
               <span>Gunakan kontrol untuk zoom dan rotasi</span>
             </div>
-            <div className="flex items-center gap-2 text-teal-600">
-              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
               <span>Klik pada node untuk melihat detail</span>
             </div>
           </div>

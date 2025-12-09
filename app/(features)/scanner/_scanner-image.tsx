@@ -4,9 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { useScannerLogic } from "@/hooks/use-scanner-logic"
-import { useScrollDetection } from "@/hooks/use-scroll-detection"
 import { getUserClient } from "@/lib/auth-client"
-import { GlassNavigation } from "@/components/glass-navigation"
 
 import { ScannerUploadArea } from "@/components/scanner/scanner-upload-area"
 import { ScannerPreview } from "@/components/scanner/scanner-preview"
@@ -33,9 +31,6 @@ export default function ScannerImage() {
   const [activeTab, setActiveTab] = useState<string>("upload")
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [showHistory, setShowHistory] = useState<boolean>(false)
-
-  // Scroll detection for navbar
-  const isScrolled = useScrollDetection({ threshold: 80 })
 
   // Scanner logic hook
   const scanner = useScannerLogic()
@@ -113,17 +108,6 @@ export default function ScannerImage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 dark:to-background">
-      {/* Glass Navigation */}
-      <GlassNavigation
-        isScrolled={isScrolled}
-        fullName={user?.profile?.full_name || user?.user_metadata?.full_name}
-        profilePicture={user?.profile?.avatar_url || user?.user_metadata?.avatar_url}
-        backHref="/"
-        backLabel="Beranda"
-        showUserInfo={true}
-        className=""
-      />
-
       {/* Confetti effect */}
       <ScannerConfetti isVisible={scanner.showConfetti} />
 

@@ -222,7 +222,7 @@ export function WhatIsTaxonomy() {
             >
               <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-border">
                 <div className="relative w-full aspect-[3/4] mb-4 rounded-xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10" />
                   <Image
                     src="https://upload.wikimedia.org/wikipedia/commons/6/68/Carl_von_Linn%C3%A9.jpg"
                     alt="Carl Linnaeus - Bapak Taksonomi Modern"

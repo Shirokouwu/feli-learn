@@ -20,7 +20,7 @@ function AnimatedRadialDiagram({ sectionInView }: { sectionInView?: boolean }) {
         species: "var(--chart-3, #7cf2b5)",
         genus: "var(--primary, #7cc3ff)",
         family: "var(--accent, #f7b267)",
-        text: "var(--foreground, #f8fafc)",
+        text: "oklch(0.99 0.003 240)",
         halo: "rgba(124, 242, 181, 0.08)",
     }
 

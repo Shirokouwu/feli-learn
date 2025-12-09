@@ -31,14 +31,14 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             aria-label="Toggle theme"
             onClick={handleToggle}
             className={cn(
-                "h-9 w-9 rounded-full border border-border bg-background/80 shadow-sm backdrop-blur hover:bg-accent",
+                "h-9 w-9 rounded-full border border-border shadow-sm backdrop-blur hover:bg-transparent  cursor-pointer",
                 className,
             )}
         >
             {mounted && isDark ? (
-                <Sun className="h-4 w-4" />
+                <Sun className="h-4 w-4 cursor-pointer " />
             ) : (
-                <Moon className="h-4 w-4" />
+                <Moon className="h-4 w-4 cursor-pointer " />
             )}
         </Button>
     )

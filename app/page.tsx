@@ -1,4 +1,3 @@
-import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { WhatIsTaxonomy } from "@/components/what-is-taxonomy"
 import { WhatIsFelidae } from "@/components/what-is-felidae"
@@ -19,7 +18,6 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
-      <Header />
       {/* 1. Pembuka - Selamat datang di dunia Felidae */}
       <HeroSection />
 

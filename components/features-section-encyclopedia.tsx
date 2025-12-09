@@ -133,7 +133,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                                     className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer"
                                 >
                                     <Image src={species.image} alt={species.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 p-4">
                                         <p className="font-semibold text-foreground">{species.name}</p>
                                         <p className="text-xs text-muted-foreground italic">{species.latin}</p>
