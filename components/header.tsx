@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -43,15 +44,15 @@ export function Header() {
             </Link>
             <Link
               href="/about"
-              className={`hover:text-foreground transition-colors text-sm ${
-                pathname === "/about" ? "text-foreground font-medium" : "text-muted-foreground"
-              }`}
+              className={`hover:text-foreground transition-colors text-sm ${pathname === "/about" ? "text-foreground font-medium" : "text-muted-foreground"
+                }`}
             >
               About
             </Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <Button variant="ghost" size="sm">
               Log in
             </Button>
@@ -67,6 +68,10 @@ export function Header() {
 
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
+            <div className="flex items-center justify-between pb-4">
+              <span className="text-sm font-medium text-foreground">Tema</span>
+              <ThemeToggle />
+            </div>
             <nav className="flex flex-col gap-4">
               <Link
                 href={isHomePage ? "#taxonomy" : "/#taxonomy"}
@@ -91,9 +96,8 @@ export function Header() {
               </Link>
               <Link
                 href="/about"
-                className={`hover:text-foreground transition-colors ${
-                  pathname === "/about" ? "text-foreground font-medium" : "text-muted-foreground"
-                }`}
+                className={`hover:text-foreground transition-colors ${pathname === "/about" ? "text-foreground font-medium" : "text-muted-foreground"
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 About

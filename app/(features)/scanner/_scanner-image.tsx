@@ -102,17 +102,17 @@ export default function ScannerImage() {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 dark:to-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-2 text-emerald-700">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-primary">Loading...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 dark:to-background">
       {/* Glass Navigation */}
       <GlassNavigation
         isScrolled={isScrolled}
@@ -136,7 +136,7 @@ export default function ScannerImage() {
         />
 
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
+          <div className="bg-card text-card-foreground rounded-2xl shadow-xl border border-border overflow-hidden">
             <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
                 <div className="space-y-6">
@@ -169,7 +169,7 @@ export default function ScannerImage() {
                 <div className="space-y-6">
                   {/* Non-Felidae Alert */}
                   {scanner.notFelidae && (
-                    <Alert className="bg-red-50 border-red-200 text-red-800">
+                    <Alert className="bg-destructive/10 border-destructive/40 text-destructive-foreground">
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Bukan kucing atau gambar kurang jelas</AlertTitle>
                       <AlertDescription>

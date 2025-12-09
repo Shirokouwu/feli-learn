@@ -56,15 +56,15 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className="bg-gradient-to-br from-emerald-50 to-white p-4 sm:p-6 rounded-xl border border-emerald-200 shadow-md"
+        className="bg-card/80 text-card-foreground p-4 sm:p-6 rounded-xl border border-border shadow-md"
       >
         <div className="flex items-center gap-4 mb-4">
-          <div className="bg-emerald-100 p-3 rounded-full">
-            <CheckCircle className="h-6 w-6 text-emerald-600" />
+          <div className="bg-primary/15 p-3 rounded-full">
+            <CheckCircle className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-emerald-800">Hasil Identifikasi</h3>
-            <p className="text-emerald-600">
+            <h3 className="text-xl font-bold text-foreground">Hasil Identifikasi</h3>
+            <p className="text-muted-foreground">
               Teridentifikasi dengan akurasi {enhancedSpeciesData?.identifikasi.akurasi.toFixed(1) || '98.7'}%
               {scanDuration > 0 && ` ( ${scanDuration >= 60
                 ? `${Math.floor(scanDuration / 60)} menit ${scanDuration % 60} detik`
@@ -78,7 +78,7 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
           <div className="mb-6 ">
             {/* Scientific Name - Most Prominent */}
             <div
-              className="text-center mb-4 p-3 md:p-4 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/50 rounded-lg border border-emerald-100 shadow-sm relative overflow-hidden cursor-pointer hover:shadow-md transition-all group"
+              className="text-center mb-4 p-3 md:p-4 bg-muted/40 rounded-lg border border-border shadow-sm relative overflow-hidden cursor-pointer hover:shadow-md transition-all group"
               onClick={navigateToDatabase}
               role="button"
               tabIndex={0}
@@ -91,15 +91,15 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
 
               <div className="relative z-10">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <p className="text-lg md:text-2xl font-bold text-emerald-800 italic tracking-wide break-words group-hover:text-emerald-600 transition-colors">
+                  <p className="text-lg md:text-2xl font-bold text-foreground italic tracking-wide break-words group-hover:text-primary transition-colors">
                     {enhancedSpeciesData.identifikasi.nama_ilmiah}
                   </p>
-                  <ArrowRight className="h-5 w-5 text-emerald-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </div>
-                <p className="text-base md:text-lg font-medium text-emerald-600">
+                <p className="text-base md:text-lg font-medium text-muted-foreground">
                   {enhancedSpeciesData.identifikasi.nama_umum}
                 </p>
-                <p className="text-xs text-emerald-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <p className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   Klik untuk melihat informasi lengkap di database
                 </p>
               </div>
@@ -111,15 +111,15 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 Status: {enhancedSpeciesData.identifikasi.status.konservasi}
               </Badge>
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
+              <Badge className="bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
                 <Leaf className="h-3 w-3 mr-1" />
                 Endemik: {enhancedSpeciesData.identifikasi.status.endemik}
               </Badge>
             </div>
 
             {/* Description - Clean */}
-            <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-100">
-              <p className="text-sm md:text-base text-gray-700 leading-relaxed text-center">
+            <div className="bg-muted/30 p-3 md:p-4 rounded-lg border border-border/60">
+              <p className="text-sm md:text-base text-foreground leading-relaxed text-center">
                 {enhancedSpeciesData.ringkasan.deskripsi_umum}
               </p>
             </div>
@@ -129,7 +129,7 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
           <div className="mb-6">
             {/* Scientific Name - Most Prominent */}
             <div
-              className="text-center mb-4 p-3 md:p-4 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/50 rounded-lg border border-emerald-100 shadow-sm relative overflow-hidden cursor-pointer hover:shadow-md transition-all group"
+              className="text-center mb-4 p-3 md:p-4 bg-muted/40 rounded-lg border border-border shadow-sm relative overflow-hidden cursor-pointer hover:shadow-md transition-all group"
               onClick={navigateToDatabase}
               role="button"
               tabIndex={0}
@@ -142,15 +142,15 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
 
               <div className="relative z-10">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <p className="text-lg md:text-2xl font-bold text-emerald-800 italic tracking-wide break-words group-hover:text-emerald-600 transition-colors">
+                  <p className="text-lg md:text-2xl font-bold text-foreground italic tracking-wide break-words group-hover:text-primary transition-colors">
                     {scanResult.scientific_name}
                   </p>
-                  <ArrowRight className="h-5 w-5 text-emerald-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </div>
-                <p className="text-base md:text-lg font-medium text-emerald-600">
+                <p className="text-base md:text-lg font-medium text-muted-foreground">
                   {scanResult.name}
                 </p>
-                <p className="text-xs text-emerald-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <p className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   Klik untuk melihat informasi lengkap di database
                 </p>
               </div>
@@ -163,15 +163,15 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
                 <span className="hidden sm:inline">Status: </span>
                 {scanResult.conservation_status}
               </Badge>
-              <Badge className="bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
+              <Badge className="bg-muted/40 text-muted-foreground border border-border hover:bg-muted/60 transition-colors duration-200 px-2 md:px-3 py-1 text-xs md:text-sm">
                 <Leaf className="h-3 w-3 mr-1" />
                 Data terbatas
               </Badge>
             </div>
 
             {/* Description - Clean */}
-            <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-100">
-              <p className="text-xs md:text-sm text-gray-700 leading-relaxed text-center">
+            <div className="bg-muted/30 p-3 md:p-4 rounded-lg border border-border/60">
+              <p className="text-xs md:text-sm text-foreground leading-relaxed text-center">
                 {scanResult.description}
               </p>
             </div>
@@ -207,12 +207,12 @@ export const ScannerResultDisplay: React.FC<ScannerResultDisplayProps> = ({
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
-                  <div className="bg-white p-6 rounded-lg border border-emerald-100">
-                    <h4 className="font-bold text-emerald-800 mb-4 text-lg text-center">Klasifikasi Taksonomi</h4>
+                  <div className="bg-card p-6 rounded-lg border border-border/70">
+                    <h4 className="font-bold text-foreground mb-4 text-lg text-center">Klasifikasi Taksonomi</h4>
 
                     {/* Penjelasan Taksonomi */}
-                    <div className="bg-emerald-50 p-4 rounded-lg mb-6 border border-emerald-200">
-                      <p className="text-sm text-emerald-700 text-center">
+                    <div className="bg-primary/10 p-4 rounded-lg mb-6 border border-primary/20">
+                      <p className="text-sm text-foreground text-center">
                         Taksonomi adalah sistem klasifikasi ilmiah untuk mengelompokkan makhluk hidup berdasarkan kesamaan karakteristik,
                         dari kelompok terbesar hingga paling spesifik.
                       </p>

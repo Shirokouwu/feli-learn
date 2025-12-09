@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { QueryProvider } from "@/providers/query-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { ThemeProvider } from "@/providers/theme-provider"
 
 const _inter = Inter({ subsets: ["latin"] })
 const _playfair = Playfair_Display({ subsets: ["latin"] })
@@ -41,10 +42,12 @@ export default function RootLayout({
   return (
     <html lang="id" className={_inter.className}>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <main>
-          <QueryProvider>{children}</QueryProvider>
-        </main>
-        <Toaster position="top-center" richColors />
+        <ThemeProvider>
+          <main>
+            <QueryProvider>{children}</QueryProvider>
+          </main>
+          <Toaster position="top-center" richColors />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

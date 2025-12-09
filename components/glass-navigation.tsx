@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from "next/link"
 import { useMobile } from "@/hooks/use-mobile"
 import Image from "next/image"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface GlassNavigationProps {
    isScrolled: boolean
@@ -16,6 +17,7 @@ interface GlassNavigationProps {
    showUserInfo?: boolean
    className?: string
    profilePicture?: string // Optional profile picture URL
+   showThemeToggle?: boolean
 }
 
 export function GlassNavigation({
@@ -25,7 +27,8 @@ export function GlassNavigation({
    backLabel = "Kembali",
    showUserInfo = true,
    className = "",
-   profilePicture = ""
+   profilePicture = "",
+   showThemeToggle = true
 }: GlassNavigationProps) {
    const isMobile = useMobile()
 
@@ -35,16 +38,18 @@ export function GlassNavigation({
          className={`fixed z-50 ${className}`}
          initial={false}
          animate={{
-            backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0)',
+            backgroundColor: isScrolled
+               ? 'color-mix(in srgb, var(--card) 80%, transparent)'
+               : 'color-mix(in srgb, var(--card) 35%, transparent)',
             width: isScrolled ? '50%' : isMobile ? '100%' : '90%',
             height: isScrolled ? '60px' : '80px',
             top: isScrolled ? '16px' : '0px',
             borderRadius: isScrolled ? '20px' : '10px',
             backdropFilter: isScrolled ? 'blur(20px)' : 'blur(0px)',
             boxShadow: isScrolled
-               ? '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+               ? '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 color-mix(in srgb, var(--foreground) 18%, transparent)'
                : '0 0 0 rgba(0, 0, 0, 0)',
-            border: isScrolled ? '1px solid rgba(255, 255, 255, 0.2)' : '0px solid rgba(255, 255, 255, 0)'
+            border: isScrolled ? '1px solid color-mix(in srgb, var(--border) 60%, transparent)' : '0px solid transparent'
          }}
          transition={{
             type: 'spring',
@@ -90,8 +95,8 @@ export function GlassNavigation({
                      variant="outline"
                      size={isScrolled ? "sm" : "default"}
                      className={`transition-all duration-300 ${isScrolled
-                        ? 'bg-white/30 backdrop-blur-sm border-white/30 hover:bg-white/40 text-teal-700 hover:text-teal-800'
-                        : 'bg-white/80 backdrop-blur-sm border-teal-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300'
+                        ? 'bg-card/70 backdrop-blur-sm border-border/80 hover:bg-card/80 text-foreground'
+                        : 'bg-card/60 backdrop-blur-md border-border/60 hover:bg-card/80 text-foreground'
                         } shadow-lg hover:shadow-xl`}
                      asChild
                   >
@@ -104,10 +109,9 @@ export function GlassNavigation({
                   </Button>
                </motion.div>
 
-               {/* User info */}
-               {showUserInfo && (
+               {(showThemeToggle || showUserInfo) && (
                   <motion.div
-                     className="flex items-center"
+                     className="flex items-center gap-3"
                      initial={false}
                      animate={{
                         scale: isScrolled ? 0.95 : 1,
@@ -119,43 +123,49 @@ export function GlassNavigation({
                         damping: 28
                      }}
                   >
-                     {fullName ? (
-                        <Link href="/profile" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-                           <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
-                              <Unlock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
-                              <span className="inline">
-                                 {fullName}
+                     {showThemeToggle && (
+                        <ThemeToggle className="border-border/70 bg-card/70 text-foreground hover:bg-card/90" />
+                     )}
+
+                     {showUserInfo && (
+                        fullName ? (
+                           <Link href="/profile" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                              <span className={`flex items-center transition-all duration-300 text-foreground ${isScrolled ? 'text-sm' : 'text-sm'}`}>
+                                 <Unlock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
+                                 <span className="inline">
+                                    {fullName}
+                                 </span>
                               </span>
-                           </span>
-                           {profilePicture ? (
-                              <div className={`relative border-2 border-white/40 rounded-full overflow-hidden transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
-                                 <img
-                                    src={profilePicture}
-                                    alt={fullName}
-                                    className="w-full h-full object-cover"
-                                    referrerPolicy="no-referrer"
-                                    crossOrigin="anonymous"
-                                    onError={(e) => {
-                                       console.error('Image load error:', profilePicture)
-                                       e.currentTarget.style.display = 'none'
-                                    }}
-                                 />
-                              </div>
-                           ) : (
-                              <Avatar className={`border-2 border-white/40 transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
-                                 <AvatarFallback className="bg-white/20 text-teal-800 font-semibold">
-                                    {fullName.charAt(0)}
-                                 </AvatarFallback>
-                              </Avatar>
-                           )}
-                        </Link>
-                     ) : (
-                        <span className={`flex items-center transition-all duration-300 text-teal-700 ${isScrolled ? 'text-sm' : 'text-sm'}`}>
-                           <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
-                           <Link href="/login" className="underline ml-1 transition-all duration-300 text-teal-700 hover:text-teal-800 font-medium">
-                              Login
+                              {profilePicture ? (
+                                 <div className={`relative border-2 border-white/40 rounded-full overflow-hidden transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
+                                    <img
+                                       src={profilePicture}
+                                       alt={fullName}
+                                       className="w-full h-full object-cover"
+                                       referrerPolicy="no-referrer"
+                                       crossOrigin="anonymous"
+                                       onError={(e) => {
+                                          console.error('Image load error:', profilePicture)
+                                          e.currentTarget.style.display = 'none'
+                                       }}
+                                    />
+                                 </div>
+                              ) : (
+                                 <Avatar className={`border-2 border-border/60 transition-all duration-300 ${isScrolled ? 'w-12 h-12' : 'w-12 h-12'}`}>
+                                    <AvatarFallback className="bg-foreground/10 text-foreground font-semibold">
+                                       {fullName.charAt(0)}
+                                    </AvatarFallback>
+                                 </Avatar>
+                              )}
                            </Link>
-                        </span>
+                        ) : (
+                           <span className={`flex items-center transition-all duration-300 text-foreground ${isScrolled ? 'text-sm' : 'text-sm'}`}>
+                              <Lock className={`${isScrolled ? 'h-4 w-4' : 'h-4 w-4'} mr-1 transition-all duration-300`} />
+                              <Link href="/login" className="underline ml-1 transition-all duration-300 text-foreground hover:text-foreground/70 font-medium">
+                                 Login
+                              </Link>
+                           </span>
+                        )
                      )}
                   </motion.div>
                )}

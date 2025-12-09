@@ -51,16 +51,16 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
     >
       <Badge
         variant="secondary"
-        className="mb-4 sm:mb-6 text-xs sm:text-sm bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-emerald-300"
+        className="mb-4 sm:mb-6 text-xs sm:text-sm bg-primary/15 text-primary border border-primary/25"
       >
         AI Scanner Pro
       </Badge>
-      <h1 className="text-4xl lg:text-5xl font-bold text-emerald-800 mb-4 sm:mb-6 px-2">
+      <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 px-2">
         Identifikasi Family Felidae
       </h1>
-      <p className="text-neutral-600 text-base md:text-lg leading-relaxed mb-4 px-0 sm:px-4">
+      <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-4 px-0 sm:px-4">
         Unggah gambar atau masukkan URL untuk mengidentifikasi kucing besar dan kecil{" "}
-        <span className="text-emerald-700 font-medium bg-emerald-50 px-2 py-1 rounded-lg">
+        <span className="text-primary font-medium bg-primary/15 px-2 py-1 rounded-lg border border-primary/20">
           (keluarga Felidae, seperti harimau, singa, kucing rumahan)
         </span>{" "}
         secara instan dengan teknologi AI
@@ -68,28 +68,28 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
 
       <section className="mx-auto ">
         <div className="flex flex-wrap justify-center gap-1 sm:gap-2 mt-4">
-          <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs md:text-sm">
-            <Zap className="h-3 w-3 mr-1 text-emerald-600" />
+          <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border text-xs md:text-sm text-foreground">
+            <Zap className="h-3 w-3 mr-1 text-primary" />
             Akurasi 96%
           </Badge>
-          <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs md:text-sm">
-            <CheckCircle className="h-3 w-3 mr-1 text-emerald-600" />
+          <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border text-xs md:text-sm text-foreground">
+            <CheckCircle className="h-3 w-3 mr-1 text-primary" />
             30 Spesies
           </Badge>
-          <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs md:text-sm">
-            <Sparkles className="h-3 w-3 mr-1 text-emerald-600" />
+          <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border text-xs md:text-sm text-foreground">
+            <Sparkles className="h-3 w-3 mr-1 text-primary" />
             Deep Learning
           </Badge>
         </div>
         <div className="flex justify-center mt-3 px-2">
           {apiChecking ? (
             <div className="flex flex-col items-center gap-2">
-              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs sm:text-sm">
+              <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border text-xs sm:text-sm text-foreground">
                 <div className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse mr-2"></div>
                 <Clock className="h-3 w-3 mr-1 text-yellow-500" />
                 Memeriksa status API...
               </Badge>
-              <div className="text-xs text-neutral-600 text-center">
+              <div className="text-xs text-muted-foreground text-center">
                 <span className="font-medium">Waktu tunggu: {formatWaitTime(waitTime)}</span>
                 <p className="mt-1 px-2">
                   Model sedang dimuat, harap tunggu sebentar...
@@ -97,19 +97,19 @@ export default function ScanStatusApi({ apiChecking, apiReady, response }: {
               </div>
             </div>
           ) : apiReady ? (
-            <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs sm:text-sm">
+            <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border text-xs sm:text-sm text-foreground">
               <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
               <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
               API Model Siap
             </Badge>
           ) : (
             <div className="flex flex-col items-center gap-2 max-w-xs sm:max-w-sm">
-              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm text-xs sm:text-sm">
+              <Badge variant="outline" className="bg-card/70 backdrop-blur-sm border-border text-xs sm:text-sm text-foreground">
                 <div className="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
                 <AlertTriangle className="h-3 w-3 mr-1 text-red-500" />
                 API Model Tidak Tersedia
               </Badge>
-              <p className="text-xs text-neutral-600 text-center px-2">
+              <p className="text-xs text-muted-foreground text-center px-2">
                 Jika masalah berlanjut, silakan hubungi developer untuk bantuan
               </p>
             </div>
