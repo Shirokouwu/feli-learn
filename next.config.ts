@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
         hostname: "avatars.githubusercontent.com"
       }, {
         hostname: "sxowqvkanlihnrsijcsm.supabase.co"
+      }, {
+        hostname: "upload.wikimedia.org"
       }
     ]
   },

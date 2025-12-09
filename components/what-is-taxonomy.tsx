@@ -224,7 +224,7 @@ export function WhatIsTaxonomy() {
                 <div className="relative w-full aspect-[3/4] mb-4 rounded-xl overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10" />
                   <Image
-                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+                    src="https://upload.wikimedia.org/wikipedia/commons/6/68/Carl_von_Linn%C3%A9.jpg"
                     alt="Carl Linnaeus - Bapak Taksonomi Modern"
                     fill
                     className="object-cover"

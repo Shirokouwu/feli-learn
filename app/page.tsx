@@ -45,10 +45,10 @@ export default function Home() {
       <ExplorationBridge />
 
       {/* 9. Preview - Lihat diagram interaktifnya */}
-      <TaxonomyDiagramPreview />
+      {/* <TaxonomyDiagramPreview /> */}
 
       {/* 10. Preview - Jelajahi ensiklopedianya */}
-      <EncyclopediaPreview />
+      {/* <EncyclopediaPreview /> */}
 
       {/* 11. Transisi - Tapi ada hal penting lainnya... */}
       <ConservationBridge />
