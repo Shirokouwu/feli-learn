@@ -6,8 +6,6 @@ import { TaxonomyEasy } from "@/components/taxonomy-easy"
 import { SolutionBridge } from "@/components/solution-bridge"
 import { FeaturesSection } from "@/components/features-section"
 import { ExplorationBridge } from "@/components/exploration-bridge"
-import { TaxonomyDiagramPreview } from "@/components/taxonomy-diagram-preview"
-import { EncyclopediaPreview } from "@/components/encyclopedia-preview"
 import { ConservationBridge } from "@/components/conservation-bridge"
 import { TaxonomyConservation } from "@/components/taxonomy-conservation"
 import { FAQSection } from "@/components/faq-section"
@@ -42,21 +40,15 @@ export default function Home() {
       {/* 8. Transisi - Penasaran seperti apa? */}
       <ExplorationBridge />
 
-      {/* 9. Preview - Lihat diagram interaktifnya */}
-      {/* <TaxonomyDiagramPreview /> */}
-
-      {/* 10. Preview - Jelajahi ensiklopedianya */}
-      {/* <EncyclopediaPreview /> */}
-
-      {/* 11. Transisi - Tapi ada hal penting lainnya... */}
+      {/* 9. Transisi - Tapi ada hal penting lainnya... */}
       <ConservationBridge />
 
-      {/* 12. Klimaks Emosional - Konservasi & kepunahan */}
+      {/* 10. Klimaks Emosional - Konservasi & kepunahan */}
       <TaxonomyConservation />
 
       <FAQSection />
 
-      {/* 14. Call to Action - Setelah termotivasi, ajak bergabung */}
+      {/* 11. Call to Action - Setelah termotivasi, ajak bergabung */}
       <CTASection />
 
       <Footer />
