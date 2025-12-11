@@ -63,7 +63,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
                 }
             }
         } catch (metadataError) {
-            console.warn('Failed to update auth metadata:', metadataError)
+            // console.warn('Failed to update auth metadata:', metadataError)
             // Don't fail the entire operation for metadata sync issues
         }
 
@@ -181,7 +181,7 @@ export async function uploadAvatarAction(prevState: any, formData: FormData) {
                     })
                 }
             } catch (metadataError) {
-                console.warn('Failed to update auth metadata:', metadataError)
+                // console.warn('Failed to update auth metadata:', metadataError)
                 // Don't fail the entire operation for metadata sync issues
             }
 
@@ -280,7 +280,7 @@ export async function removeAvatarAction() {
                 })
             }
         } catch (metadataError) {
-            console.warn('Failed to update auth metadata:', metadataError)
+            // console.warn('Failed to update auth metadata:', metadataError)
             // Don't fail the entire operation for metadata sync issues
         }
 

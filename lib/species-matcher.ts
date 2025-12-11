@@ -81,7 +81,7 @@ export async function matchAndFetchSpeciesData(
             searchKey = predicted_class;
         }
 
-        console.log("Using search key:", searchKey);
+        // console.log("Using search key:", searchKey);
 
         // Step 1: Find species by search key (kunci field in database)
         // Try with original key first

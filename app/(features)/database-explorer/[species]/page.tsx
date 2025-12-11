@@ -23,7 +23,7 @@ import {
   fetchSpeciesByKey,
   fetchSpeciesDetails,
   fetchSpeciesImages,
-  fetchRelatedSpecies,
+  getRelatedSpecies,
   fetchSpeciesVideos,
 } from "@/lib/supabase-v2"
 import { getUserClient } from "@/lib/auth-client"
@@ -128,7 +128,7 @@ export default function SpeciesDetailPage() {
         const [details, imagesData, related, videos] = await Promise.all([
           fetchSpeciesDetails(species.id),
           fetchSpeciesImages(species.id),
-          fetchRelatedSpecies(species.genus_id, species.id),
+          getRelatedSpecies(species.genus_id, species.id),
           fetchSpeciesVideos(species.id),
         ])
 
@@ -207,7 +207,7 @@ export default function SpeciesDetailPage() {
           url: window.location.href,
         })
       } catch (error) {
-        console.log("Error sharing:", error)
+        // console.log("Error sharing:", error)
       }
     } else {
       // Fallback: copy to clipboard

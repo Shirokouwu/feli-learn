@@ -365,11 +365,10 @@ export function RadialSearch({
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className={`w-full px-4 py-3 text-left transition-colors rounded-xl flex items-center gap-3 ${
-                            index === selectedIndex
+                          className={`w-full px-4 py-3 text-left transition-colors rounded-xl flex items-center gap-3 ${index === selectedIndex
                               ? "bg-teal-50 dark:bg-teal-900/20"
                               : "hover:bg-neutral-100 dark:hover:bg-neutral-800/50"
-                          }`}
+                            }`}
                           onClick={() => handleNodeClick(node)}
                           onMouseEnter={() => setSelectedIndex(index)}
                         >
@@ -398,13 +397,12 @@ export function RadialSearch({
                             {node.level && (
                               <div className="flex items-center gap-1 mt-1">
                                 <Badge
-                                  className={`px-1.5 py-0 text-[10px] ${
-                                    node.level === "family"
+                                  className={`px-1.5 py-0 text-[10px] ${node.level === "family"
                                       ? "bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300"
                                       : node.level === "genus"
                                         ? "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300"
                                         : "bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300"
-                                  }`}
+                                    }`}
                                 >
                                   {node.level === "family" ? "Felidae" : node.level === "genus" ? "Genus" : "Spesies"}
                                 </Badge>
@@ -492,11 +490,10 @@ export function RadialSearch({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className={`w-full px-3 py-2 text-left transition-colors rounded-xl flex items-center gap-3 ${
-                              index === selectedIndex
+                            className={`w-full px-3 py-2 text-left transition-colors rounded-xl flex items-center gap-3 ${index === selectedIndex
                                 ? "bg-teal-50 dark:bg-teal-900/20"
                                 : "hover:bg-neutral-100 dark:hover:bg-neutral-800/50"
-                            }`}
+                              }`}
                             onClick={() => handleNodeClick(node)}
                             onMouseEnter={() => setSelectedIndex(index)}
                           >
@@ -561,11 +558,10 @@ export function RadialSearch({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className={`w-full px-3 py-2 text-left transition-colors rounded-xl flex items-center gap-3 ${
-                              index === selectedIndex
+                            className={`w-full px-3 py-2 text-left transition-colors rounded-xl flex items-center gap-3 ${index === selectedIndex
                                 ? "bg-teal-50 dark:bg-teal-900/20"
                                 : "hover:bg-neutral-100 dark:hover:bg-neutral-800/50"
-                            }`}
+                              }`}
                             onClick={() => handleNodeClick(node)}
                             onMouseEnter={() => setSelectedIndex(index)}
                           >

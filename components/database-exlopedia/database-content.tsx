@@ -14,7 +14,7 @@ import {
   Shield,
   Loader2,
 } from "lucide-react"
-import { fetchAllSpecies, fetchAllGenera } from "@/lib/supabase-v2"
+import { getAllSpecies, getAllGenera } from "@/lib/supabase-v2"
 import type { TaksonomiSpesies, TaksonomiGenus, TaksonomiKonservasi } from "@/lib/supabase-v2"
 import { SearchFilters } from "./search-filters"
 import { CatalogGrid } from "./catalog-grid"
@@ -44,13 +44,13 @@ export function DatabaseContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("[v0] Fetching database data...")
+        // console.log("[v0] Fetching database data...")
         setError(null)
 
-        const [speciesData, generaData] = await Promise.all([fetchAllSpecies(), fetchAllGenera()])
+        const [speciesData, generaData] = await Promise.all([getAllSpecies(), getAllGenera()])
 
-        console.log("[v0] Species data:", speciesData)
-        console.log("[v0] Genera data:", generaData)
+        // console.log("[v0] Species data:", speciesData)
+        // console.log("[v0] Genera data:", generaData)
 
         setSpecies(speciesData)
         setGenera(generaData)
@@ -66,7 +66,7 @@ export function DatabaseContent() {
         ).sort()
 
         setConservationStatuses(uniqueStatuses)
-        console.log("[v0] Data fetched successfully")
+        // console.log("[v0] Data fetched successfully")
       } catch (error) {
         console.error("[v0] Error fetching data:", error)
         setError("Gagal memuat data. Silakan coba lagi.")
@@ -101,16 +101,16 @@ export function DatabaseContent() {
     const matches = searchMatch && statusMatch && genusMatch
 
     // Debug logging
-    if (searchTerm && !matches) {
-      console.log(`Species ${speciesItem.nama} filtered out:`, {
-        searchTerm,
-        searchMatch,
-        statusMatch,
-        genusMatch,
-        speciesNama: speciesItem.nama,
-        speciesNamaUmum: speciesItem.nama_umum,
-      })
-    }
+    // if (searchTerm && !matches) {
+    //   console.log(`Species ${speciesItem.nama} filtered out:`, {
+    //     searchTerm,
+    //     searchMatch,
+    //     statusMatch,
+    //     genusMatch,
+    //     speciesNama: speciesItem.nama,
+    //     speciesNamaUmum: speciesItem.nama_umum,
+    //   })
+    // }
 
     return matches
   })
@@ -213,15 +213,15 @@ export function DatabaseContent() {
   }
 
   // Debug info
-  useEffect(() => {
-    console.log("Filter state:", {
-      searchTerm,
-      filterStatus,
-      selectedGenera,
-      totalSpecies: species.length,
-      filteredCount: filteredSpecies.length,
-    })
-  }, [searchTerm, filterStatus, selectedGenera, species.length, filteredSpecies.length])
+  // useEffect(() => {
+  //   console.log("Filter state:", {
+  //     searchTerm,
+  //     filterStatus,
+  //     selectedGenera,
+  //     totalSpecies: species.length,
+  //     filteredCount: filteredSpecies.length,
+  //   })
+  // }, [searchTerm, filterStatus, selectedGenera, species.length, filteredSpecies.length])
 
   if (error) {
     return (
@@ -414,7 +414,7 @@ export function DatabaseContent() {
                   }}
                   disabled={currentPage === 1}
                   variant="outline"
-                  className="flex-shrink-0 border-emerald-100 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 px-3 py-2"
+                  className="shrink-0 border-emerald-100 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 px-3 py-2"
                 >
                   <ChevronLeft className="mr-1 h-4 w-4" />
                   <span className="hidden sm:inline">Sebelumnya</span>
@@ -437,7 +437,7 @@ export function DatabaseContent() {
                   }}
                   disabled={currentPage === pageCount}
                   variant="outline"
-                  className="flex-shrink-0 border-emerald-100 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 px-3 py-2"
+                  className="shrink-0 border-emerald-100 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 px-3 py-2"
                 >
                   <span className="hidden sm:inline">Selanjutnya</span>
                   <ChevronRight className="ml-1 h-4 w-4" />

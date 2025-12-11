@@ -26,7 +26,7 @@ export async function loginAction(prevState: any, formData: FormData) {
 
     const checkUserRegistered = await supabase.from('users').select('id').eq('email', formDataLogin.email).single()
 
-    console.log(checkUserRegistered)
+    // console.log(checkUserRegistered)
 
     if (checkUserRegistered.error || !checkUserRegistered.data.id) {
         return {
@@ -93,7 +93,7 @@ export async function registerAction(prevState: any, formData: FormData) {
     })
 
     if (!validatedFields.success) {
-        console.log(validatedFields.error.flatten().fieldErrors)
+        // console.log(validatedFields.error.flatten().fieldErrors)
         return {
             success: false,
             errors: validatedFields.error.flatten().fieldErrors,
@@ -115,7 +115,7 @@ export async function registerAction(prevState: any, formData: FormData) {
         },
     })
 
-    console.log("Sign up result:", { data, error });
+    // console.log("Sign up result:", { data, error });
 
     if (error) {
         console.error("❌ Registration error:", error)
@@ -146,7 +146,7 @@ export async function registerAction(prevState: any, formData: FormData) {
     }
 
     if (data.user) {
-        console.log("User created:", {
+        // console.log("User created:", {
             id: data.user.id,
             email: data.user.email,
             email_confirmed_at: data.user.email_confirmed_at,
@@ -157,7 +157,7 @@ export async function registerAction(prevState: any, formData: FormData) {
     // User record is automatically created by the auto trigger
     // No manual insert needed
 
-    console.log("Redirecting to confirm-email page");
+    // console.log("Redirecting to confirm-email page");
     return redirect(`/confirm-email?email=${encodeURIComponent(email)}`)
 
 }
@@ -174,16 +174,16 @@ const signInWith = (provider: any) => async () => {
         },
     });
 
-    console.log(data);
+    // console.log(data);
 
     if (error) {
-        console.log(error);
+        // console.log(error);
     }
 
     if (data?.url) {
         redirect(data.url);
     } else {
-        console.log("No URL returned from OAuth sign-in");
+        // console.log("No URL returned from OAuth sign-in");
     }
 };
 

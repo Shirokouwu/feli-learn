@@ -31,18 +31,18 @@ export async function requestPasswordReset(email: string) {
             console.error("Error checking users:", authError)
         }
 
-        console.log("🔍 Checking email:", email)
-        console.log("📧 Sending reset email to:", email)
-        console.log("🔗 Redirect URL:", `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password/confirm`)
+        // console.log("🔍 Checking email:", email)
+        // console.log("📧 Sending reset email to:", email)
+        // console.log("🔗 Redirect URL:", `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password/confirm`)
 
         // Kirim reset password email
         // Supabase akan generate token dan kirim email otomatis
         // NOTE: Supabase akan kirim email bahkan jika user tidak ada (security)
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password/confirm`,
-        })
+        }
 
-        console.log("📨 Reset email result:", { data, error })
+        // console.log("📨 Reset email result:", { data, error })
 
         if (error) {
             console.error("❌ Reset password error:", error)
@@ -58,7 +58,7 @@ export async function requestPasswordReset(email: string) {
             }
         }
 
-        console.log("✅ Reset email sent successfully!")
+        // console.log("✅ Reset email sent successfully!")
 
         return {
             success: true,

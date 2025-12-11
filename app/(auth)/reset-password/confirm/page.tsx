@@ -32,7 +32,7 @@ export default function ConfirmResetPasswordPage() {
             const { data: { session } } = await supabase.auth.getSession()
 
             if (session) {
-                console.log("✅ User already authenticated via reset link")
+                // console.log("✅ User already authenticated via reset link")
                 setMessage({
                     type: "success",
                     text: "Link verified! Silakan masukkan password baru Anda."
@@ -41,10 +41,10 @@ export default function ConfirmResetPasswordPage() {
                 return
             }
 
-            console.log("=== 🔍 DEBUG RESET PASSWORD TOKEN ===")
-            console.log("Full URL:", window.location.href)
-            console.log("URL Hash:", window.location.hash)
-            console.log("URL Search:", window.location.search)
+            // console.log("=== 🔍 DEBUG RESET PASSWORD TOKEN ===")
+            // console.log("Full URL:", window.location.href)
+            // console.log("URL Hash:", window.location.hash)
+            // console.log("URL Search:", window.location.search)
 
             // Check hash params (Supabase default)
             const hashParams = new URLSearchParams(window.location.hash.substring(1))
@@ -57,12 +57,12 @@ export default function ConfirmResetPasswordPage() {
             const queryType = queryParams.get('type')
             const queryToken = queryParams.get('token') // Some configs use 'token'
 
-            console.log("Hash Params:", {
+            // console.log("Hash Params:", {
                 accessToken: hashAccessToken ? `✓ ${hashAccessToken.substring(0, 20)}...` : '✗ Missing',
                 type: hashType || '✗ Missing'
             })
 
-            console.log("Query Params:", {
+            // console.log("Query Params:", {
                 accessToken: queryAccessToken ? `✓ ${queryAccessToken.substring(0, 20)}...` : '✗ Missing',
                 type: queryType || '✗ Missing',
                 token: queryToken ? `✓ ${queryToken.substring(0, 20)}...` : '✗ Missing'
@@ -101,7 +101,7 @@ export default function ConfirmResetPasswordPage() {
             const type = hashType || queryType
 
             if ((type === 'recovery' || queryToken) && accessToken) {
-                console.log("✅ Valid recovery token found, exchanging for session...")
+                // console.log("✅ Valid recovery token found, exchanging for session...")
 
                 // Exchange the token for a session
                 const { error } = await supabase.auth.setSession({
@@ -116,7 +116,7 @@ export default function ConfirmResetPasswordPage() {
                         text: "Link reset password tidak valid atau sudah expired. Silakan request reset password lagi."
                     })
                 } else {
-                    console.log("✅ Session established successfully!")
+                    // console.log("✅ Session established successfully!")
                     setMessage({
                         type: "success",
                         text: "Link verified! Silakan masukkan password baru Anda."

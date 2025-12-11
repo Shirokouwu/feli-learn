@@ -55,7 +55,6 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
         show: {
             opacity: 1,
             y: 0,
-            transition: { duration: 0.35, ease: "easeOut" },
         },
     }
 
@@ -77,7 +76,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                 <motion.div
                     animate={{ opacity: [0.04, 0.09, 0.04], scale: [1.02, 1, 1.02] }}
                     transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 3 }}
-                    className="absolute top-1/3 right-1/4 w-[320px] h-[320px] bg-primary/12 rounded-full blur-[70px] will-change-transform"
+                    className="absolute top-1/3 right-1/4 w-[320px] h-80 bg-primary/12 rounded-full blur-[70px] will-change-transform"
                 />
                 <div
                     className="absolute inset-0 opacity-[0.02]"
@@ -91,7 +90,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                         initial={{ opacity: 0, x: -30 }}
                         animate={encyclopediaInView ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.45, delay: 0.1, ease: "easeOut" }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-accent/20 to-accent/10 text-accent text-sm font-semibold mb-6"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-accent/20 to-accent/10 text-accent text-sm font-semibold mb-6"
                     >
                         <BookOpen size={16} />
                         Complete Encyclopedia
@@ -167,7 +166,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                                         loading="lazy"
                                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-104"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 p-4">
                                         <p className="font-semibold text-foreground">{species.name}</p>
                                         <p className="text-xs text-muted-foreground italic">{species.latin}</p>
