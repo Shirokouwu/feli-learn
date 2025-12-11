@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import {
   Github,
@@ -110,7 +109,6 @@ const inspirationSources = [
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-background">
-      <Header />
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
@@ -439,9 +437,8 @@ export default function AboutPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`relative flex items-start gap-6 ${
-                    index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                  }`}
+                  className={`relative flex items-start gap-6 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                    }`}
                 >
                   {/* Timeline Dot */}
                   <div
@@ -458,22 +455,20 @@ export default function AboutPage() {
 
                   {/* Content */}
                   <div
-                    className={`ml-16 md:ml-0 md:w-[calc(50%-2rem)] ${
-                      index % 2 === 0 ? "md:pr-8 md:text-right" : "md:pl-8"
-                    }`}
+                    className={`ml-16 md:ml-0 md:w-[calc(50%-2rem)] ${index % 2 === 0 ? "md:pr-8 md:text-right" : "md:pl-8"
+                      }`}
                   >
                     <div
                       className={`bg-card border border-border rounded-xl p-6 ${index % 2 === 0 ? "md:ml-auto" : ""}`}
                     >
                       <div className={`flex items-center gap-2 mb-2 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            item.status === "completed"
+                          className={`px-2 py-1 rounded text-xs font-medium ${item.status === "completed"
                               ? "bg-emerald-500/10 text-emerald-500"
                               : item.status === "in-progress"
                                 ? "bg-amber-500/10 text-amber-500"
                                 : "bg-muted text-muted-foreground"
-                          }`}
+                            }`}
                         >
                           {item.status === "completed"
                             ? "Selesai"
