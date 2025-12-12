@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TreesIcon as TreeIcon, Globe, Droplet, Check, Heart, MapPin } from "lucide-react"
-import type { SpeciesTabProps } from "./types"
+import type { SpeciesTabProps } from "@/components/types"
 import { motion } from "framer-motion"
 
 // Helper function to safely format values

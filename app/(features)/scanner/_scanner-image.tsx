@@ -120,7 +120,7 @@ export default function ScannerImage() {
         />
 
         <div className="max-w-3xl mx-auto">
-          <div className="bg-card text-card-foreground rounded-2xl shadow-xl border border-border overflow-hidden">
+          <div className="bg-card text-card-foreground rounded-3xl shadow-xl border border-border/30 overflow-hidden">
             <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
                 <div className="space-y-6">

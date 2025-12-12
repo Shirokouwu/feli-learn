@@ -20,11 +20,11 @@ import {
   VideoIcon,
 } from "lucide-react"
 import {
-  fetchSpeciesByKey,
-  fetchSpeciesDetails,
-  fetchSpeciesImages,
+  getSpeciesByKey,
+  getSpeciesDetails,
+  getSpeciesImages,
   getRelatedSpecies,
-  fetchSpeciesVideos,
+  getSpeciesVideos,
 } from "@/lib/supabase-v2"
 import { getUserClient } from "@/lib/auth-client"
 
@@ -119,23 +119,23 @@ export default function SpeciesDetailPage() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const species = await fetchSpeciesByKey(params.species)
+        const species = await getSpeciesByKey(params.species)
 
         if (!species) {
           notFound()
         }
 
         const [details, imagesData, related, videos] = await Promise.all([
-          fetchSpeciesDetails(species.id),
-          fetchSpeciesImages(species.id),
+          getSpeciesDetails(species.id),
+          getSpeciesImages(species.id),
           getRelatedSpecies(species.genus_id, species.id),
-          fetchSpeciesVideos(species.id),
+          getSpeciesVideos(species.id),
         ])
 
         // Get images for the gallery
         const imageUrls =
           imagesData.length > 0
-            ? imagesData.map((img) => img.url)
+            ? imagesData.map((img: any) => img.url)
             : [species.url_gambar || "/placeholder.svg?height=800&width=1200"]
 
         setSpeciesData({

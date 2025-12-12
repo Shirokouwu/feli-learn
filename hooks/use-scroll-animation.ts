@@ -14,7 +14,7 @@ interface ScrollAnimationOptions {
 export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
   const { threshold = 0.2, once = true, margin = "-80px" } = options
   const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once, margin, amount: threshold })
+  const isInView = useInView(ref, { once, margin: margin as any, amount: threshold })
 
   return { ref, isInView }
 }
@@ -22,7 +22,7 @@ export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
 export function useStaggeredInView(options: ScrollAnimationOptions = {}) {
   const { threshold = 0.15, once = true, margin = "-50px" } = options
   const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once, margin, amount: threshold })
+  const isInView = useInView(ref, { once, margin: margin as any, amount: threshold })
 
   return { ref, isInView }
 }
@@ -82,7 +82,7 @@ export const staggerItem = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
     },
   },
 }
@@ -94,7 +94,7 @@ export const fadeInVariant = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
     },
   },
 }
@@ -106,7 +106,7 @@ export const scaleInVariant = {
     scale: 1,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
     },
   },
 }

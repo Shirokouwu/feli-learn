@@ -40,17 +40,12 @@ export async function requestPasswordReset(email: string) {
         // NOTE: Supabase akan kirim email bahkan jika user tidak ada (security)
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password/confirm`,
-        }
+        })
 
         // console.log("📨 Reset email result:", { data, error })
 
         if (error) {
-            console.error("❌ Reset password error:", error)
-            console.error("Error details:", {
-                message: error.message,
-                status: error.status,
-                name: error.name
-            })
+
 
             return {
                 success: false,

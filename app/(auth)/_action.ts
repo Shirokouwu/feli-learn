@@ -147,11 +147,11 @@ export async function registerAction(prevState: any, formData: FormData) {
 
     if (data.user) {
         // console.log("User created:", {
-            id: data.user.id,
-            email: data.user.email,
-            email_confirmed_at: data.user.email_confirmed_at,
-            confirmation_sent_at: data.user.confirmation_sent_at
-        });
+        //     id: data.user.id,
+        //     email: data.user.email,
+        //     email_confirmed_at: data.user.email_confirmed_at,
+        //     confirmation_sent_at: data.user.confirmation_sent_at
+        // });
     }
 
     // User record is automatically created by the auto trigger

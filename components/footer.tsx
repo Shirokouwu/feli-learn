@@ -53,6 +53,7 @@ export function Footer() {
           className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12"
         >
           {/* Brand */}
+          {/* @ts-ignore */}
           <motion.div variants={staggerItem} className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4 group">
               <motion.div
@@ -73,6 +74,7 @@ export function Footer() {
 
           {/* Links */}
           {footerLinks.map((section) => (
+          
             <motion.div key={section.title} variants={staggerItem}>
               <h4 className="font-semibold text-foreground mb-4">{section.title}</h4>
               <ul className="space-y-2">

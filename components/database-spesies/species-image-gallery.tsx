@@ -225,7 +225,7 @@ export function SpeciesImageGallery({
                     <div>
                       <p className="font-medium text-neutral-600">Tanggal</p>
                       <p className="text-neutral-800">
-                        {new Date(currentImageDetail.tanggal_diambil).toLocaleDateString("id-ID")}
+                        {new Date(currentImageDetail.tanggal_diambil!).toLocaleDateString("id-ID")}
                       </p>
                     </div>
                   </div>

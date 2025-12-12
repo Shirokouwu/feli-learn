@@ -3,13 +3,6 @@ import { createServer } from "@/utils/supabase/server"
 import { validateImageFile, generateFileName } from "@/lib/upload/validation"
 
 
-export const config = {
-    api: {
-        bodyParser: false,
-        sizeLimit: "5mb",
-    }
-}
-
 export async function POST(request: Request) {
     try {
         const { data: { user } } = await (await createServer()).auth.getUser()

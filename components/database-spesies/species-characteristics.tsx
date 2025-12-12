@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Ruler, Weight, Palette, Sparkles, Zap, Target, PawPrintIcon as Paw } from "lucide-react"
-import type { SpeciesTabProps } from "./types"
+import type { SpeciesTabProps } from "@/components/types"
 
 export function SpeciesCharacteristics({ species, details }: SpeciesTabProps) {
   const deskripsi = details.deskripsi

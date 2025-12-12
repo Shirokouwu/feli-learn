@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Leaf, Baby, Target, Clock, Heart, Users, Calendar, Dna, Scale, Hourglass, PawPrint, Timer } from "lucide-react"
-import type { SpeciesTabProps } from "./types"
+import type { SpeciesTabProps } from "@/components/types"
 
 // Helper function to safely format values
 const formatValue = (value: any): string => {

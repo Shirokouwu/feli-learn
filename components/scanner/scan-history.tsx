@@ -149,7 +149,7 @@ export function ScanHistory({ isOpen, onOpenChange }: ScanHistoryProps) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AnimatePresence>
-                  {historyData.map((item) => (
+                  {historyData.map((item: any) => (
                     <ScanHistoryCard
                       key={item.id}
                       id={item.id}

@@ -62,19 +62,19 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
       <AnimatePresence mode="wait">
         <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-card border border-border/60">
-            <TabsTrigger value="upload" className="text-sm md:text-base">
+            <TabsTrigger value="upload" className="text-sm md:text-base cursor-pointer">
               <Upload className="h-4 w-4 mr-1 md:mr-2" />
               <span className="hidden sm:inline">Unggah </span>
               <span>Gambar</span>
             </TabsTrigger>
-            <TabsTrigger value="url" className="text-sm md:text-base" disabled={!apiReady}>
+            <TabsTrigger value="url" className="text-sm md:text-base cursor-pointer" disabled={!apiReady}>
               <Link className="h-4 w-4 mr-1 md:mr-2" />
               <span className="hidden sm:inline">Gunakan </span>
               <span>URL</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="space-y-4" asChild>
+          <TabsContent value="upload" className="space-y-4 mt-0">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -90,7 +90,7 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                 className={`h-64 border-2 border-dashed ${apiReady
                   ? "border-primary/50 cursor-pointer hover:bg-primary/5"
                   : "border-border/70 cursor-not-allowed opacity-70"
-                  } bg-card/60 rounded-xl flex flex-col items-center justify-center transition-colors duration-300 group`}
+                  } bg-card/60 rounded-3xl flex flex-col items-center justify-center transition-colors duration-300 group`}
               >
                 <div className="p-4 bg-primary/15 rounded-full mb-4 group-hover:bg-primary/25 transition-colors duration-300">
                   <Upload className="h-8 w-8 text-primary" />
@@ -117,7 +117,7 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
             </motion.div>
           </TabsContent>
 
-          <TabsContent value="url" className="space-y-4" asChild>
+          <TabsContent value="url" className="space-y-4 mt-0">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
