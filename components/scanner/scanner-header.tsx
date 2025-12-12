@@ -23,9 +23,9 @@ export const ScannerHeader: React.FC<ScannerHeaderProps> = ({
             id="login-mode"
             checked={isLoggedIn}
             onCheckedChange={onToggleLogin}
-            className="data-[state=checked]:bg-emerald-600"
+            className="data-[state=checked]:bg-primary"
           />
-          <Label htmlFor="login-mode" className="text-sm text-emerald-800">
+          <Label htmlFor="login-mode" className="text-sm text-foreground">
             {isLoggedIn ? "Login Aktif" : "Login Nonaktif"}
           </Label>
         </div>
@@ -34,7 +34,7 @@ export const ScannerHeader: React.FC<ScannerHeaderProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
+            className="text-foreground hover:text-primary hover:bg-primary/10"
             onClick={onShowHistory}
           >
             <History className="h-4 w-4 mr-2" />

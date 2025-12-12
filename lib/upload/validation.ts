@@ -48,14 +48,14 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
     }
 
     // Log for debugging (works on both server and client)
-    console.log('File validation:', {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        extension: fileExtension,
-        isValidMimeType,
-        isValidExtension
-    })
+    // console.log('File validation:', {
+    //     name: file.name,
+    //     type: file.type,
+    //     size: file.size,
+    //     extension: fileExtension,
+    //     isValidMimeType,
+    //     isValidExtension
+    // })
 
     return { valid: true }
 }

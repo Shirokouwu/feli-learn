@@ -20,11 +20,11 @@ import {
   VideoIcon,
 } from "lucide-react"
 import {
-  fetchSpeciesByKey,
-  fetchSpeciesDetails,
-  fetchSpeciesImages,
-  fetchRelatedSpecies,
-  fetchSpeciesVideos,
+  getSpeciesByKey,
+  getSpeciesDetails,
+  getSpeciesImages,
+  getRelatedSpecies,
+  getSpeciesVideos,
 } from "@/lib/supabase-v2"
 import { getUserClient } from "@/lib/auth-client"
 
@@ -119,23 +119,23 @@ export default function SpeciesDetailPage() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const species = await fetchSpeciesByKey(params.species)
+        const species = await getSpeciesByKey(params.species)
 
         if (!species) {
           notFound()
         }
 
         const [details, imagesData, related, videos] = await Promise.all([
-          fetchSpeciesDetails(species.id),
-          fetchSpeciesImages(species.id),
-          fetchRelatedSpecies(species.genus_id, species.id),
-          fetchSpeciesVideos(species.id),
+          getSpeciesDetails(species.id),
+          getSpeciesImages(species.id),
+          getRelatedSpecies(species.genus_id, species.id),
+          getSpeciesVideos(species.id),
         ])
 
         // Get images for the gallery
         const imageUrls =
           imagesData.length > 0
-            ? imagesData.map((img) => img.url)
+            ? imagesData.map((img: any) => img.url)
             : [species.url_gambar || "/placeholder.svg?height=800&width=1200"]
 
         setSpeciesData({
@@ -207,7 +207,7 @@ export default function SpeciesDetailPage() {
           url: window.location.href,
         })
       } catch (error) {
-        console.log("Error sharing:", error)
+        // console.log("Error sharing:", error)
       }
     } else {
       // Fallback: copy to clipboard

@@ -14,7 +14,7 @@ import {
   Leaf,
   MapPin,
 } from "lucide-react"
-import type { SpeciesTabProps } from "./types"
+import type { SpeciesTabProps } from "@/components/types"
 import { motion } from "framer-motion"
 
 // Helper function to safely format values

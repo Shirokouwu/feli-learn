@@ -22,7 +22,7 @@ export default function NewPasswordPage() {
       return
     }
     // Handle password reset logic here
-    console.log("Password reset attempt with:", password)
+    // console.log("Password reset attempt with:", password)
   }
 
   return (

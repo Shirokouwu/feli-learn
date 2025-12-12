@@ -61,20 +61,20 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
     <div className="space-y-6">
       <AnimatePresence mode="wait">
         <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="upload" className="text-sm md:text-base">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-card border border-border/60">
+            <TabsTrigger value="upload" className="text-sm md:text-base cursor-pointer">
               <Upload className="h-4 w-4 mr-1 md:mr-2" />
               <span className="hidden sm:inline">Unggah </span>
               <span>Gambar</span>
             </TabsTrigger>
-            <TabsTrigger value="url" className="text-sm md:text-base" disabled={!apiReady}>
+            <TabsTrigger value="url" className="text-sm md:text-base cursor-pointer" disabled={!apiReady}>
               <Link className="h-4 w-4 mr-1 md:mr-2" />
               <span className="hidden sm:inline">Gunakan </span>
               <span>URL</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="space-y-4" asChild>
+          <TabsContent value="upload" className="space-y-4 mt-0">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -88,36 +88,36 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 className={`h-64 border-2 border-dashed ${apiReady
-                  ? "border-emerald-200 cursor-pointer hover:bg-emerald-50"
-                  : "border-gray-200 cursor-not-allowed opacity-70"
-                  } rounded-xl flex flex-col items-center justify-center transition-colors duration-300 group`}
+                  ? "border-primary/50 cursor-pointer hover:bg-primary/5"
+                  : "border-border/70 cursor-not-allowed opacity-70"
+                  } bg-card/60 rounded-3xl flex flex-col items-center justify-center transition-colors duration-300 group`}
               >
-                <div className="p-4 bg-emerald-100 rounded-full mb-4 group-hover:bg-emerald-200 transition-colors duration-300">
-                  <Upload className="h-8 w-8 text-emerald-600" />
+                <div className="p-4 bg-primary/15 rounded-full mb-4 group-hover:bg-primary/25 transition-colors duration-300">
+                  <Upload className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-lg text-center font-medium text-emerald-800 mb-2">
+                <h3 className="text-lg text-center font-medium text-foreground mb-2">
                   <span className="hidden sm:inline">Tarik & Lepas atau </span>
                   <span>Klik untuk Unggah</span>
                 </h3>
-                <p className="text-neutral-500 text-sm max-w-md text-center">
+                <p className="text-muted-foreground text-sm max-w-md text-center">
                   Unggah foto family Felidae (kucing, singa, harimau, dll) untuk diidentifikasi
                 </p>
                 <div className="text-center mt-2">
-                  <p className="text-emerald-600 text-xs">
+                  <p className="text-primary text-xs">
                     Format: JPG, PNG, WEBP (Maks. 10MB)
                   </p>
 
                 </div>
                 {!apiReady && (
-                  <div className="mt-3 px-4 py-2 bg-red-50 rounded-lg">
-                    <p className="text-xs text-red-600">API model tidak tersedia. Coba lagi nanti.</p>
+                  <div className="mt-3 px-4 py-2 bg-destructive/10 border border-destructive/40 rounded-lg">
+                    <p className="text-xs text-destructive-foreground">API model tidak tersedia. Coba lagi nanti.</p>
                   </div>
                 )}
               </div>
             </motion.div>
           </TabsContent>
 
-          <TabsContent value="url" className="space-y-4" asChild>
+          <TabsContent value="url" className="space-y-4 mt-0">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -136,7 +136,7 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                   <Button
                     onClick={onUrlSubmit}
                     disabled={!imageUrl || !apiReady}
-                    className="bg-emerald-600 hover:bg-emerald-700 mt-2 w-full sm:w-fit sm:mt-0"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground mt-2 w-full sm:w-fit sm:mt-0"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Scan
@@ -156,16 +156,16 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                   </div>
                 )}
 
-                <div className="bg-emerald-50 p-4 rounded-lg">
+                <div className="bg-muted/40 border border-border p-4 rounded-lg">
                   <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-emerald-600 mt-0.5" />
+                    <Info className="h-5 w-5 text-primary mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-emerald-800 mb-1">Tips URL Gambar</h4>
-                      <p className="text-sm text-emerald-700">
+                      <h4 className="font-medium text-foreground mb-1">Tips URL Gambar</h4>
+                      <p className="text-sm text-muted-foreground">
                         Pastikan URL berakhiran dengan format gambar (.jpg, .png, .webp) dan berasal dari
                         sumber yang dapat diakses publik.
                       </p>
-                      <p className="text-xs text-emerald-600 mt-2">
+                      <p className="text-xs text-primary mt-2">
                         Contoh: https://example.com/foto-felidae.jpg
                       </p>
                     </div>
@@ -177,12 +177,12 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
         </Tabs>
       </AnimatePresence>
 
-      <div className="border-t border-neutral-100 pt-6">
+      <div className="border-t border-border pt-6">
         <Button
           variant="outline"
           size="sm"
           onClick={onToggleTips}
-          className="text-neutral-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-all duration-300"
+          className="text-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all duration-300"
         >
           <Info className="h-4 w-4 mr-2" />
           {showTips ? "Sembunyikan Tips" : "Tampilkan Tips Penggunaan"}
@@ -200,17 +200,17 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
               <div className="grid md:grid-cols-3 gap-4 mt-4">
                 {[
                   {
-                    icon: <Eye className="h-5 w-5 text-emerald-600" />,
+                    icon: <Eye className="h-5 w-5 text-primary" />,
                     title: "Fokus pada Hewan",
                     desc: "Pastikan anggota Felidae terlihat jelas untuk hasil identifikasi terbaik",
                   },
                   {
-                    icon: <Leaf className="h-5 w-5 text-emerald-600" />,
+                    icon: <Leaf className="h-5 w-5 text-primary" />,
                     title: "Hindari Oklusi",
                     desc: "Pastikan tidak ada objek yang menghalangi tampilan hewan",
                   },
                   {
-                    icon: <Zap className="h-5 w-5 text-emerald-600" />,
+                    icon: <Zap className="h-5 w-5 text-primary" />,
                     title: "Pencahayaan Baik",
                     desc: "Gunakan pencahayaan yang cukup untuk detail yang lebih baik",
                   },
@@ -220,13 +220,13 @@ export const ScannerUploadArea: React.FC<ScannerUploadAreaProps> = ({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    className="bg-white p-3 rounded-lg border border-emerald-100 shadow-sm"
+                    className="bg-card p-3 rounded-lg border border-border shadow-sm"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="bg-emerald-50 p-2 rounded-md">{tip.icon}</div>
+                      <div className="bg-primary/10 p-2 rounded-md">{tip.icon}</div>
                       <div>
-                        <h4 className="font-medium text-emerald-800 text-sm">{tip.title}</h4>
-                        <p className="text-xs text-neutral-600">{tip.desc}</p>
+                        <h4 className="font-medium text-foreground text-sm">{tip.title}</h4>
+                        <p className="text-xs text-muted-foreground">{tip.desc}</p>
                       </div>
                     </div>
                   </motion.div>

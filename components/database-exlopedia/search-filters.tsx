@@ -70,7 +70,7 @@ export function SearchFilters({
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    console.log("Search term changed:", value)
+    // console.log("Search term changed:", value)
     setLocalSearchTerm(value)
     setShowSuggestions(true)
     setSelectedSuggestion(-1)
@@ -115,17 +115,17 @@ export function SearchFilters({
     }
   }
 
-  const handleSuggestionClick = (suggestion: any) => {
-    console.log("Suggestion clicked:", suggestion)
-    setLocalSearchTerm(suggestion.name)
-    setSearchTerm(suggestion.name)
+  const handleSuggestionClick = (suggestion: string) => {
+    // console.log("Suggestion clicked:", suggestion)
+    setLocalSearchTerm(suggestion)
+    setSearchTerm(suggestion)
     setShowSuggestions(false)
     setSelectedSuggestion(-1)
     searchInputRef.current?.blur()
   }
 
   const clearSearch = () => {
-    console.log("Clearing search")
+    // console.log("Clearing search")
     setLocalSearchTerm("")
     setSearchTerm("")
     setShowSuggestions(false)
@@ -134,21 +134,21 @@ export function SearchFilters({
   }
 
   const toggleStatus = (status: string) => {
-    console.log("Toggling status:", status)
+    // console.log("Toggling status:", status)
     setFilterStatus(
       filterStatus.includes(status) ? filterStatus.filter((s) => s !== status) : [...filterStatus, status],
     )
   }
 
   const toggleGenus = (genus: string) => {
-    console.log("Toggling genus:", genus)
+    // console.log("Toggling genus:", genus)
     setSelectedGenera(
       selectedGenera.includes(genus) ? selectedGenera.filter((g) => g !== genus) : [...selectedGenera, genus],
     )
   }
 
   const removeFilter = (type: "genus" | "status", value: string) => {
-    console.log("Removing filter:", type, value)
+    // console.log("Removing filter:", type, value)
     if (type === "genus") {
       setSelectedGenera(selectedGenera.filter((g) => g !== value))
     } else {
@@ -157,7 +157,7 @@ export function SearchFilters({
   }
 
   const clearAllFilters = () => {
-    console.log("Clearing all filters")
+    // console.log("Clearing all filters")
     setFilterStatus([])
     setSelectedGenera([])
     setLocalSearchTerm("")
@@ -207,7 +207,7 @@ export function SearchFilters({
           </div>
 
           {/* Search Suggestions */}
-          <div className="relative z-[100]">
+          <div className="relative z-100">
             <SearchSuggestions
               searchTerm={localSearchTerm}
               showSuggestions={showSuggestions}

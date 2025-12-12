@@ -26,7 +26,7 @@ export async function uploadScanImage(
 
         // Don't upload blob URLs (they're temporary client-side)
         if (imageData.startsWith('blob:')) {
-            console.log("Skipping blob URL upload - need base64 data")
+            // console.log("Skipping blob URL upload - need base64 data")
             return { url: null, error: "Blob URL cannot be uploaded" }
         }
 

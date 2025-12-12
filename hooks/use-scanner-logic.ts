@@ -70,7 +70,7 @@ export const useScannerLogic = (): ScannerHook => {
   useEffect(() => {
     const checkApiHealth = async () => {
       if (!API_MODEL_HEALTH_URL) {
-        console.log("❌ API_MODEL_HEALTH_URL is empty or undefined")
+        // console.log("❌ API_MODEL_HEALTH_URL is empty or undefined")
         setApiChecking(false)
         setApiReady(false)
         setApiResponse({ data: { status: "error - no URL" } })
@@ -96,9 +96,9 @@ export const useScannerLogic = (): ScannerHook => {
         setApiReady(data.status === "ok")
 
         if (data.status === "ok") {
-          console.log("✅ API is ready!")
+          // console.log("✅ API is ready!")!")
         } else {
-          console.log("⚠️ API status is not ok:", data.status)
+          // console.log("⚠️ API status is not ok:", data.status)
         }
 
       } catch (error) {
@@ -111,13 +111,13 @@ export const useScannerLogic = (): ScannerHook => {
 
         // If it's a timeout or network error, assume API might be slow but available
         if (error instanceof Error && (errorMessage.includes('timeout') || errorMessage.includes('Network Error'))) {
-          console.log("⏰ API timeout detected, but assuming API is available for direct calls")
+          // console.log("⏰ API timeout detected, but assuming API is available for direct calls")
           setApiReady(true) // Assume API is available despite timeout
           setApiResponse({ data: { status: "timeout-but-available" } })
         }
         // If it's a CORS error, we assume the API is available but blocked by browser
         else if (error instanceof TypeError && (errorMessage.includes('CORS') || errorMessage.includes('fetch'))) {
-          console.log("🔄 CORS error detected, but assuming API is available for direct calls")
+          // console.log("🔄 CORS error detected, but assuming API is available for direct calls")
           setApiReady(true) // Assume API is available despite CORS
           setApiResponse({ data: { status: "cors-blocked-but-available" } })
         } else {
@@ -158,11 +158,11 @@ export const useScannerLogic = (): ScannerHook => {
   const processScanResult = async (apiData: ApiClassificationResponse, enhancedData: EnhancedSpeciesData | null, imageSource: string, scannerDuration: number, fetchDuration: number) => {
     const totalDuration = scannerDuration + fetchDuration
 
-    console.log("Timing breakdown:", {
-      scannerDuration,
-      fetchDuration,
-      totalDuration
-    })
+    // console.log("Timing breakdown:", {
+    //   scannerDuration,
+    //   fetchDuration,
+    //   totalDuration
+    // })
 
     setScanDuration(totalDuration)
 
@@ -380,7 +380,7 @@ export const useScannerLogic = (): ScannerHook => {
       }
 
       const apiData: ApiClassificationResponse = response.data
-      console.log("API Response:", apiData)
+      // console.log("API Response:", apiData)
       const scannerEndTime = Date.now()
       const scannerDuration = Math.round((scannerEndTime - scannerStartTime) / 1000)
 

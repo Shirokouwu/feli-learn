@@ -8,7 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Navbar } from "@/components/navbar-v2"
 import { DatabaseContent } from "@/components/database-exlopedia/database-content"
 import { Suspense } from "react"
 import { DatabaseContentSkeleton } from "@/components/database-exlopedia/database-content-skeleton"
@@ -18,12 +17,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { ForceLightDatabaseTheme } from "@/components/force-light-database"
 
 export default function DatabasePage() {
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-gradient-to-b from-emerald-50/30 via-neutral-50/50 to-neutral-100/30 relative">
+      <ForceLightDatabaseTheme />
+      <main className="min-h-screen bg-gradient-to-b from-emerald-50/30 via-neutral-50/50 to-neutral-100/30 relative pt-16">
         {/* Hero Background Section - Static Content */}
         <div className="relative h-56 sm:h-64 md:h-80 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500" />

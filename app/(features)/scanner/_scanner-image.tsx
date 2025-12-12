@@ -4,9 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { useScannerLogic } from "@/hooks/use-scanner-logic"
-import { useScrollDetection } from "@/hooks/use-scroll-detection"
 import { getUserClient } from "@/lib/auth-client"
-import { GlassNavigation } from "@/components/glass-navigation"
 
 import { ScannerUploadArea } from "@/components/scanner/scanner-upload-area"
 import { ScannerPreview } from "@/components/scanner/scanner-preview"
@@ -33,9 +31,6 @@ export default function ScannerImage() {
   const [activeTab, setActiveTab] = useState<string>("upload")
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [showHistory, setShowHistory] = useState<boolean>(false)
-
-  // Scroll detection for navbar
-  const isScrolled = useScrollDetection({ threshold: 80 })
 
   // Scanner logic hook
   const scanner = useScannerLogic()
@@ -102,28 +97,17 @@ export default function ScannerImage() {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 dark:to-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-2 text-emerald-700">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-primary">Loading...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-emerald-50/50">
-      {/* Glass Navigation */}
-      <GlassNavigation
-        isScrolled={isScrolled}
-        fullName={user?.profile?.full_name || user?.user_metadata?.full_name}
-        profilePicture={user?.profile?.avatar_url || user?.user_metadata?.avatar_url}
-        backHref="/"
-        backLabel="Beranda"
-        showUserInfo={true}
-        className=""
-      />
-
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 dark:to-background">
       {/* Confetti effect */}
       <ScannerConfetti isVisible={scanner.showConfetti} />
 
@@ -136,7 +120,7 @@ export default function ScannerImage() {
         />
 
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
+          <div className="bg-card text-card-foreground rounded-3xl shadow-xl border border-border/30 overflow-hidden">
             <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
                 <div className="space-y-6">
@@ -169,7 +153,7 @@ export default function ScannerImage() {
                 <div className="space-y-6">
                   {/* Non-Felidae Alert */}
                   {scanner.notFelidae && (
-                    <Alert className="bg-red-50 border-red-200 text-red-800">
+                    <Alert className="bg-destructive/10 border-destructive/40 text-destructive-foreground">
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Bukan kucing atau gambar kurang jelas</AlertTitle>
                       <AlertDescription>

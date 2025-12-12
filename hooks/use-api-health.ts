@@ -20,7 +20,7 @@ export const useApiHealth = ({
   useEffect(() => {
     const checkApiHealth = async () => {
       if (!API_MODEL_HEALTH_URL) {
-        console.log("❌ API_MODEL_HEALTH_URL is empty or undefined")
+        // console.log("❌ API_MODEL_HEALTH_URL is empty or undefined")
         setApiChecking(false)
         setApiReady(false)
         setApiResponse({ data: { status: "error - no URL" } })
@@ -50,9 +50,9 @@ export const useApiHealth = ({
         setApiReady(data.status === "ok")
 
         if (data.status === "ok") {
-          console.log("✅ API is ready!")
+          // console.log("✅ API is ready!")!")
         } else {
-          console.log("⚠️ API status is not ok:", data.status)
+          // console.log("⚠️ API status is not ok:", data.status)
           toast.error("API Model tidak tersedia. Silakan hubungi developer untuk bantuan.")
         }
 
@@ -66,7 +66,7 @@ export const useApiHealth = ({
 
         // If it's a CORS error, we assume the API is available but blocked by browser
         if (error instanceof TypeError && (errorMessage.includes('CORS') || errorMessage.includes('fetch'))) {
-          console.log("🔄 CORS error detected, but assuming API is available for direct calls")
+          // console.log("🔄 CORS error detected, but assuming API is available for direct calls")
           setApiReady(true) // Assume API is available despite CORS
           setApiResponse({ data: { status: "cors-blocked-but-available" } })
         } else {

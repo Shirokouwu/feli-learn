@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Users, ArrowRight, ExternalLink } from "lucide-react"
-import type { RelatedSpeciesProps } from "./types"
+import type { RelatedSpeciesProps } from "@/components/types"
 
 export function SpeciesRelated({ relatedSpecies }: RelatedSpeciesProps) {
   const [hoveredSpecies, setHoveredSpecies] = useState<string | null>(null)
@@ -46,11 +46,10 @@ export function SpeciesRelated({ relatedSpecies }: RelatedSpeciesProps) {
               onHoverStart={() => setHoveredSpecies(species.id)}
               onHoverEnd={() => setHoveredSpecies(null)}
             >
-              <Link href={`/database-explorer/${species.key}`}>
+              <Link href={`/database-explorer/${species.kunci}`}>
                 <div
-                  className={`group flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
-                    hoveredSpecies === species.id ? "bg-emerald-50 shadow-sm" : "hover:bg-neutral-50"
-                  }`}
+                  className={`group flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${hoveredSpecies === species.id ? "bg-emerald-50 shadow-sm" : "hover:bg-neutral-50"
+                    }`}
                 >
                   {/* Species Image */}
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-neutral-100">
@@ -73,9 +72,8 @@ export function SpeciesRelated({ relatedSpecies }: RelatedSpeciesProps) {
                   {/* Arrow Icon */}
                   <div className="flex-shrink-0">
                     <ArrowRight
-                      className={`h-4 w-4 transition-all duration-200 ${
-                        hoveredSpecies === species.id ? "text-emerald-600 translate-x-1" : "text-neutral-400"
-                      }`}
+                      className={`h-4 w-4 transition-all duration-200 ${hoveredSpecies === species.id ? "text-emerald-600 translate-x-1" : "text-neutral-400"
+                        }`}
                     />
                   </div>
                 </div>

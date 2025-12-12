@@ -54,3 +54,7 @@ export interface SpeciesHeroProps extends SpeciesTabProps {
   userInfo: UserInfo
   onToggleLogin: () => void
 }
+
+export interface RelatedSpeciesProps {
+  relatedSpecies: TaksonomiSpesies[]
+}

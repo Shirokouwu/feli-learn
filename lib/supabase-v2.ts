@@ -206,9 +206,9 @@ export type TaksonomiVideoYoutube = {
 }
 
 // Helper functions to fetch data with better error handling
-export async function fetchAllSpecies() {
+export async function getAllSpecies() {
   try {
-    console.log("Fetching all species...")
+    // console.log("Fetching all species...")
 
     const { data, error } = await supabase
       .from("taksonomi_spesies")
@@ -224,7 +224,7 @@ export async function fetchAllSpecies() {
       throw error
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} species`)
+    // console.log(`Successfully fetched ${data?.length || 0} species`)
     return data as (TaksonomiSpesies & {
       genus: TaksonomiGenus
       konservasi: TaksonomiKonservasi | null
@@ -236,9 +236,9 @@ export async function fetchAllSpecies() {
   }
 }
 
-export async function fetchSpeciesByKey(key: string) {
+export async function getSpeciesByKey(key: string) {
   try {
-    console.log(`Fetching species by key: ${key}`)
+    // console.log(`Fetching species by key: ${key}`)
 
     const { data, error } = await supabase
       .from("taksonomi_spesies")
@@ -254,7 +254,7 @@ export async function fetchSpeciesByKey(key: string) {
       throw error
     }
 
-    console.log("Successfully fetched species by key")
+    // console.log("Successfully fetched species by key")
     return data as TaksonomiSpesies & { genus: TaksonomiGenus }
   } catch (error) {
     console.error("Error fetching species by key:", error)
@@ -262,9 +262,9 @@ export async function fetchSpeciesByKey(key: string) {
   }
 }
 
-export async function fetchSpeciesDetails(speciesId: string) {
+export async function getSpeciesDetails(speciesId: string) {
   try {
-    console.log(`Fetching details for species: ${speciesId}`)
+    // console.log(`Fetching details for species: ${speciesId}`)
 
     // Fetch all related data for a species
     const [
@@ -289,7 +289,7 @@ export async function fetchSpeciesDetails(speciesId: string) {
       supabase.from("taksonomi_referensi").select("*").eq("spesies_id", speciesId),
     ])
 
-    console.log("Successfully fetched species details")
+    // console.log("Successfully fetched species details")
 
     return {
       habitat: habitatResult.data as TaksonomiHabitat,
@@ -319,9 +319,9 @@ export async function fetchSpeciesDetails(speciesId: string) {
   }
 }
 
-export async function fetchAllGenera() {
+export async function getAllGenera() {
   try {
-    console.log("Fetching all genera...")
+    // console.log("Fetching all genera...")
 
     const { data, error } = await supabase.from("taksonomi_genus").select("*").order("nama")
 
@@ -330,7 +330,7 @@ export async function fetchAllGenera() {
       throw error
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} genera`)
+    // console.log(`Successfully fetched ${data?.length || 0} genera`)
     return data as TaksonomiGenus[]
   } catch (error) {
     console.error("Error fetching genera:", error)
@@ -339,9 +339,9 @@ export async function fetchAllGenera() {
   }
 }
 
-export async function fetchConservationStatuses() {
+export async function getConservationStatuses() {
   try {
-    console.log("Fetching conservation statuses...")
+    // console.log("Fetching conservation statuses...")
 
     const { data, error } = await supabase
       .from("taksonomi_konservasi")
@@ -357,7 +357,7 @@ export async function fetchConservationStatuses() {
     const statuses = [...new Set(data.map((item) => item.status_konservasi_alam))]
     const filteredStatuses = statuses.filter(Boolean) as string[]
 
-    console.log(`Successfully fetched ${filteredStatuses.length} conservation statuses`)
+    // console.log(`Successfully fetched ${filteredStatuses.length} conservation statuses`)
     return filteredStatuses
   } catch (error) {
     console.error("Error fetching conservation statuses:", error)
@@ -366,9 +366,9 @@ export async function fetchConservationStatuses() {
   }
 }
 
-export async function fetchSpeciesImages(speciesId: string) {
+export async function getSpeciesImages(speciesId: string) {
   try {
-    console.log(`Fetching images for species: ${speciesId}`)
+    // console.log(`Fetching images for species: ${speciesId}`)
 
     const { data, error } = await supabase
       .from("taksonomi_gambar")
@@ -381,7 +381,7 @@ export async function fetchSpeciesImages(speciesId: string) {
       throw error
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} images`)
+    // console.log(`Successfully fetched ${data?.length || 0} images`)
     return data as TaksonomiGambar[]
   } catch (error) {
     console.error("Error fetching species images:", error)
@@ -389,9 +389,9 @@ export async function fetchSpeciesImages(speciesId: string) {
   }
 }
 
-export async function fetchRelatedSpecies(genusId: string, currentSpeciesId: string) {
+export async function getRelatedSpecies(genusId: string, currentSpeciesId: string) {
   try {
-    console.log(`Fetching related species for genus: ${genusId}`)
+    // console.log(`Fetching related species for genus: ${genusId}`)
 
     const { data, error } = await supabase
       .from("taksonomi_spesies")
@@ -405,7 +405,7 @@ export async function fetchRelatedSpecies(genusId: string, currentSpeciesId: str
       throw error
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} related species`)
+    // console.log(`Successfully fetched ${data?.length || 0} related species`)
     return data as TaksonomiSpesies[]
   } catch (error) {
     console.error("Error fetching related species:", error)
@@ -414,9 +414,9 @@ export async function fetchRelatedSpecies(genusId: string, currentSpeciesId: str
 }
 
 // New function to fetch YouTube videos for a species
-export async function fetchSpeciesVideos(speciesId: string) {
+export async function getSpeciesVideos(speciesId: string) {
   try {
-    console.log(`Fetching YouTube videos for species: ${speciesId}`)
+    // console.log(`Fetching YouTube videos for species: ${speciesId}`)
 
     const { data, error } = await supabase
       .from("taksonomi_video_youtube")
@@ -430,7 +430,7 @@ export async function fetchSpeciesVideos(speciesId: string) {
       throw error
     }
 
-    console.log(`Successfully fetched ${data?.length || 0} videos`)
+    // console.log(`Successfully fetched ${data?.length || 0} videos`)
     return data as TaksonomiVideoYoutube[]
   } catch (error) {
     console.error("Error fetching species videos:", error)
@@ -441,9 +441,9 @@ export async function fetchSpeciesVideos(speciesId: string) {
 // ======================= LIST ========================================
 
 // Database statistics function
-export async function fetchDatabaseStatistics() {
+export async function getDatabaseStatistics() {
   try {
-    console.log("Fetching database statistics...")
+    // console.log("Fetching database statistics...")
 
     const [generaResult, speciesResult, speciesCountResult] = await Promise.all([
       supabase.from("taksonomi_genus").select("id", { count: "exact", head: true }),
@@ -461,7 +461,7 @@ export async function fetchDatabaseStatistics() {
       lastUpdated: new Date().toISOString(),
     }
 
-    console.log("Database statistics:", statistics)
+    // console.log("Database statistics:", statistics)
     return statistics
   } catch (error) {
     console.error("Error fetching database statistics:", error)
@@ -475,9 +475,9 @@ export async function fetchDatabaseStatistics() {
 }
 
 // Test connection function
-export async function testSupabaseConnection() {
+export async function testConnection() {
   try {
-    console.log("Testing Supabase connection...")
+    // console.log("Testing Supabase connection...")
     const { data, error } = await supabase.from("taksonomi_spesies").select("count").limit(1)
 
     if (error) {
@@ -485,7 +485,7 @@ export async function testSupabaseConnection() {
       return false
     }
 
-    console.log("Supabase connection test successful")
+    // console.log("Supabase connection test successful")
     return true
   } catch (error) {
     console.error("Supabase connection test error:", error)

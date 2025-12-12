@@ -4,9 +4,10 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, MapPin, Calendar, Globe, Ruler, Weight, Palette, Info } from "lucide-react"
-import type { SpeciesOverviewProps } from "./types"
+import type { SpeciesTabProps } from "@/components/types"
 
-export function SpeciesOverview({ species, details }: SpeciesOverviewProps) {
+
+export function SpeciesOverview({ species, details }: SpeciesTabProps) {
   const formatValue = (value: any) => {
     if (value === null || value === undefined || value === "") return null
     return String(value)
@@ -192,7 +193,7 @@ export function SpeciesOverview({ species, details }: SpeciesOverviewProps) {
                   {species.distribusi_geografis
                     ?.sort((a, b) => {
                       // Sort by hierarchy: continents first, then regions, then countries
-                      const hierarchy = {
+                      const hierarchy: Record<string, number> = {
                         Asia: 1,
                         "Asia Tenggara": 2,
                         Indonesia: 3,
@@ -227,7 +228,7 @@ export function SpeciesOverview({ species, details }: SpeciesOverviewProps) {
       )}
 
       {/* Additional Features */}
-      {formatArray(details.deskripsi?.fitur_unik) && (
+      {formatArray(details.deskripsi?.fitur_unik ?? null) && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -242,7 +243,7 @@ export function SpeciesOverview({ species, details }: SpeciesOverviewProps) {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {details.deskripsi.fitur_unik?.map((feature, index) => (
+                {details.deskripsi?.fitur_unik?.map((feature, index) => (
                   <div
                     key={index}
                     className="flex items-start gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-100"

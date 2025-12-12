@@ -857,20 +857,17 @@ export function RadialExplorer() {
         animationRef.current = null
       }
 
-      // Cancel any inertia animation and update state immediately
+      // Cancel any inertia animation and sync state immediately
       if (inertiaAnimationRef.current) {
         cancelAnimationFrame(inertiaAnimationRef.current)
         inertiaAnimationRef.current = null
-
-        // Update React state with the last position from inertia
-        setTransform(dragTransformRef.current)
       }
 
-      // Store current transform values in ref for direct manipulation
-      // Use the latest values (either from React state or from dragTransformRef)
+      // CRITICAL FIX: Always use current transform state as source of truth
+      // This prevents the jump back to old position bug
       dragTransformRef.current = {
-        x: dragTransformRef.current.x !== transform.x ? dragTransformRef.current.x : transform.x,
-        y: dragTransformRef.current.y !== transform.y ? dragTransformRef.current.y : transform.y,
+        x: transform.x,
+        y: transform.y,
         scale: transform.scale,
         rotation: transform.rotation,
       }
@@ -905,9 +902,9 @@ export function RadialExplorer() {
     let totalWeight = 0
 
     if (velocityHistoryRef.current.length > 0) {
-      // Gunakan weighted average - sample terbaru memiliki bobot lebih tinggi
+      // Use weighted average - recent samples have higher weight
       velocityHistoryRef.current.forEach((v, index) => {
-        const weight = index + 1 // Sample terbaru memiliki bobot lebih tinggi
+        const weight = index + 1 // Recent samples have higher weight
         avgVelocityX += v.x * weight
         avgVelocityY += v.y * weight
         totalWeight += weight
@@ -917,15 +914,15 @@ export function RadialExplorer() {
       avgVelocityY /= totalWeight
     }
 
-    // Apply decay factor to make movement more natural
-    const friction = 0.94 // Sedikit lebih halus
+    // Apply decay factor for more natural movement
+    const friction = 0.95 // Slightly higher friction for better control
     let currentVelocityX = avgVelocityX
     let currentVelocityY = avgVelocityY
     let lastTimestamp = performance.now()
 
     // Don't apply inertia if velocity is too low
     if (Math.abs(currentVelocityX) < 0.5 && Math.abs(currentVelocityY) < 0.5) {
-      // PENTING: Update React state dengan posisi terakhir
+      // CRITICAL: Update React state with final position
       setTransform(dragTransformRef.current)
       return
     }
@@ -946,8 +943,8 @@ export function RadialExplorer() {
       currentVelocityY *= scaledFriction
 
       // Update position
-      dragTransformRef.current.x += currentVelocityX
-      dragTransformRef.current.y += currentVelocityY
+      dragTransformRef.current.x += currentVelocityX * timeScale
+      dragTransformRef.current.y += currentVelocityY * timeScale
 
       // Apply transform with 2D translation for sharper rendering
       if (diagramElementRef.current) {
@@ -959,10 +956,10 @@ export function RadialExplorer() {
       }
 
       // Continue animation if velocity is still significant
-      if (Math.abs(currentVelocityX) > 0.05 || Math.abs(currentVelocityY) > 0.05) {
+      if (Math.abs(currentVelocityX) > 0.1 || Math.abs(currentVelocityY) > 0.1) {
         inertiaAnimationRef.current = requestAnimationFrame(inertiaStep)
       } else {
-        // PENTING: Update React state dengan posisi terakhir
+        // CRITICAL: Update React state with final position when inertia ends
         setTransform(dragTransformRef.current)
         inertiaAnimationRef.current = null
       }
@@ -981,7 +978,7 @@ export function RadialExplorer() {
     const now = performance.now()
     const elapsed = now - velocityRef.current.timestamp
 
-    // Update velocity tracking
+    // Update velocity tracking (for inertia calculation)
     if (elapsed > 0) {
       const newVelocity = {
         x: (dx / elapsed) * 16.67, // Normalize to pixels per frame (assuming 60fps)
@@ -989,9 +986,9 @@ export function RadialExplorer() {
         timestamp: now,
       }
 
-      // Keep last 8 velocity samples for smoother inertia (increased from 5)
+      // Keep last 5 velocity samples for smoother inertia (reduced from 8)
       velocityHistoryRef.current.push(newVelocity)
-      if (velocityHistoryRef.current.length > 8) {
+      if (velocityHistoryRef.current.length > 5) {
         velocityHistoryRef.current.shift()
       }
 
@@ -1016,7 +1013,7 @@ export function RadialExplorer() {
 
     // Prevent default to avoid text selection and other browser behaviors
     event.preventDefault()
-  }, [])
+  }, [applyTransformDOM])
 
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<SVGSVGElement>) => {
@@ -1026,19 +1023,16 @@ export function RadialExplorer() {
         animationRef.current = null
       }
 
-      // Cancel any inertia animation and update state immediately
+      // Cancel any inertia animation and sync state immediately
       if (inertiaAnimationRef.current) {
         cancelAnimationFrame(inertiaAnimationRef.current)
         inertiaAnimationRef.current = null
-
-        // Update React state with the last position from inertia
-        setTransform(dragTransformRef.current)
       }
 
-      // Store current transform values in ref for direct manipulation
+      // CRITICAL FIX: Always use current transform state as source of truth
       dragTransformRef.current = {
-        x: dragTransformRef.current.x !== transform.x ? dragTransformRef.current.x : transform.x,
-        y: dragTransformRef.current.y !== transform.y ? dragTransformRef.current.y : transform.y,
+        x: transform.x,
+        y: transform.y,
         scale: transform.scale,
         rotation: transform.rotation,
       }
@@ -1108,7 +1102,7 @@ export function RadialExplorer() {
         const now = performance.now()
         const elapsed = now - velocityRef.current.timestamp
 
-        // Update velocity tracking
+        // Update velocity tracking (for inertia)
         if (elapsed > 0) {
           const newVelocity = {
             x: (dx / elapsed) * 16.67,
@@ -1116,15 +1110,16 @@ export function RadialExplorer() {
             timestamp: now,
           }
 
+          // Keep last 5 velocity samples (reduced from 8)
           velocityHistoryRef.current.push(newVelocity)
-          if (velocityHistoryRef.current.length > 8) {
+          if (velocityHistoryRef.current.length > 5) {
             velocityHistoryRef.current.shift()
           }
 
           velocityRef.current = newVelocity
         }
 
-        // Update position
+        // Update position in ref (not state for performance)
         dragTransformRef.current.x += dx
         dragTransformRef.current.y += dy
 
@@ -1271,6 +1266,10 @@ export function RadialExplorer() {
     if (!isGrabbingRef.current) return
 
     isGrabbingRef.current = false
+
+    // CRITICAL FIX: Update React state FIRST before applying inertia
+    // This ensures that if user drags again, the position doesn't jump back
+    setTransform(dragTransformRef.current)
 
     // Apply inertia effect
     applyInertia()

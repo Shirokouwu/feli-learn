@@ -7,7 +7,9 @@ export async function GET(request: Request) {
     const code = searchParams.get("code");
     const type = searchParams.get("type"); // Check if this is password recovery
     // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get("next") ?? "/";
+    const rawNext = searchParams.get("next") ?? "/";
+    // Only allow internal relative paths to avoid open redirects
+    const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
 
     if (code) {
         const supabase = await createServer();

@@ -75,9 +75,9 @@ export function useScanHistory(filters: { search?: string; sortBy?: string } = {
         isLoading: loading,
         error,
         refetch,
-    } = useQuery({
+    } = useQuery<ScanHistoryItem[], Error>({
         queryKey: scanHistoryQueryKeys.list(filters),
-        queryFn: fetchScanHistory,
+        queryFn: () => fetchScanHistory(),
         staleTime: 2 * 60 * 1000, // 2 minutes
         retry: 2,
     })

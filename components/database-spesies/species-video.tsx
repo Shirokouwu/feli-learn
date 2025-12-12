@@ -23,6 +23,7 @@ interface VideoCardProps {
 
 function VideoCard({ video, isPlaying, onPlay, onSwap, isPrimary = false }: VideoCardProps) {
   const videoId = extractVideoId(video.url)
+  //@ts-ignore
   const thumbnailUrl = getVideoThumbnail(videoId)
 
   const handleClick = () => {
@@ -168,6 +169,7 @@ export function SpeciesVideo({ videos, speciesName }: SpeciesVideoProps) {
                 onClick={() => handleVideoPlay(primaryVideo.id)}
               >
                 <img
+                // @ts-ignore
                   src={getVideoThumbnail(primaryVideoId_extracted) || "/placeholder.svg"}
                   alt={`Video thumbnail for ${speciesName}`}
                   className="w-full h-full object-cover"

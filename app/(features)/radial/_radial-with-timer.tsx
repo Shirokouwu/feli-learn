@@ -59,18 +59,18 @@ export default function RadialWithTimer() {
 
   if (showLoginPrompt) {
     return (
-      <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6">
-        <div className="bg-white rounded-2xl shadow-xl border border-teal-200 p-8 max-w-md text-center">
-          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="h-8 w-8 text-amber-600" />
+      <div className="absolute inset-0 bg-background/90 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6">
+        <div className="bg-card rounded-2xl shadow-xl border border-border p-8 max-w-md text-center">
+          <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-xl font-bold text-teal-800 mb-2">Waktu Akses Habis</h3>
-          <p className="text-neutral-600 mb-6">
+          <h3 className="text-xl font-bold text-foreground mb-2">Waktu Akses Habis</h3>
+          <p className="text-muted-foreground mb-6">
             Waktu akses gratis Anda telah berakhir. Untuk terus menjelajahi visualisasi radial Felidae,
             silakan login untuk akses penuh.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleLogin}>
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleLogin}>
               <LogIn className="h-4 w-4 mr-2" />
               Login Sekarang
             </Button>
@@ -82,9 +82,9 @@ export default function RadialWithTimer() {
 
   return (
     <div className="relative">
-      <div className="fixed top-4 right-4 bg-white/90 shadow-md rounded-full px-4 py-2 flex items-center gap-2 z-10 border border-amber-200">
-        <Clock className="h-4 w-4 text-amber-600" />
-        <span className="font-medium text-sm">
+      <div className="fixed top-4 right-4 bg-card/90 shadow-md rounded-full px-4 py-2 flex items-center gap-2 z-10 border border-border">
+        <Clock className="h-4 w-4 text-primary" />
+        <span className="font-medium text-sm text-foreground">
           Akses gratis: {formatTime(timeRemaining)}
         </span>
       </div>

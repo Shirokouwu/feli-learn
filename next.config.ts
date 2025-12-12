@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {
@@ -20,6 +21,8 @@ const nextConfig: NextConfig = {
         hostname: "avatars.githubusercontent.com"
       }, {
         hostname: "sxowqvkanlihnrsijcsm.supabase.co"
+      }, {
+        hostname: "upload.wikimedia.org"
       }
     ]
   },
@@ -33,9 +36,6 @@ const nextConfig: NextConfig = {
     },
   },
   experimental: {
-    serverActions: {
-      bodySizeLimit: '5mb'
-    },
     // Package import optimizations untuk Turbopack
     optimizePackageImports: [
       '@radix-ui/react-accordion',
