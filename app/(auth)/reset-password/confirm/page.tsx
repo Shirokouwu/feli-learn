@@ -17,7 +17,7 @@ function LoadingFallback() {
 export default async function ConfirmResetPasswordPage() {
     // Mark this page as dynamic - it needs to read URL params at runtime
     await connection()
-    
+
     return (
         <Suspense fallback={<LoadingFallback />}>
             <ConfirmResetPasswordForm />
