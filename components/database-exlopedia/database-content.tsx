@@ -81,10 +81,11 @@ export function DatabaseContent() {
   // Enhanced filtering logic with better debugging
   const filteredSpecies = species.filter((speciesItem) => {
     // Search term filter - check both nama and nama_umum
+    const searchTermLower = (searchTerm || '').toString().toLowerCase()
     const searchMatch =
       !searchTerm ||
-      speciesItem.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (speciesItem.nama_umum && speciesItem.nama_umum.toLowerCase().includes(searchTerm.toLowerCase()))
+      speciesItem.nama.toLowerCase().includes(searchTermLower) ||
+      (speciesItem.nama_umum && speciesItem.nama_umum.toLowerCase().includes(searchTermLower))
 
     // Conservation status filter - improved handling
     const statusMatch =
@@ -292,7 +293,7 @@ export function DatabaseContent() {
                     <>
                       <span className="font-medium text-emerald-600">{filteredSpecies.length}</span> dari{" "}
                       <span className="font-medium">{species.length}</span> spesies ditemukan
-                      {(filterStatus.length > 0 || selectedGenera.length > 0 || searchTerm.trim()) && (
+                      {(filterStatus.length > 0 || selectedGenera.length > 0 || (searchTerm && String(searchTerm).trim())) && (
                         <span className="text-emerald-600 ml-1">(terfilter)</span>
                       )}
                     </>
@@ -301,7 +302,7 @@ export function DatabaseContent() {
               </div>
               <div className="flex items-center gap-3">
                 {/* Clear filters button */}
-                {(filterStatus.length > 0 || selectedGenera.length > 0 || searchTerm.trim()) && (
+                {(filterStatus.length > 0 || selectedGenera.length > 0 || (searchTerm && String(searchTerm).trim())) && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -365,7 +366,7 @@ export function DatabaseContent() {
                       <li>• Hapus beberapa filter</li>
                     </ul>
                   </div>
-                  {(filterStatus.length > 0 || selectedGenera.length > 0 || searchTerm.trim()) && (
+                  {(filterStatus.length > 0 || selectedGenera.length > 0 || (searchTerm && String(searchTerm).trim())) && (
                     <Button
                       variant="outline"
                       onClick={clearAllFilters}

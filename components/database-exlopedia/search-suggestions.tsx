@@ -32,8 +32,8 @@ export function SearchSuggestions({
   // Filter species based on search term
   const filteredSpecies = species
     .filter((s) => {
-      if (!searchTerm) return false
-      const term = searchTerm.toLowerCase()
+      if (!searchTerm || typeof searchTerm !== 'string') return false
+      const term = (searchTerm || '').toLowerCase()
       return s.nama.toLowerCase().includes(term) || (s.nama_umum && s.nama_umum.toLowerCase().includes(term))
     })
     .slice(0, 5)
@@ -41,14 +41,14 @@ export function SearchSuggestions({
   // Filter genera based on search term
   const filteredGenera = genera
     .filter((g) => {
-      if (!searchTerm) return false
-      return g.nama.toLowerCase().includes(searchTerm.toLowerCase())
+      if (!searchTerm || typeof searchTerm !== 'string') return false
+      return g.nama.toLowerCase().includes((searchTerm || '').toLowerCase())
     })
     .slice(0, 3)
 
   // Show popular/recent searches when no search term
-  const showPopular = !searchTerm && popularSearches.length > 0
-  const showRecent = !searchTerm && recentSearches.length > 0
+  const showPopular = (!searchTerm || (typeof searchTerm === 'string' && !searchTerm.trim())) && popularSearches.length > 0
+  const showRecent = (!searchTerm || (typeof searchTerm === 'string' && !searchTerm.trim())) && recentSearches.length > 0
 
   // Create all suggestions array for keyboard navigation
   const allSuggestions = [

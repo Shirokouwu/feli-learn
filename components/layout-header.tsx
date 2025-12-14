@@ -22,6 +22,11 @@ export function LayoutHeader({ user }: LayoutHeaderProps) {
         return null
     }
 
+    // Hide header on species detail page (database-explorer/[species])
+    if (pathname.startsWith("/database-explorer/") && pathname !== "/database-explorer/") {
+        return null
+    }
+
     // Show header on all other pages
     return <Header user={user} />
 }

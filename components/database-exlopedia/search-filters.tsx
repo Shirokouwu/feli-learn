@@ -164,7 +164,7 @@ export function SearchFilters({
     setSearchTerm("")
   }
 
-  const hasActiveFilters = filterStatus.length > 0 || selectedGenera.length > 0 || searchTerm.trim()
+  const hasActiveFilters = filterStatus.length > 0 || selectedGenera.length > 0 || (searchTerm && typeof searchTerm === 'string' && searchTerm.trim())
 
   return (
     <div className="bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-xl p-4 shadow-sm">
