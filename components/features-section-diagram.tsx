@@ -264,9 +264,9 @@ export function FeaturesSectionDiagram({ diagramRef, diagramInView }: FeaturesSe
             initial={{ opacity: 0, y: 50 }}
             animate={diagramInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-32"
+            className="mb-20 lg:mb-24 xl:mb-32"
         >
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
                 <div className="order-1">
                     <AnimatedRadialDiagram sectionInView={diagramInView} />
                 </div>
@@ -285,7 +285,7 @@ export function FeaturesSectionDiagram({ diagramRef, diagramInView }: FeaturesSe
                         initial={{ opacity: 0, y: 20 }}
                         animate={diagramInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                        className="text-3xl sm:text-4xl font-bold text-foreground mb-6"
+                        className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-bold text-foreground mb-4 lg:mb-6"
                     >
                         Visualisasi Taksonomi yang <span className="text-primary">Interaktif</span>
                     </motion.h3>
@@ -293,12 +293,12 @@ export function FeaturesSectionDiagram({ diagramRef, diagramInView }: FeaturesSe
                         initial={{ opacity: 0, y: 20 }}
                         animate={diagramInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="text-muted-foreground text-lg mb-8 leading-relaxed"
+                        className="text-muted-foreground text-base lg:text-lg mb-6 lg:mb-8 leading-relaxed"
                     >
                         Jelajahi hubungan antar spesies dengan diagram radial yang intuitif. Lihat bagaimana setiap kucing liar terhubung dalam pohon evolusi keluarga Felidae.
                     </motion.p>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3 lg:space-y-4">
                         {[
                             { icon: MousePointerClick, title: "Klik untuk Detail", desc: "Lihat informasi lengkap setiap node" },
                             { icon: ZoomIn, title: "Zoom & Pan", desc: "Eksplorasi diagram dengan bebas" },
@@ -310,10 +310,10 @@ export function FeaturesSectionDiagram({ diagramRef, diagramInView }: FeaturesSe
                                 animate={diagramInView ? { opacity: 1, x: 0 } : {}}
                                 transition={{ duration: 0.5, delay: 0.4 + index * 0.12, ease: [0.22, 1, 0.36, 1] }}
                                 whileHover={{ x: 6, transition: { duration: 0.3 } }}
-                                className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300"
+                                className="flex items-start gap-3 lg:gap-4 p-3 lg:p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300"
                             >
-                                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                    <feature.icon className="text-primary" size={20} />
+                                <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                    <feature.icon className="text-primary" size={18} />
                                 </div>
                                 <div>
                                     <p className="font-semibold text-foreground">{feature.title}</p>

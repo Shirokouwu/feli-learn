@@ -59,7 +59,7 @@ export function FAQSection() {
   }
 
   return (
-    <section ref={ref as React.RefObject<HTMLElement>} className="py-24 px-4 bg-background relative overflow-hidden">
+    <section ref={ref as React.RefObject<HTMLElement>} className="py-16 lg:py-20 xl:py-24 px-4 bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
@@ -72,18 +72,18 @@ export function FAQSection() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="text-center mb-16"
+          className="text-center mb-10 lg:mb-14 xl:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4 lg:mb-6">
             <MessageCircleQuestion className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Pusat Bantuan</span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif font-bold text-foreground mb-3 lg:mb-4">
             Pertanyaan yang <span className="text-primary">Sering Diajukan</span>
           </h2>
 
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto">
             Temukan jawaban untuk pertanyaan umum tentang aplikasi Felidae, taksonomi kucing, dan fitur-fitur yang
             tersedia.
           </p>

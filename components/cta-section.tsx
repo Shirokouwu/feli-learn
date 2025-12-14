@@ -17,7 +17,7 @@ export function CTASection() {
   ]
 
   return (
-    <section className="py-24 bg-card overflow-hidden relative">
+    <section className="py-16 lg:py-20 xl:py-24 bg-card overflow-hidden relative">
       <SectionBackground variant="gradient" />
 
       <div
@@ -28,7 +28,7 @@ export function CTASection() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/15 via-accent/8 to-primary/15 border border-primary/20 p-8 sm:p-12 lg:p-16"
+          className="relative overflow-hidden rounded-2xl lg:rounded-3xl bg-gradient-to-br from-primary/15 via-accent/8 to-primary/15 border border-primary/20 p-6 sm:p-8 lg:p-12 xl:p-16"
         >
           <motion.div
             animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
@@ -56,7 +56,7 @@ export function CTASection() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance"
+              className="font-serif text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground mb-4 lg:mb-6 text-balance"
             >
               Mulai Perjalanan Anda Sekarang
             </motion.h2>
@@ -65,7 +65,7 @@ export function CTASection() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="text-lg text-muted-foreground mb-6 leading-relaxed max-w-2xl mx-auto"
+              className="text-base lg:text-lg text-muted-foreground mb-4 lg:mb-6 leading-relaxed max-w-2xl mx-auto"
             >
               Dengan memahami Felidae, Anda tidak hanya belajar tentang taksonomi—Anda menjadi bagian dari gerakan
               pelestarian satwa liar global.
@@ -75,7 +75,7 @@ export function CTASection() {
               initial={{ opacity: 0, y: 16 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm"
+              className="flex flex-wrap items-center justify-center gap-4 lg:gap-6 mb-6 lg:mb-8 xl:mb-10 text-sm"
             >
               {features.map((feature, i) => (
                 <motion.div

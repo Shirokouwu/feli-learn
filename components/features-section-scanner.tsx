@@ -226,9 +226,9 @@ export function FeaturesSectionScanner({ scannerRef, scannerInView }: FeaturesSe
             initial={{ opacity: 0, y: 50 }}
             animate={scannerInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-32"
+            className="mb-20 lg:mb-24 xl:mb-32"
         >
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
                 <div className="order-2 lg:order-1">
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
@@ -243,7 +243,7 @@ export function FeaturesSectionScanner({ scannerRef, scannerInView }: FeaturesSe
                         initial={{ opacity: 0, y: 20 }}
                         animate={scannerInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                        className="text-3xl sm:text-4xl font-bold text-foreground mb-6"
+                        className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-bold text-foreground mb-4 lg:mb-6"
                     >
                         Identifikasi Spesies dalam <span className="text-primary">Hitungan Detik</span>
                     </motion.h3>
@@ -251,13 +251,13 @@ export function FeaturesSectionScanner({ scannerRef, scannerInView }: FeaturesSe
                         initial={{ opacity: 0, y: 20 }}
                         animate={scannerInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="text-muted-foreground text-lg mb-8 leading-relaxed"
+                        className="text-muted-foreground text-base lg:text-lg mb-6 lg:mb-8 leading-relaxed"
                     >
                         Cukup arahkan kamera atau upload foto kucing liar yang kamu temui. AI kami yang dilatih dengan puluhan ribu
                         gambar akan mengidentifikasi spesiesnya dengan akurasi tinggi.
                     </motion.p>
 
-                    <div className="flex gap-4 mb-8">
+                    <div className="flex gap-3 lg:gap-4 mb-6 lg:mb-8">
                         {scannerSteps.map((step, index) => (
                             <motion.button
                                 key={index}
@@ -265,11 +265,11 @@ export function FeaturesSectionScanner({ scannerRef, scannerInView }: FeaturesSe
                                 animate={scannerInView ? { opacity: 1, y: 0 } : {}}
                                 transition={{ duration: 0.5, delay: 0.4 + index * 0.12, ease: [0.22, 1, 0.36, 1] }}
                                 onClick={() => setActiveStep(index)}
-                                className={`flex-1 p-4 rounded-xl border transition-all duration-500 text-left ${activeStep === index ? "border-primary bg-primary/10 shadow-lg shadow-primary/15" : "border-border bg-card hover:border-primary/50"
+                                className={`flex-1 p-3 lg:p-4 rounded-xl border transition-all duration-500 text-left ${activeStep === index ? "border-primary bg-primary/10 shadow-lg shadow-primary/15" : "border-border bg-card hover:border-primary/50"
                                     }`}
                             >
                                 <step.icon
-                                    size={24}
+                                    size={20}
                                     className={`transition-colors duration-300 ${activeStep === index ? "text-primary mb-2" : "text-muted-foreground mb-2"}`}
                                 />
                                 <p className={`font-semibold text-sm transition-colors duration-300 ${activeStep === index ? "text-foreground" : "text-muted-foreground"}`}>
@@ -280,7 +280,7 @@ export function FeaturesSectionScanner({ scannerRef, scannerInView }: FeaturesSe
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-3 lg:gap-4">
                         {[
                             { value: "98%", label: "Akurasi" },
                             { value: "<2s", label: "Kecepatan" },
@@ -292,9 +292,9 @@ export function FeaturesSectionScanner({ scannerRef, scannerInView }: FeaturesSe
                                 animate={scannerInView ? { opacity: 1, y: 0 } : {}}
                                 transition={{ duration: 0.5, delay: 0.7 + index * 0.12, ease: [0.22, 1, 0.36, 1] }}
                                 whileHover={{ y: -4, transition: { duration: 0.3 } }}
-                                className="text-center p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300"
+                                className="text-center p-3 lg:p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300"
                             >
-                                <p className="text-2xl font-bold text-primary">{stat.value}</p>
+                                <p className="text-xl lg:text-2xl font-bold text-primary">{stat.value}</p>
                                 <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
                             </motion.div>
                         ))}

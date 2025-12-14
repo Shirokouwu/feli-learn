@@ -10,7 +10,7 @@ export function ConservationBridge() {
   const { ref, isInView } = useScrollAnimation({ threshold: 0.25 })
 
   return (
-    <section ref={ref as React.RefObject<HTMLElement>} className="py-20 bg-background relative overflow-hidden">
+    <section ref={ref as React.RefObject<HTMLElement>} className="py-14 lg:py-16 xl:py-20 bg-background relative overflow-hidden">
       {/* Decorative elements - Animasi lebih subtle */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -36,13 +36,13 @@ export function ConservationBridge() {
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center justify-center gap-3 mb-6"
+            className="inline-flex items-center justify-center gap-2 lg:gap-3 mb-4 lg:mb-6"
           >
-            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-              <Leaf className="text-accent" size={24} />
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-accent/10 flex items-center justify-center">
+              <Leaf className="text-accent" size={20} />
             </div>
-            <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-              <Heart className="text-red-500" size={24} />
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+              <Heart className="text-red-500" size={20} />
             </div>
           </motion.div>
 
@@ -50,7 +50,7 @@ export function ConservationBridge() {
             initial={{ opacity: 0, y: 12 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-            className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-4 text-balance"
+            className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-3 lg:mb-4 text-balance"
           >
             Tapi, Ada Hal yang Lebih Penting...
           </motion.h2>
@@ -59,7 +59,7 @@ export function ConservationBridge() {
             initial={{ opacity: 0, y: 12 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto"
+            className="text-muted-foreground text-base lg:text-lg leading-relaxed max-w-2xl mx-auto"
           >
             Di balik keindahan dan keajaiban keluarga Felidae, ada{" "}
             <span className="text-red-400 font-medium">kenyataan pahit</span> yang harus kita hadapi. Banyak dari mereka

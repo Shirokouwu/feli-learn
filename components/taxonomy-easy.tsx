@@ -54,7 +54,7 @@ export function TaxonomyEasy() {
   const { ref, isInView } = useScrollAnimation({ threshold: 0.2 })
 
   return (
-    <section className="py-24 bg-background overflow-hidden relative">
+    <section className="py-16 lg:py-20 xl:py-24 bg-background overflow-hidden relative">
       <SectionBackground variant="waves" />
 
       <div
@@ -66,15 +66,15 @@ export function TaxonomyEasy() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-10 lg:mb-14 xl:mb-16"
         >
-          <span className="inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4">
+          <span className="inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium mb-3 lg:mb-4">
             Panduan Pemula
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground mb-4 lg:mb-6 text-balance">
             Memahami Taksonomi dengan Mudah
           </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed">
+          <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
             Jangan khawatir jika istilah taksonomi terdengar rumit. Kami akan memandu Anda langkah demi langkah untuk
             memahami sistem klasifikasi makhluk hidup dengan cara yang menyenangkan.
           </p>
@@ -85,17 +85,17 @@ export function TaxonomyEasy() {
           variants={staggerContainer}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 xl:gap-6 mb-10 lg:mb-14 xl:mb-16"
         >
           {steps.map((step) => (
             <motion.div key={step.number} variants={staggerItem} whileHover={{ y: -4 }} className="relative group">
-              <div className="relative p-6 rounded-2xl bg-card border border-border group-hover:border-primary/30 transition-all duration-300 h-full">
-                <span className="text-5xl font-bold text-primary/20 font-mono">{step.number}</span>
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center my-4 group-hover:bg-primary/20 transition-colors">
-                  <step.icon className="text-primary" size={24} />
+              <div className="relative p-5 lg:p-6 rounded-2xl bg-card border border-border group-hover:border-primary/30 transition-all duration-300 h-full">
+                <span className="text-4xl lg:text-5xl font-bold text-primary/20 font-mono">{step.number}</span>
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center my-3 lg:my-4 group-hover:bg-primary/20 transition-colors">
+                  <step.icon className="text-primary" size={20} />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
+                <h3 className="text-base lg:text-lg font-semibold text-foreground mb-2">{step.title}</h3>
+                <p className="text-muted-foreground text-xs lg:text-sm leading-relaxed">{step.description}</p>
               </div>
             </motion.div>
           ))}

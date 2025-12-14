@@ -29,15 +29,15 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center pt-14 lg:pt-16 overflow-hidden">
       <SectionBackground variant="mesh" />
 
       {/* Static gradient orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/15 rounded-full blur-[120px] opacity-50" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-[100px] opacity-40" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 xl:py-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
           {/* Left: Text Content */}
           <motion.div
             variants={containerVariants}
@@ -55,14 +55,14 @@ export function HeroSection() {
 
             <motion.h1
               variants={itemVariants}
-              className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight text-balance"
+              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-foreground mb-6 leading-tight text-balance"
             >
               Jelajahi Dunia Menakjubkan <span className="text-primary">Felidae</span>
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
-              className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed"
+              className="text-base sm:text-lg xl:text-xl text-muted-foreground mb-8 lg:mb-10 leading-relaxed"
             >
               Jelajahi keluarga kucing liar melalui scanner AI, diagram taksonomi interaktif, dan ensiklopedia lengkap.
               Pelajari dan kenali setiap spesies dengan mudah.

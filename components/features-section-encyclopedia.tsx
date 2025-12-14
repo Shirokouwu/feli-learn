@@ -84,7 +84,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                 />
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center relative z-10">
                 <div className="order-2 lg:order-1">
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
@@ -99,7 +99,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                         initial={{ opacity: 0, y: 20 }}
                         animate={encyclopediaInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.45, delay: 0.2, ease: "easeOut" }}
-                        className="text-3xl sm:text-4xl font-bold text-foreground mb-6"
+                        className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-bold text-foreground mb-4 lg:mb-6"
                     >
                         Database Lengkap <span className="text-accent">41 Spesies</span>
                     </motion.h3>
@@ -107,12 +107,12 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                         initial={{ opacity: 0, y: 20 }}
                         animate={encyclopediaInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.45, delay: 0.25, ease: "easeOut" }}
-                        className="text-muted-foreground text-lg mb-8 leading-relaxed"
+                        className="text-muted-foreground text-base lg:text-lg mb-6 lg:mb-8 leading-relaxed"
                     >
                         Akses informasi mendalam tentang setiap spesies Felidae. Dari habitat, perilaku, hingga status konservasi - semua tersedia dalam satu tempat.
                     </motion.p>
 
-                    <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-6 lg:mb-8">
                         {[{ icon: ImageIcon, value: "500+", label: "Foto HD" }, { icon: MapPin, value: "Global", label: "Distribusi" }, { icon: Shield, value: "IUCN", label: "Status" }, { icon: Search, value: "Cepat", label: "Pencarian" }].map((stat, index) => (
                             <motion.div
                                 key={stat.label}
@@ -120,9 +120,9 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                                 animate={encyclopediaInView ? { opacity: 1, y: 0 } : {}}
                                 transition={{ duration: 0.35, delay: 0.3 + index * 0.08, ease: "easeOut" }}
                                 whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.15 } }}
-                                className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-accent/30 transition-all duration-200 will-change-transform"
+                                className="flex items-center gap-2 lg:gap-3 p-3 lg:p-4 rounded-xl bg-card border border-border hover:border-accent/30 transition-all duration-200 will-change-transform"
                             >
-                                <stat.icon className="text-accent" size={20} />
+                                <stat.icon className="text-accent" size={18} />
                                 <div>
                                     <p className="font-semibold text-foreground">{stat.value}</p>
                                     <p className="text-xs text-muted-foreground">{stat.label}</p>

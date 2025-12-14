@@ -82,7 +82,7 @@ export function TaxonomyConservation() {
   const yCta = useTransform(scrollYProgress, [0, 1], [30, -20])
 
   return (
-    <section ref={sectionRef} className="py-24 bg-card relative overflow-hidden">
+    <section ref={sectionRef} className="py-16 lg:py-20 xl:py-24 bg-card relative overflow-hidden">
       {/* Background Pattern */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -100,21 +100,21 @@ export function TaxonomyConservation() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-10 lg:mb-14 xl:mb-16"
         >
           <motion.span
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium mb-3 lg:mb-4"
           >
             <Leaf size={16} />
             Konservasi
           </motion.span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground mb-4 lg:mb-6 text-balance">
             Memahami Taksonomi: Langkah Awal Melindungi Alam
           </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed">
+          <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
             Taksonomi bukan sekadar ilmu klasifikasi. Ini adalah fondasi penting dalam upaya konservasi global untuk
             melindungi spesies yang terancam punah dan menjaga keseimbangan ekosistem.
           </p>
@@ -125,29 +125,29 @@ export function TaxonomyConservation() {
           variants={staggerContainer}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 gap-6 mb-16"
+          className="grid md:grid-cols-2 gap-4 lg:gap-5 xl:gap-6 mb-10 lg:mb-14 xl:mb-16"
         >
           {conservationPoints.map((point, index) => (
             <motion.div
               key={point.title}
               variants={staggerItem}
               whileHover={{ y: -3 }}
-              className="group p-6 rounded-2xl bg-background border border-border hover:border-accent/50 transition-all duration-300"
+              className="group p-5 lg:p-6 rounded-2xl bg-background border border-border hover:border-accent/50 transition-all duration-300"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3 lg:gap-4">
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={isInView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.5, delay: 0.2 + index * 0.08 }}
-                  className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors"
+                  className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors"
                 >
-                  <point.icon className="text-accent" size={28} />
+                  <point.icon className="text-accent" size={24} />
                 </motion.div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-foreground mb-2">{point.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4">{point.description}</p>
+                  <h3 className="text-base lg:text-lg font-semibold text-foreground mb-1.5 lg:mb-2">{point.title}</h3>
+                  <p className="text-muted-foreground text-xs lg:text-sm leading-relaxed mb-3 lg:mb-4">{point.description}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-accent">{point.stat}</span>
+                    <span className="text-xl lg:text-2xl font-bold text-accent">{point.stat}</span>
                     <span className="text-sm text-muted-foreground">{point.statLabel}</span>
                   </div>
                 </div>
@@ -163,9 +163,9 @@ export function TaxonomyConservation() {
           transition={{ duration: 0.6, delay: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
           className="bg-background rounded-2xl border border-border overflow-hidden"
         >
-          <div className="p-6 border-b border-border bg-red-500/5">
-            <h3 className="text-xl font-semibold text-foreground flex items-center gap-3">
-              <AlertTriangle className="text-red-500" size={24} />
+          <div className="p-4 lg:p-6 border-b border-border bg-red-500/5">
+            <h3 className="text-lg lg:text-xl font-semibold text-foreground flex items-center gap-2 lg:gap-3">
+              <AlertTriangle className="text-red-500" size={20} />
               Spesies Felidae yang Terancam
             </h3>
             <p className="text-muted-foreground mt-2">

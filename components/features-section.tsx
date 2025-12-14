@@ -20,7 +20,7 @@ export function FeaturesSection() {
   const encyclopediaInView = useInView(encyclopediaRef, { once: true, margin: "-80px", amount: 0.15 })
 
   return (
-    <section id="features" className="py-24 bg-background relative overflow-hidden">
+    <section id="features" className="py-16 lg:py-20 xl:py-24 bg-background relative overflow-hidden">
       <SectionBackground variant="mesh" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

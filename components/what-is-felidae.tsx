@@ -64,7 +64,7 @@ export function WhatIsFelidae() {
   ]
 
   return (
-    <section className="py-20 lg:py-28 bg-muted/30 overflow-hidden relative">
+    <section className="py-14 lg:py-20 xl:py-28 bg-muted/30 overflow-hidden relative">
       <SectionBackground variant="gradient" />
 
       {/* Decorative elements */}
@@ -79,9 +79,9 @@ export function WhatIsFelidae() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="mb-16"
+          className="mb-10 lg:mb-14 xl:mb-16"
         >
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-8">
             <div className="lg:max-w-2xl">
               <motion.span
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -92,12 +92,12 @@ export function WhatIsFelidae() {
                 <Cat size={14} />
                 The Cat Family
               </motion.span>
-              <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 text-balance leading-tight">
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-4 lg:mb-6 text-balance leading-tight">
                 Apa itu <span className="text-primary">Felidae</span>?
               </h2>
             </div>
-            <div className="lg:max-w-md lg:pt-16">
-              <p className="text-muted-foreground text-lg lg:text-xl leading-relaxed">
+            <div className="lg:max-w-md lg:pt-10 xl:pt-16">
+              <p className="text-muted-foreground text-base lg:text-lg xl:text-xl leading-relaxed">
                 <strong className="text-foreground">Felidae</strong> adalah famili taksonomi yang mencakup semua spesies
                 kucing di dunia — dari kucing rumah hingga harimau besar. Famili ini terdiri dari{" "}
                 <span className="text-primary font-semibold">41 spesies</span> yang tersebar di seluruh benua kecuali
@@ -111,19 +111,19 @@ export function WhatIsFelidae() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16"
+          className="mb-10 lg:mb-14 xl:mb-16"
         >
-          <div className="grid grid-cols-4 gap-2 lg:gap-4">
+          <div className="grid grid-cols-4 gap-2 lg:gap-3 xl:gap-4">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.5, delay: 0.25 + index * 0.05 }}
-                className="group text-center p-4 sm:p-6 lg:p-8 rounded-xl lg:rounded-2xl bg-card/80 backdrop-blur-sm border border-border hover:border-primary/30 transition-all duration-300"
+                className="group text-center p-3 sm:p-5 lg:p-6 xl:p-8 rounded-xl lg:rounded-2xl bg-card/80 backdrop-blur-sm border border-border hover:border-primary/30 transition-all duration-300"
               >
                 <p
-                  className={`text-3xl sm:text-4xl lg:text-6xl font-bold ${stat.color} mb-1 lg:mb-2 group-hover:scale-105 transition-transform duration-300`}
+                  className={`text-2xl sm:text-3xl lg:text-4xl xl:text-6xl font-bold ${stat.color} mb-1 lg:mb-2 group-hover:scale-105 transition-transform duration-300`}
                 >
                   {stat.value}
                 </p>
@@ -135,7 +135,7 @@ export function WhatIsFelidae() {
           </div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid lg:grid-cols-2 gap-5 lg:gap-6 xl:gap-8">
           {/* Characteristics - Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}

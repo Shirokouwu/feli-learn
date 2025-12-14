@@ -44,13 +44,13 @@ export function Footer() {
   ]
 
   return (
-    <footer ref={ref as React.RefObject<HTMLElement>} id="about" className="py-16 bg-background border-t border-border">
+    <footer ref={ref as React.RefObject<HTMLElement>} id="about" className="py-10 lg:py-14 xl:py-16 bg-background border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12"
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 mb-8 lg:mb-12"
         >
           {/* Brand */}
           {/* @ts-ignore */}

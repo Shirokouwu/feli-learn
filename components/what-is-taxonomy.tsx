@@ -28,7 +28,7 @@ export function WhatIsTaxonomy() {
   ]
 
   return (
-    <section id="taxonomy" className="py-24 bg-card overflow-hidden relative">
+    <section id="taxonomy" className="py-16 lg:py-20 xl:py-24 bg-card overflow-hidden relative">
       <SectionBackground variant="grid" />
 
       <div
@@ -39,35 +39,35 @@ export function WhatIsTaxonomy() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12 lg:mb-16 xl:mb-20"
         >
           {/* Header dengan visual yang menarik */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 lg:mb-14 xl:mb-16">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <BookOpen className="w-4 h-4" />
               Fundamental Knowledge
             </span>
-            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-8 text-balance">
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 text-balance">
               Apa itu Taksonomi?
             </h2>
           </div>
 
           {/* Definisi dan penjelasan taksonomi - visual card */}
-          <div className="grid lg:grid-cols-2 gap-8 mb-16">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-10 lg:mb-14 xl:mb-16">
             {/* Card definisi utama */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-background to-accent/5 border border-primary/20"
+              className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-background to-accent/5 border border-primary/20"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <Lightbulb className="w-6 h-6 text-primary" />
+              <div className="flex items-center gap-3 mb-4 lg:mb-6">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Lightbulb className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-foreground">Definisi Sederhana</h3>
+                <h3 className="font-serif text-xl lg:text-2xl font-bold text-foreground">Definisi Sederhana</h3>
               </div>
-              <p className="text-xl text-foreground leading-relaxed mb-4">
+              <p className="text-lg lg:text-xl text-foreground leading-relaxed mb-3 lg:mb-4">
                 <strong className="text-primary">Taksonomi</strong> adalah ilmu yang mempelajari cara{" "}
                 <em>mengklasifikasikan</em>, <em>menamai</em>, dan <em>mengelompokkan</em> semua makhluk hidup di Bumi.
               </p>
@@ -83,13 +83,13 @@ export function WhatIsTaxonomy() {
               initial={{ opacity: 0, x: 20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="p-8 rounded-2xl bg-secondary/50 border border-border"
+              className="p-6 lg:p-8 rounded-2xl bg-secondary/50 border border-border"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                  <HelpCircle className="w-6 h-6 text-accent" />
+              <div className="flex items-center gap-3 mb-4 lg:mb-6">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <HelpCircle className="w-5 h-5 lg:w-6 lg:h-6 text-accent" />
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-foreground">Kenapa Penting?</h3>
+                <h3 className="font-serif text-xl lg:text-2xl font-bold text-foreground">Kenapa Penting?</h3>
               </div>
               <p className="text-foreground leading-relaxed mb-4">
                 Tanpa taksonomi, dunia ilmiah akan kacau. Bayangkan kalau setiap negara punya nama berbeda untuk hewan
@@ -132,7 +132,7 @@ export function WhatIsTaxonomy() {
             variants={staggerContainer}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-20"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-12 lg:mb-16 xl:mb-20"
           >
             {featureCards.map((item) => (
               <motion.div
@@ -153,24 +153,24 @@ export function WhatIsTaxonomy() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-20"
+          className="mb-12 lg:mb-16 xl:mb-20"
         >
           {/* Divider dengan pertanyaan transisi */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-4 text-muted-foreground text-sm mb-6">
+          <div className="text-center mb-8 lg:mb-12">
+            <div className="inline-flex items-center gap-4 text-muted-foreground text-sm mb-4 lg:mb-6">
               <span className="h-px w-12 bg-border" />
               <span>Tapi siapa yang menciptakan sistem jenius ini?</span>
               <span className="h-px w-12 bg-border" />
             </div>
-            <h3 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4">
+            <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Kisah Sang <span className="text-primary">Bapak Taksonomi</span>
             </h3>
           </div>
 
           {/* Story Linnaeus dengan layout yang lebih engaging */}
-          <div className="grid lg:grid-cols-[1fr,320px] gap-10 items-start">
-            <div className="space-y-6 order-2 lg:order-1">
-              <p className="text-lg text-foreground leading-relaxed">
+          <div className="grid lg:grid-cols-[1fr,280px] xl:grid-cols-[1fr,320px] gap-6 lg:gap-8 xl:gap-10 items-start">
+            <div className="space-y-4 lg:space-y-6 order-2 lg:order-1">
+              <p className="text-base lg:text-lg text-foreground leading-relaxed">
                 Tahun 1735, Eropa masih dalam kebingungan ilmiah. Para naturalis dari berbagai negara tidak bisa
                 berkomunikasi dengan baik karena setiap daerah punya nama sendiri untuk hewan dan tumbuhan yang sama.
                 Penelitian jadi terhambat, publikasi ilmiah penuh kesalahpahaman.

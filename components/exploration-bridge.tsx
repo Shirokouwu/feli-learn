@@ -10,7 +10,7 @@ export function ExplorationBridge() {
   const { ref, isInView } = useScrollAnimation({ threshold: 0.25 })
 
   return (
-    <section ref={ref as React.RefObject<HTMLElement>} className="py-16 bg-card relative overflow-hidden">
+    <section ref={ref as React.RefObject<HTMLElement>} className="py-10 lg:py-14 xl:py-16 bg-card relative overflow-hidden">
       <SectionBackground variant="grid" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
