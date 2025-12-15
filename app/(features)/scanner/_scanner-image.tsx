@@ -107,7 +107,7 @@ export default function ScannerImage() {
       } as unknown as React.ChangeEvent<HTMLInputElement>
 
       scanner.handleFileUpload(syntheticEvent)
-      
+
       // Increment guest scan count after successful upload trigger
       if (!isLoggedIn) {
         guestLimit.incrementScanCount()
@@ -131,9 +131,9 @@ export default function ScannerImage() {
       event.target.value = "" // Reset file input
       return
     }
-    
+
     scanner.handleFileUpload(event)
-    
+
     // Increment guest scan count after successful upload
     if (!isLoggedIn && event.target.files?.[0]) {
       guestLimit.incrementScanCount()
@@ -146,9 +146,9 @@ export default function ScannerImage() {
       setShowLoginPrompt(true)
       return
     }
-    
+
     scanner.handleUrlSubmit()
-    
+
     // Increment guest scan count after URL submit
     if (!isLoggedIn && scanner.imageUrl) {
       guestLimit.incrementScanCount()

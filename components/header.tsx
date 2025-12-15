@@ -120,8 +120,8 @@ export function Header({ user }: HeaderProps) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={handleSignOut} 
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
                     className="text-destructive focus:text-destructive cursor-pointer"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
@@ -215,9 +215,9 @@ export function Header({ user }: HeaderProps) {
                         </span>
                       </div>
                     </Link>
-                    <Button 
-                      variant="destructive" 
-                      size="sm" 
+                    <Button
+                      variant="destructive"
+                      size="sm"
                       className="justify-start mt-2"
                       onClick={() => {
                         setIsMenuOpen(false)
