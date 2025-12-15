@@ -1,15 +1,46 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Scan, BookOpen, GitBranch } from "lucide-react"
+import { ArrowRight, Scan, BookOpen, GitBranch, Sparkles, X } from "lucide-react"
 import { SectionBackground } from "@/components/section-background"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 
 export function HeroSection() {
+  const [showBanner, setShowBanner] = useState(true)
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-14 lg:pt-16 overflow-hidden">
-      <SectionBackground variant="mesh" />
+    <>
+      {/* Announcement Banner - Below header */}
+      {showBanner && (
+        <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground shadow-md">
+          <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-center gap-3 text-sm relative">
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 animate-pulse" />
+              <span className="font-medium">🎉 Rilis Resmi Felidae Learn v1.0</span>
+              <span className="hidden sm:inline text-primary-foreground/80">— Platform pembelajaran taksonomi kucing liar pertama di Indonesia!</span>
+            </span>
+            <Link 
+              href="/about" 
+              className="hidden md:inline-flex items-center gap-1 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs font-medium transition-colors"
+            >
+              Pelajari Lebih
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+            <button 
+              onClick={() => setShowBanner(false)}
+              className="absolute right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
+              aria-label="Tutup banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${showBanner ? 'pt-28 lg:pt-32' : 'pt-14 lg:pt-16'}`}>
+        <SectionBackground variant="mesh" />
 
       {/* Static gradient orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-40" />
@@ -136,5 +167,6 @@ export function HeroSection() {
 
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background to-transparent" />
     </section>
+    </>
   )
 }
