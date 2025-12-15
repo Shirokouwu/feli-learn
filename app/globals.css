@@ -243,3 +243,139 @@ html {
     @apply text-3xl sm:text-4xl lg:text-5xl;
   }
 }
+
+/* ===== HERO SECTION ANIMATIONS - GPU ACCELERATED ===== */
+
+/* Shimmer effect for badge */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+/* Main fade-in animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@keyframes fade-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateZ(0);
+  }
+}
+
+/* Combined fade-in + float animations for badges */
+@keyframes fade-in-float-1 {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(0) translateZ(0);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+  60% {
+    transform: scale(1) translateY(-6px) translateZ(0);
+  }
+  100% {
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+}
+
+@keyframes fade-in-float-2 {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(0) translateZ(0);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+  60% {
+    transform: scale(1) translateY(-8px) translateZ(0);
+  }
+  100% {
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+}
+
+@keyframes fade-in-float-3 {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(0) translateZ(0);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+  60% {
+    transform: scale(1) translateY(-7px) translateZ(0);
+  }
+  100% {
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 0.4s ease-out forwards;
+}
+
+.animate-fade-in-up-delay {
+  opacity: 0;
+  animation: fade-in-up 0.3s ease-out 0.2s forwards;
+}
+
+/* Floating badges with fade-in */
+.animate-badge-1 {
+  opacity: 0;
+  animation: fade-in-float-1 5s ease-in-out 0.3s infinite;
+  animation-fill-mode: forwards;
+}
+
+.animate-badge-2 {
+  opacity: 0;
+  animation: fade-in-float-2 4.5s ease-in-out 0.4s infinite;
+  animation-fill-mode: forwards;
+}
+
+.animate-badge-3 {
+  opacity: 0;
+  animation: fade-in-float-3 4s ease-in-out 0.5s infinite;
+  animation-fill-mode: forwards;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in-right,
+  .animate-fade-in-up-delay,
+  .animate-badge-1,
+  .animate-badge-2,
+  .animate-badge-3 {
+    animation: none;
+    opacity: 1;
+  }
+}

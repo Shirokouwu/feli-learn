@@ -100,7 +100,7 @@ export function WhatIsFelidae() {
               <p className="text-muted-foreground text-base lg:text-lg xl:text-xl leading-relaxed">
                 <strong className="text-foreground">Felidae</strong> adalah famili taksonomi yang mencakup semua spesies
                 kucing di dunia — dari kucing rumah hingga harimau besar. Famili ini terdiri dari{" "}
-                <span className="text-primary font-semibold">41 spesies</span> yang tersebar di seluruh benua kecuali
+                <span className="text-primary font-semibold">30 spesies</span> yang tersebar di seluruh benua kecuali
                 Antartika dan Australia.
               </p>
             </div>

@@ -214,7 +214,7 @@ export const RadialNode = memo(function RadialNode({ node, isSelected, onClick }
               transition: "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
-            41 spesies • 14 genus
+            30 spesies • 14 genus
           </text>
         </>
       ) : (

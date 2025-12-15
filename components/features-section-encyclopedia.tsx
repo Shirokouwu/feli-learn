@@ -101,7 +101,7 @@ export function FeaturesSectionEncyclopedia({ encyclopediaRef, encyclopediaInVie
                         transition={{ duration: 0.45, delay: 0.2, ease: "easeOut" }}
                         className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-bold text-foreground mb-4 lg:mb-6"
                     >
-                        Database Lengkap <span className="text-accent">41 Spesies</span>
+                        Database Lengkap <span className="text-accent">30 Spesies</span>
                     </motion.h3>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}

@@ -11,7 +11,7 @@ const faqs = [
   {
     question: "Apa itu Felidae dan mengapa penting untuk dipelajari?",
     answer:
-      "Felidae adalah keluarga taksonomi yang mencakup semua spesies kucing, dari kucing rumah hingga singa dan harimau. Mempelajari Felidae penting karena membantu kita memahami evolusi, perilaku, dan kebutuhan konservasi dari 41 spesies kucing yang ada di dunia. Banyak di antaranya terancam punah dan membutuhkan perhatian khusus.",
+      "Felidae adalah keluarga taksonomi yang mencakup semua spesies kucing, dari kucing rumah hingga singa dan harimau. Mempelajari Felidae penting karena membantu kita memahami evolusi, perilaku, dan kebutuhan konservasi dari 30 spesies kucing yang ada di dunia. Banyak di antaranya terancam punah dan membutuhkan perhatian khusus.",
   },
   {
     question: "Apakah aplikasi ini gratis digunakan?",
