@@ -99,11 +99,10 @@ export function FAQSection() {
               transition={{ duration: 0.4, delay: 0.1 + index * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <div
-                className={`rounded-xl border transition-all duration-300 ${
-                  openIndex === index
+                className={`rounded-xl border transition-all duration-300 ${openIndex === index
                     ? "bg-card border-primary/30 shadow-lg shadow-primary/5"
                     : "bg-card/50 border-border hover:border-primary/20 hover:bg-card"
-                }`}
+                  }`}
               >
                 <button
                   onClick={() => toggleFAQ(index)}
@@ -111,16 +110,14 @@ export function FAQSection() {
                 >
                   <div className="flex items-center gap-4">
                     <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                        openIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      }`}
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${openIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                        }`}
                     >
                       <HelpCircle className="w-5 h-5" />
                     </div>
                     <span
-                      className={`font-medium text-base md:text-lg transition-colors ${
-                        openIndex === index ? "text-foreground" : "text-foreground/80"
-                      }`}
+                      className={`font-medium text-base md:text-lg transition-colors ${openIndex === index ? "text-foreground" : "text-foreground/80"
+                        }`}
                     >
                       {faq.question}
                     </span>

@@ -180,6 +180,7 @@ html {
 
 /* Custom breakpoint untuk laptop screens */
 @media (max-width: 1400px) {
+
   /* Base font size reduction untuk laptop */
   html {
     font-size: 15px;
@@ -197,7 +198,7 @@ html {
   .landing-section {
     @apply py-16 lg:py-20;
   }
-  
+
   /* Reduce max-width container untuk laptop */
   .max-w-7xl {
     max-width: 1100px;
@@ -209,7 +210,7 @@ html {
   .hero-title {
     @apply text-4xl sm:text-5xl lg:text-6xl;
   }
-  
+
   .hero-subtitle {
     @apply text-base sm:text-lg;
   }
@@ -220,7 +221,7 @@ html {
   .section-title {
     @apply text-3xl sm:text-4xl lg:text-5xl;
   }
-  
+
   .section-subtitle {
     @apply text-base lg:text-lg;
   }
@@ -231,7 +232,7 @@ html {
   .card-title {
     @apply text-lg lg:text-xl;
   }
-  
+
   .card-description {
     @apply text-sm lg:text-base;
   }
@@ -251,6 +252,7 @@ html {
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -266,6 +268,7 @@ html {
     opacity: 0;
     transform: translateY(20px) translateZ(0);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) translateZ(0);
@@ -277,6 +280,7 @@ html {
     opacity: 0;
     transform: translateX(20px) translateZ(0);
   }
+
   to {
     opacity: 1;
     transform: translateX(0) translateZ(0);
@@ -289,13 +293,16 @@ html {
     opacity: 0;
     transform: scale(0.95) translateY(0) translateZ(0);
   }
+
   20% {
     opacity: 1;
     transform: scale(1) translateY(0) translateZ(0);
   }
+
   60% {
     transform: scale(1) translateY(-6px) translateZ(0);
   }
+
   100% {
     transform: scale(1) translateY(0) translateZ(0);
   }
@@ -306,13 +313,16 @@ html {
     opacity: 0;
     transform: scale(0.95) translateY(0) translateZ(0);
   }
+
   20% {
     opacity: 1;
     transform: scale(1) translateY(0) translateZ(0);
   }
+
   60% {
     transform: scale(1) translateY(-8px) translateZ(0);
   }
+
   100% {
     transform: scale(1) translateY(0) translateZ(0);
   }
@@ -323,13 +333,16 @@ html {
     opacity: 0;
     transform: scale(0.95) translateY(0) translateZ(0);
   }
+
   20% {
     opacity: 1;
     transform: scale(1) translateY(0) translateZ(0);
   }
+
   60% {
     transform: scale(1) translateY(-7px) translateZ(0);
   }
+
   100% {
     transform: scale(1) translateY(0) translateZ(0);
   }
@@ -369,6 +382,7 @@ html {
 
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
+
   .animate-fade-in-up,
   .animate-fade-in-right,
   .animate-fade-in-up-delay,
