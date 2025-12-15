@@ -12,3 +12,7 @@ export { ScanHistory } from './scan-history'
 export { ScanCounter } from './scan-counter'
 export { AboutAiScanner } from './about-ai-scanner'
 export { default as ScanStatusApi } from './scan-check-api'
+
+// Guest scan limit components
+export { LoginPromptModal } from './login-prompt-modal'
+export { GuestScanBanner } from './guest-scan-banner'

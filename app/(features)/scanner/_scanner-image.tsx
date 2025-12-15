@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { useScannerLogic } from "@/hooks/use-scanner-logic"
+import { useGuestScanLimit } from "@/hooks/use-guest-scan-limit"
 import { getUserClient } from "@/lib/auth-client"
 
 import { ScannerUploadArea } from "@/components/scanner/scanner-upload-area"
@@ -15,6 +16,8 @@ import { ScanHistory } from "@/components/scanner/scan-history"
 import { RecentScans } from "@/components/scanner/recent-scans"
 import { ScanCounter } from "@/components/scanner/scan-counter"
 import { AboutAiScanner } from "@/components/scanner/about-ai-scanner"
+import { LoginPromptModal } from "@/components/scanner/login-prompt-modal"
+import { GuestScanBanner } from "@/components/scanner/guest-scan-banner"
 import ScanStatusApi from "@/components/scanner/scan-check-api"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertTriangle } from "lucide-react"
@@ -31,9 +34,13 @@ export default function ScannerImage() {
   const [activeTab, setActiveTab] = useState<string>("upload")
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [showHistory, setShowHistory] = useState<boolean>(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState<boolean>(false)
 
   // Scanner logic hook
   const scanner = useScannerLogic()
+
+  // Guest scan limit hook
+  const guestLimit = useGuestScanLimit()
 
   // Check authentication on mount
   useEffect(() => {
@@ -41,11 +48,14 @@ export default function ScannerImage() {
       try {
         const userData = await getUserClient()
         setUser(userData)
-        setIsLoggedIn(!!userData)
+        const loggedIn = !!userData
+        setIsLoggedIn(loggedIn)
+        guestLimit.setIsLoggedIn(loggedIn)
       } catch (error) {
         console.error('Auth check failed:', error)
         setUser(null)
         setIsLoggedIn(false)
+        guestLimit.setIsLoggedIn(false)
       } finally {
         setLoading(false)
       }
@@ -78,6 +88,12 @@ export default function ScannerImage() {
 
   // Handle file drop
   const handleFileDrop = (files: FileList) => {
+    // Check guest scan limit first
+    if (!isLoggedIn && guestLimit.hasReachedLimit) {
+      setShowLoginPrompt(true)
+      return
+    }
+
     const file = files[0]
     if (file && fileInputRef.current) {
       // Set the file to the file input and trigger change event
@@ -91,6 +107,51 @@ export default function ScannerImage() {
       } as unknown as React.ChangeEvent<HTMLInputElement>
 
       scanner.handleFileUpload(syntheticEvent)
+      
+      // Increment guest scan count after successful upload trigger
+      if (!isLoggedIn) {
+        guestLimit.incrementScanCount()
+      }
+    }
+  }
+
+  // Handle file input click with guest limit check
+  const handleFileInputClick = () => {
+    if (!isLoggedIn && guestLimit.hasReachedLimit) {
+      setShowLoginPrompt(true)
+      return
+    }
+    fileInputRef.current?.click()
+  }
+
+  // Handle file upload with guest limit tracking
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isLoggedIn && guestLimit.hasReachedLimit) {
+      setShowLoginPrompt(true)
+      event.target.value = "" // Reset file input
+      return
+    }
+    
+    scanner.handleFileUpload(event)
+    
+    // Increment guest scan count after successful upload
+    if (!isLoggedIn && event.target.files?.[0]) {
+      guestLimit.incrementScanCount()
+    }
+  }
+
+  // Handle URL submit with guest limit check
+  const handleUrlSubmit = () => {
+    if (!isLoggedIn && guestLimit.hasReachedLimit) {
+      setShowLoginPrompt(true)
+      return
+    }
+    
+    scanner.handleUrlSubmit()
+    
+    // Increment guest scan count after URL submit
+    if (!isLoggedIn && scanner.imageUrl) {
+      guestLimit.incrementScanCount()
     }
   }
 
@@ -120,6 +181,16 @@ export default function ScannerImage() {
         />
 
         <div className="max-w-3xl mx-auto">
+          {/* Guest Scan Banner - Show for non-logged in users */}
+          {!isLoggedIn && (
+            <GuestScanBanner
+              remainingScans={guestLimit.remainingScans}
+              maxScans={guestLimit.maxFreeScans}
+              hasReachedLimit={guestLimit.hasReachedLimit}
+              onLoginClick={() => setShowLoginPrompt(true)}
+            />
+          )}
+
           <div className="bg-card text-card-foreground rounded-3xl shadow-xl border border-border/30 overflow-hidden">
             <div className="p-4 md:p-6">
               {!scanner.previewImage ? (
@@ -132,10 +203,10 @@ export default function ScannerImage() {
                     onTabChange={handleTabChange}
                     imageUrl={scanner.imageUrl}
                     onImageUrlChange={scanner.setImageUrl}
-                    onUrlSubmit={scanner.handleUrlSubmit}
-                    onFileInputClick={() => fileInputRef.current?.click()}
+                    onUrlSubmit={handleUrlSubmit}
+                    onFileInputClick={handleFileInputClick}
                     onFileDrop={handleFileDrop}
-                    apiReady={scanner.apiReady}
+                    apiReady={scanner.apiReady && (!guestLimit.hasReachedLimit || isLoggedIn)}
                     showTips={showTips}
                     onToggleTips={() => setShowTips(!showTips)}
                   />
@@ -146,7 +217,7 @@ export default function ScannerImage() {
                     ref={fileInputRef}
                     className="hidden"
                     accept="image/*"
-                    onChange={scanner.handleFileUpload}
+                    onChange={handleFileUpload}
                   />
                 </div>
               ) : (
@@ -200,6 +271,14 @@ export default function ScannerImage() {
       <ScanHistory
         isOpen={showHistory && isLoggedIn}
         onOpenChange={setShowHistory}
+      />
+
+      {/* Login Prompt Modal */}
+      <LoginPromptModal
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
+        usedScans={guestLimit.guestScanCount}
+        maxScans={guestLimit.maxFreeScans}
       />
     </div>
   )

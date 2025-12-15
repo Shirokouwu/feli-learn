@@ -2,11 +2,20 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Menu, X, User } from "lucide-react"
+import { Menu, X, User, LogOut } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import Image from "next/image"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { signOut } from "@/app/(auth)/_action"
 
 interface HeaderProps {
   user?: {
@@ -22,7 +31,18 @@ interface HeaderProps {
 export function Header({ user }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   const isHomePage = pathname === "/"
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      router.push("/")
+      router.refresh()
+    } catch (error) {
+      console.error("Error signing out:", error)
+    }
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -69,24 +89,46 @@ export function Header({ user }: HeaderProps) {
           <div className="hidden md:flex items-center gap-4">
             <ThemeToggle />
             {user ? (
-              <Link href="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                {user.profile?.avatar_url ? (
-                  <Image
-                    src={user.profile.avatar_url}
-                    alt={user.profile?.full_name || "User"}
-                    width={32}
-                    height={32}
-                    className="rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="w-4 h-4 text-primary" />
-                  </div>
-                )}
-                <span className="text-sm font-medium text-foreground">
-                  {user.profile?.full_name || user.email?.split('@')[0] || 'User'}
-                </span>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none">
+                    {user.profile?.avatar_url ? (
+                      <Image
+                        src={user.profile.avatar_url}
+                        alt={user.profile?.full_name || "User"}
+                        width={32}
+                        height={32}
+                        className="rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="w-4 h-4 text-primary" />
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-foreground">
+                      {user.profile?.full_name || user.email?.split('@')[0] || 'User'}
+                    </span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleSignOut} 
+                    className="text-destructive focus:text-destructive cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Keluar
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>
@@ -145,33 +187,47 @@ export function Header({ user }: HeaderProps) {
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
                 {user ? (
-                  <Link
-                    href="/profile"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {user.profile?.avatar_url ? (
-                      <Image
-                        src={user.profile.avatar_url}
-                        alt={user.profile?.full_name || "User"}
-                        width={40}
-                        height={40}
-                        className="rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="w-5 h-5 text-primary" />
+                  <>
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {user.profile?.avatar_url ? (
+                        <Image
+                          src={user.profile.avatar_url}
+                          alt={user.profile?.full_name || "User"}
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User className="w-5 h-5 text-primary" />
+                        </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-foreground">
+                          {user.profile?.full_name || 'User'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {user.email}
+                        </span>
                       </div>
-                    )}
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-foreground">
-                        {user.profile?.full_name || 'User'}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {user.email}
-                      </span>
-                    </div>
-                  </Link>
+                    </Link>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="justify-start mt-2"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        handleSignOut()
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Keluar
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="ghost" size="sm" className="justify-start" asChild>
