@@ -8,7 +8,7 @@ import { useUserProfile } from "@/hooks/use-user-profile"
 // Client Component wrapper for LayoutHeader
 function HeaderWithUser() {
     const pathname = usePathname()
-    const { user } = useUserProfile()
+    const { profile } = useUserProfile()
     
     // Hide header on auth routes
     const isAuthRoute = pathname.startsWith("/login") || 
@@ -21,7 +21,7 @@ function HeaderWithUser() {
         return null
     }
     
-    return <LayoutHeader user={user} />
+    return <LayoutHeader user={profile} />
 }
 
 // Loading fallback for header
