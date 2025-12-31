@@ -44,10 +44,10 @@ export default function RootLayout({
     <html lang="id" className={_inter.className}>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider>
-          <SuspendedHeader />
-          <main>
-            <QueryProvider>{children}</QueryProvider>
-          </main>
+          <QueryProvider>
+            <SuspendedHeader />
+            <main>{children}</main>
+          </QueryProvider>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
         <Analytics />

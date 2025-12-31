@@ -1,10 +1,26 @@
-import { Suspense } from "react"
-import { getCurrentUser } from "@/lib/auth"
-import { LayoutHeader } from "@/components/layout-header"
+"use client"
 
-// Server Component wrapper for LayoutHeader with user data
-async function HeaderWithUser() {
-    const user = await getCurrentUser()
+import { Suspense } from "react"
+import { usePathname } from "next/navigation"
+import { LayoutHeader } from "@/components/layout-header"
+import { useUserProfile } from "@/hooks/use-user-profile"
+
+// Client Component wrapper for LayoutHeader
+function HeaderWithUser() {
+    const pathname = usePathname()
+    const { user } = useUserProfile()
+    
+    // Hide header on auth routes
+    const isAuthRoute = pathname.startsWith("/login") || 
+                       pathname.startsWith("/register") || 
+                       pathname.startsWith("/confirm-email") ||
+                       pathname.startsWith("/reset-password") ||
+                       pathname.startsWith("/new-password")
+    
+    if (isAuthRoute) {
+        return null
+    }
+    
     return <LayoutHeader user={user} />
 }
 
