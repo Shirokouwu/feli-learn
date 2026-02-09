@@ -13,6 +13,8 @@ import {
   Check,
   Leaf,
   MapPin,
+  ExternalLink,
+  BookOpen,
 } from "lucide-react"
 import type { SpeciesTabProps } from "@/components/types"
 import { motion } from "framer-motion"
@@ -289,6 +291,47 @@ export function SpeciesConservation({ species, details }: SpeciesTabProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Data Source Section - IUCN Red List */}
+      <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg text-neutral-800 flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-emerald-600" />
+            Sumber Data Konservasi
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 p-4 bg-white rounded-lg border border-emerald-100">
+              <div className="bg-emerald-100 p-3 rounded-xl flex-shrink-0">
+                <ShieldAlert className="h-6 w-6 text-emerald-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-neutral-800 mb-2">IUCN Red List of Threatened Species</h3>
+                <p className="text-sm text-neutral-600 leading-relaxed mb-3">
+                  Semua data konservasi untuk spesies Felidae bersumber dari IUCN Red List, database yang paling komprehensif tentang status konservasi spesies global.
+                </p>
+                <a
+                  href="https://www.iucnredlist.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"
+                >
+                  <span>Kunjungi IUCN Red List</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200">
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                <strong>Catatan:</strong> Data konservasi diperbarui secara berkala oleh IUCN Species Survival Commission (SSC). 
+                Untuk informasi terbaru dan paling akurat, silakan kunjungi situs resmi IUCN Red List.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

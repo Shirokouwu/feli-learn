@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, MapPin, Calendar, Globe, Ruler, Weight, Palette, Info } from "lucide-react"
+import { Sparkles, MapPin, Calendar, Globe, Ruler, Weight, Palette, Info, BookOpen, ExternalLink, ShieldAlert } from "lucide-react"
 import type { SpeciesTabProps } from "@/components/types"
 
 
@@ -257,6 +257,55 @@ export function SpeciesOverview({ species, details }: SpeciesTabProps) {
           </Card>
         </motion.div>
       )}
+
+      {/* Data Source Section - IUCN Red List */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+      >
+        <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white shadow-lg">
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-3">
+                <BookOpen className="h-5 w-5 text-emerald-600" />
+                <h3 className="text-lg font-semibold text-neutral-800">Sumber Data</h3>
+              </div>
+              
+              <div className="flex items-start gap-4 p-4 bg-white rounded-lg border border-emerald-100">
+                <div className="bg-emerald-100 p-3 rounded-xl flex-shrink-0">
+                  <ShieldAlert className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-neutral-800 mb-2">IUCN Red List of Threatened Species</h4>
+                  <p className="text-sm text-neutral-600 leading-relaxed mb-3">
+                    Semua informasi tentang spesies Felidae dalam database ini bersumber dari IUCN Red List, 
+                    organisasi internasional yang menyediakan data paling komprehensif dan terpercaya tentang 
+                    status konservasi, habitat, perilaku, dan karakteristik spesies di seluruh dunia.
+                  </p>
+                  <a
+                    href="https://www.iucnredlist.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"
+                  >
+                    <span>Kunjungi IUCN Red List</span>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200">
+                <p className="text-xs text-neutral-600 leading-relaxed">
+                  <strong>Catatan:</strong> IUCN (International Union for Conservation of Nature) adalah otoritas global 
+                  untuk status konservasi alam dan spesies. Data diperbarui secara berkala oleh para ahli biologi dan 
+                  konservasi dari seluruh dunia.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   )
 }

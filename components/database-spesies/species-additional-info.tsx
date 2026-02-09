@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Leaf, Baby, Target, Clock, Heart, Users, Calendar, Dna, Scale, Hourglass, PawPrint, Timer } from "lucide-react"
+import { Leaf, Baby, Target, Clock, Heart, Users, Calendar, Dna, Scale, Hourglass, PawPrint, Timer, BookOpen, ExternalLink, ShieldAlert } from "lucide-react"
 import type { SpeciesTabProps } from "@/components/types"
 
 // Helper function to safely format values
@@ -392,6 +392,40 @@ export function SpeciesAdditionalInfo({ species, details }: SpeciesTabProps) {
               </TabsContent>
             )}
           </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Data Source Section - IUCN Red List */}
+      <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BookOpen className="h-5 w-5 text-emerald-600" />
+              <h3 className="text-lg font-semibold text-neutral-800">Sumber Data</h3>
+            </div>
+            
+            <div className="flex items-start gap-4 p-4 bg-white rounded-lg border border-emerald-100">
+              <div className="bg-emerald-100 p-3 rounded-xl flex-shrink-0">
+                <ShieldAlert className="h-6 w-6 text-emerald-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-neutral-800 mb-2">IUCN Red List of Threatened Species</h4>
+                <p className="text-sm text-neutral-600 leading-relaxed mb-3">
+                  Semua data ekologi, perilaku, dan konservasi untuk spesies Felidae bersumber dari IUCN Red List, 
+                  database yang paling komprehensif tentang status konservasi dan informasi spesies global.
+                </p>
+                <a
+                  href="https://www.iucnredlist.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"
+                >
+                  <span>Kunjungi IUCN Red List</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
